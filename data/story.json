@@ -1,0 +1,19 @@
+{
+  "start": "ch1",
+  "endings": [
+    { "id": "ending_artist", "name": "THE NEW ARTIST" },
+    { "id": "ending_escape", "name": "THE ESCAPE" },
+    { "id": "ending_blank", "name": "THE BLANK PAGE" }
+  ],
+  "chapters": {
+    "ch1": { "file": "data/chapter1.json", "next": "ch2" },
+    "ch2": {
+      "file": "data/chapter2.json",
+      "next": { "byFlag": [["route_cut", "ch3b"], ["route_sea", "ch3a"]], "default": "ch3a" }
+    },
+    "ch3a": { "file": "data/chapter3a.json", "next": "ch4" },
+    "ch3b": { "file": "data/chapter3b.json", "next": "ch4" },
+    "ch4": { "file": "data/chapter4.json", "next": "ch5" },
+    "ch5": { "file": "data/chapter5.json", "next": null }
+  }
+}

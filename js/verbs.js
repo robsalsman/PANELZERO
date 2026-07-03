@@ -1,7 +1,8 @@
 // Verb engine (M1). One challenge object per active panel. Exactly one verb each.
 // Contract: { update(dt), draw(ctx, w, h), onDown/onMove/onUp/onTap/onSwipe }.
 // api = { succeed(), fail(), setFlag(name), flags, sfx, buzz, size: () => ({w, h}) }
-import { INK, impactStar, drawSFXText, drawKai, drawSmudge, speechBubble } from './art.js';
+import { INK, impactStar, drawSFXText, drawSmudge, speechBubble, drawPencilShadow } from './art.js';
+import { drawKai } from './chars.js';
 import { anchors } from './scenes.js';
 
 /* ---------- helpers ---------- */
@@ -32,6 +33,12 @@ function tapChallenge(def, api) {
   let smudgeHop = 0;
 
   const hitArea = (w, h) => {
+    if (p.target) {
+      // data-driven target (chapters 2+): normalized pos, fat-thumb minimum
+      let x = p.target.x * w;
+      if (p.wobble) x += Math.sin(smudgeHop * 2.4) * w * 0.14;
+      return { x, y: p.target.y * h, r: Math.max(p.target.r * Math.min(w, h), 44) };
+    }
     switch (p.hit) {
       case 'kai': {
         const k = anchors.kaiWake(w, h);
@@ -95,20 +102,27 @@ function tapChallenge(def, api) {
       ctx.setLineDash([]);
       ctx.globalAlpha = 1;
 
-      if (p.hit === 'smudge') {
+      if (p.hit === 'smudge' || p.creature === 'smudge') {
         // the creature itself (moves with hits)
         const hpFrac = 1 - this.count / p.count;
         drawSmudge(ctx, a.x, a.y, Math.min(w, h) * 0.2, t, Math.max(0.2, hpFrac));
-        // ink-drain timer on Kai's floor tile
-        if (timeLeft !== null && p.time) {
+      }
+      if (timeLeft !== null && p.time) {
+        if (p.hit === 'smudge') {
+          // ch1: ink-drain timer on Kai's floor tile
           const k = anchors.kaiFight(w, h);
           const frac = Math.max(0, timeLeft / p.time);
           const tw = w * 0.17;
-          const tx = k.x - tw / 2;
-          const ty = h * 0.84;
           ctx.fillStyle = INK;
           ctx.globalAlpha = 0.8;
-          ctx.fillRect(tx, ty + (1 - frac) * h * 0.1, tw, frac * h * 0.1);
+          ctx.fillRect(k.x - tw / 2, h * 0.84 + (1 - frac) * h * 0.1, tw, Math.max(0, frac) * h * 0.1);
+          ctx.globalAlpha = 1;
+        } else {
+          // generic: ink draining out of a bar along the panel bottom
+          const frac = Math.max(0, timeLeft / p.time);
+          ctx.fillStyle = INK;
+          ctx.globalAlpha = 0.75;
+          ctx.fillRect(12, h - 10, (w - 24) * frac, 5);
           ctx.globalAlpha = 1;
         }
       }
@@ -174,10 +188,10 @@ function swipeChallenge(def, api) {
           : dir === need;
       if (ok) {
         hz.state = 'dodged';
-        kaiDir = dir === 'left' ? -1 : 1;
+        kaiDir = dir === 'up' ? 'up' : dir === 'left' ? -1 : 1;
         api.sfx.page();
         api.buzz(20);
-      } else if (dir === 'left' || dir === 'right') {
+      } else if (dir === 'left' || dir === 'right' || (need === 'any' ? false : dir === 'up')) {
         // dodged INTO it
         hz.state = 'crashed';
         api.sfx.hit();
@@ -189,6 +203,7 @@ function swipeChallenge(def, api) {
       const groundY = h * 0.88;
       // Kai
       if (kaiDir === 0) drawKai(ctx, w * 0.5, groundY, h * 0.42, 'stand', { dir: 0 });
+      else if (kaiDir === 'up') drawKai(ctx, w * 0.5, groundY - h * 0.22, h * 0.42, 'dodge', { dir: 1 });
       else drawKai(ctx, w * 0.5 + kaiDir * w * 0.26, groundY, h * 0.42, 'dodge', { dir: kaiDir });
 
       const size = Math.min(w, h) * 0.15;
@@ -249,6 +264,15 @@ function swipeChallenge(def, api) {
             if (hz.dir === 'any') { draw(-1); draw(1); }
             else if (hz.dir === 'left') draw(-1);
             else if (hz.dir === 'right') draw(1);
+            else if (hz.dir === 'up') {
+              // upward arrow — jump!
+              ctx.beginPath();
+              ctx.moveTo(w * 0.5, h * 0.6 - bob);
+              ctx.lineTo(w * 0.5 - 12, h * 0.6 - bob + 20);
+              ctx.lineTo(w * 0.5 + 12, h * 0.6 - bob + 20);
+              ctx.closePath();
+              ctx.fill();
+            }
             ctx.globalAlpha = 1;
           }
         }
@@ -308,6 +332,24 @@ function holdChallenge(def, api) {
       }
     },
     draw(ctx, w, h) {
+      // the sweeping threat, when the scene doesn't paint its own
+      if (this.sweepX !== null && this.sweepX !== undefined && p.overlay) {
+        if (p.overlay === 'pencil') {
+          drawPencilShadow(ctx, w, h, this.sweepX, 0.5);
+        } else if (p.overlay === 'wave') {
+          // a wall of ink crossing the panel
+          ctx.save();
+          ctx.fillStyle = INK;
+          ctx.globalAlpha = 0.65;
+          ctx.beginPath();
+          ctx.moveTo(this.sweepX - w * 0.2, h);
+          ctx.quadraticCurveTo(this.sweepX - w * 0.05, h * 0.1, this.sweepX + w * 0.14, h * 0.25);
+          ctx.quadraticCurveTo(this.sweepX + w * 0.02, h * 0.45, this.sweepX + w * 0.1, h);
+          ctx.closePath();
+          ctx.fill();
+          ctx.restore();
+        }
+      }
       // hold progress ring, bottom center
       const cx = w / 2;
       const cy = h - 34;

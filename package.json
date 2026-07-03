@@ -15,5 +15,6 @@
   "license": "ISC",
   "devDependencies": {
     "playwright": "^1.61.1"
-  }
+  },
+  "type": "module"
 }

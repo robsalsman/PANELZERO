@@ -1,5 +1,5 @@
-// Service worker: cache-first so the manga is playable offline after first read.
-const CACHE = 'panelzero-v1';
+// Service worker: cache-first so the whole manga is playable offline after first read.
+const CACHE = 'panelzero-v2';
 const ASSETS = [
   '.',
   'index.html',
@@ -10,10 +10,19 @@ const ASSETS = [
   'js/input.js',
   'js/verbs.js',
   'js/scenes.js',
+  'js/setpieces.js',
+  'js/compose.js',
+  'js/chars.js',
   'js/art.js',
   'js/sfx.js',
   'js/save.js',
+  'data/story.json',
   'data/chapter1.json',
+  'data/chapter2.json',
+  'data/chapter3a.json',
+  'data/chapter3b.json',
+  'data/chapter4.json',
+  'data/chapter5.json',
   'manifest.webmanifest',
   'icons/icon.svg',
   'icons/icon-maskable.svg',

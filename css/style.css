@@ -131,6 +131,14 @@ html, body {
 .stat-label { font-size: 11px; font-weight: 800; letter-spacing: 0.25em; opacity: 0.55; }
 .stat span:last-child { font-size: 26px; font-weight: 900; }
 
+.endings-line {
+  margin: 14px 0 6px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  opacity: 0.65;
+}
+
 .badge {
   display: inline-block;
   margin-bottom: 20px;

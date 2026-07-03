@@ -4,8 +4,9 @@
 // ctx is already translated to the panel's top-left and clipped to it.
 import {
   INK, PAPER, fillTone, speedLinesV, speedLinesH, impactStar, drawSFXText,
-  drawKai, drawLetterC, drawPencilShadow, drawHandWithEraser, drawSmudge, speechBubble,
+  drawPencilShadow, drawHandWithEraser, drawSmudge, speechBubble,
 } from './art.js';
+import { drawKai } from './chars.js';
 
 /* Shared layout anchors — challenges import these so hitboxes match the art. */
 export const anchors = {
