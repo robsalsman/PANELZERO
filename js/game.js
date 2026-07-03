@@ -512,7 +512,7 @@ export class Game {
     }
 
     const capText = this.captionFor(def);
-    if (capText) drawCaption(ctx, capText, r.w, 10, Math.max(12, r.h * 0.042));
+    if (capText) drawCaption(ctx, capText, r.w, 10, Math.min(19, Math.max(12, r.h * 0.042)));
 
     if (isCurrent && this.phase === 'active' && this.challenge) {
       this.challenge.draw(ctx, r.w, r.h);

@@ -2,12 +2,32 @@
 // both route bosses, the desk, and the three ending spreads.
 // Same painter contract as scenes.js.
 import {
-  INK, PAPER, fillTone, impactStar, drawSFXText, speechBubble,
+  INK, PAPER, fillTone, impactStar, drawSFXText, speechBubble, wrapText,
   drawHandWithEraser, drawSmudge,
 } from './art.js';
 import { drawKai, drawSumi, drawRejected } from './chars.js';
 
 const clamp01 = (v) => Math.max(0, Math.min(1, v));
+
+// ending card text: auto-fit title + wrapped subtitle, kept inside the panel
+function endingTitle(ctx, w, h, title, sub, yTitle) {
+  ctx.save();
+  ctx.fillStyle = INK;
+  ctx.textAlign = 'center';
+  let fs = h * 0.045;
+  ctx.font = `900 ${fs}px -apple-system, "Arial Black", sans-serif`;
+  while (ctx.measureText(title).width > w * 0.9 && fs > 12) {
+    fs *= 0.94;
+    ctx.font = `900 ${fs}px -apple-system, "Arial Black", sans-serif`;
+  }
+  ctx.fillText(title, w / 2, yTitle * h);
+  const sfs = Math.min(h * 0.02, w * 0.042);
+  ctx.font = `700 ${sfs}px -apple-system, sans-serif`;
+  ctx.globalAlpha = 0.7;
+  const lines = wrapText(ctx, sub, w * 0.86);
+  lines.forEach((l, i) => ctx.fillText(l, w / 2, yTitle * h + fs * 0.9 + i * sfs * 1.35));
+  ctx.restore();
+}
 
 function seaBase(ctx, w, h, t, level = 0.62) {
   ctx.save();
@@ -283,7 +303,7 @@ export const setpieces = {
       ctx.quadraticCurveTo(w * 0.92, h * 0.34, w * 0.95, h * 0.42);
       ctx.stroke();
       ctx.restore();
-      speechBubble(ctx, 'It just wanted to be finished.', w * 0.34, h * 0.16, w * 0.55, { fs: Math.max(13, h * 0.042) });
+      speechBubble(ctx, 'It just wanted to be finished.', w * 0.34, h * 0.16, w * 0.55, { fs: Math.min(20, Math.max(13, h * 0.042)) });
     } else {
       seaBase(ctx, w, h, o.t, 0.72);
       // scattered stroke fragments raining
@@ -299,7 +319,7 @@ export const setpieces = {
         ctx.restore();
       }
       ctx.globalAlpha = 1;
-      speechBubble(ctx, 'The sea goes quiet. Too quiet.', w * 0.4, h * 0.14, w * 0.6, { fs: Math.max(13, h * 0.042) });
+      speechBubble(ctx, 'The sea goes quiet. Too quiet.', w * 0.4, h * 0.14, w * 0.6, { fs: Math.min(20, Math.max(13, h * 0.042)) });
     }
     drawKai(ctx, w * 0.24, h * 0.92, h * 0.3, 'stand', { dir: 1, emotion: o.flags.mercy ? 'smile' : 'neutral', weapon: 'brush' });
     drawSumi(ctx, w * 0.4, h * 0.92, h * 0.26, 'float', { dir: 1, t: o.t });
@@ -317,7 +337,7 @@ export const setpieces = {
     drawKai(ctx, w * 0.24, h * 0.86, h * 0.46, 'stand', { dir: 1, emotion: o.flags.mercy ? 'smile' : 'sad', weapon: 'nib' });
     if (o.flags.mercy) {
       drawRejected(ctx, w * 0.68, h * 0.86, h * 0.48, 'stand', { dir: -1, emotion: 'smile', restored: true });
-      speechBubble(ctx, '"A whole line. I\'m... whole."', w * 0.6, h * 0.16, w * 0.62, { fs: Math.max(13, h * 0.042), tail: { x: w * 0.66, y: h * 0.42 } });
+      speechBubble(ctx, '"A whole line. I\'m... whole."', w * 0.6, h * 0.16, w * 0.62, { fs: Math.min(20, Math.max(13, h * 0.042)), tail: { x: w * 0.66, y: h * 0.42 } });
     } else {
       const p = o.phase === 'done' ? 1 : clamp01(o.t / 2.5);
       ctx.save();
@@ -333,7 +353,7 @@ export const setpieces = {
         ctx.fill();
       }
       ctx.globalAlpha = 1;
-      speechBubble(ctx, '"Better than the drawer... thank you."', w * 0.55, h * 0.16, w * 0.66, { fs: Math.max(13, h * 0.042) });
+      speechBubble(ctx, '"Better than the drawer... thank you."', w * 0.55, h * 0.16, w * 0.66, { fs: Math.min(20, Math.max(13, h * 0.042)) });
     }
   },
 
@@ -434,9 +454,9 @@ export const setpieces = {
     if (o.flags.savedSumi) drawSumi(ctx, w * 0.58, h * 0.9, h * 0.12, 'float', { dir: -1, t: o.t });
     if (drop >= 1) {
       ctx.fillStyle = INK;
-      ctx.font = `900 ${h * 0.028}px -apple-system, sans-serif`;
+      ctx.font = `900 ${Math.min(h * 0.024, w * 0.052)}px -apple-system, sans-serif`;
       ctx.textAlign = 'center';
-      ctx.fillText('F I N A L   C H A P T E R :   P A N E L   Z E R O', w / 2, h * 0.985);
+      ctx.fillText('FINAL CHAPTER: PANEL ZERO', w / 2, h * 0.985);
     }
   },
 
@@ -469,22 +489,22 @@ export const setpieces = {
     ctx.lineWidth = 2.5;
     ctx.strokeRect(w * 0.34, h * 0.4, w * 0.32, h * 0.16);
     ctx.setLineDash([]);
-    // Kai wielding the great pencil
-    drawKai(ctx, w * 0.38, h * 0.88, h * 0.34, 'fight', { dir: 1, weapon: null, emotion: 'smile' });
+    // Kai wielding the great pencil, Sumi beside him — kept clear of the title
+    drawKai(ctx, w * 0.38, h * 0.66, h * 0.24, 'fight', { dir: 1, weapon: null, emotion: 'smile' });
     ctx.save();
     ctx.fillStyle = INK;
-    ctx.translate(w * 0.47, h * 0.52);
-    ctx.rotate(0.5);
-    ctx.fillRect(-w * 0.02, 0, w * 0.04, h * 0.3);
+    ctx.translate(w * 0.55, h * 0.4); // held high, clear of his face
+    ctx.rotate(0.8);
+    ctx.fillRect(-w * 0.015, 0, w * 0.03, h * 0.15);
     ctx.beginPath();
-    ctx.moveTo(-w * 0.02, 0);
-    ctx.lineTo(0, -h * 0.045);
-    ctx.lineTo(w * 0.02, 0);
+    ctx.moveTo(-w * 0.015, 0);
+    ctx.lineTo(0, -h * 0.03);
+    ctx.lineTo(w * 0.015, 0);
     ctx.closePath();
     ctx.fill();
     ctx.restore();
-    drawSumi(ctx, w * 0.64, h * 0.88, h * 0.3, 'float', { dir: -1, t: o.t, emotion: 'smile' });
-    // the leviathan-koi arcs across the sky panel
+    drawSumi(ctx, w * 0.62, h * 0.66, h * 0.2, 'float', { dir: -1, t: o.t, emotion: 'smile' });
+    // the finished leviathan-koi arcs across a fresh sky panel
     ctx.strokeStyle = INK;
     ctx.lineWidth = w * 0.02;
     ctx.lineCap = 'round';
@@ -492,14 +512,7 @@ export const setpieces = {
     ctx.moveTo(w * 0.12, h * 0.28);
     ctx.bezierCurveTo(w * 0.2, h * 0.16, w * 0.32, h * 0.16, w * 0.38, h * 0.26);
     ctx.stroke();
-    ctx.fillStyle = INK;
-    ctx.font = `900 ${h * 0.05}px -apple-system, "Arial Black", sans-serif`;
-    ctx.textAlign = 'center';
-    ctx.fillText('THE NEW ARTIST', w / 2, h * 0.72);
-    ctx.font = `700 ${h * 0.022}px -apple-system, sans-serif`;
-    ctx.globalAlpha = 0.7;
-    ctx.fillText('Kai picks up the pencil. This story gets an ending — his.', w / 2, h * 0.765);
-    ctx.globalAlpha = 1;
+    endingTitle(ctx, w, h, 'THE NEW ARTIST', 'Kai picks up the pencil. This story gets an ending — his.', 0.8);
   },
 
   ending_escape(ctx, w, h, o) {
@@ -530,18 +543,22 @@ export const setpieces = {
       ctx.restore();
     }
     fillTone(ctx, w * 0.1, h * 0.25, w * 0.8, h * 0.55, 'light', 0.3);
-    // Kai leaping through the gap, out of the panel
+    // Kai mid-leap toward the broken gap in the border
     const wpn = o.flags.brush ? 'brush' : o.flags.nib ? 'nib' : 'club';
-    drawKai(ctx, w * 0.5, h * 0.34, h * 0.4, 'run', { dir: 1, emotion: 'determined', weapon: wpn });
-    drawSFXText(ctx, 'SHATTER', w * 0.5, h * 0.14, Math.min(w, h) * 0.09, -0.05);
-    ctx.fillStyle = INK;
-    ctx.font = `900 ${h * 0.05}px -apple-system, "Arial Black", sans-serif`;
-    ctx.textAlign = 'center';
-    ctx.fillText('THE ESCAPE', w / 2, h * 0.9);
-    ctx.font = `700 ${h * 0.022}px -apple-system, sans-serif`;
-    ctx.globalAlpha = 0.7;
-    ctx.fillText('Kai breaks the border and walks out of the story — alone.', w / 2, h * 0.945);
+    drawKai(ctx, w * 0.5, h * 0.56, h * 0.36, 'run', { dir: 1, emotion: 'determined', weapon: wpn });
+    // motion burst under him
+    ctx.strokeStyle = INK;
+    ctx.globalAlpha = 0.35;
+    ctx.lineWidth = 3;
+    for (let i = 0; i < 4; i++) {
+      ctx.beginPath();
+      ctx.moveTo(w * (0.34 + i * 0.08), h * 0.6);
+      ctx.lineTo(w * (0.3 + i * 0.08), h * 0.68);
+      ctx.stroke();
+    }
     ctx.globalAlpha = 1;
+    drawSFXText(ctx, 'SHATTER', w * 0.5, h * 0.16, Math.min(w, h) * 0.085, -0.05);
+    endingTitle(ctx, w, h, 'THE ESCAPE', 'Kai breaks the border and walks out of the story — alone.', 0.89);
   },
 
   ending_blank(ctx, w, h, o) {
@@ -583,14 +600,7 @@ export const setpieces = {
     ctx.fill();
     ctx.restore();
     drawKai(ctx, w * 0.22, h * 0.92, h * 0.32, 'stand', { dir: 1, emotion: 'sad', weapon: null });
-    if (o.flags.savedSumi) drawSumi(ctx, w * 0.78, h * 0.92, h * 0.26, 'float', { dir: -1, t: o.t, emotion: 'smile' });
-    ctx.fillStyle = INK;
-    ctx.font = `900 ${h * 0.05}px -apple-system, "Arial Black", sans-serif`;
-    ctx.textAlign = 'center';
-    ctx.fillText('THE BLANK PAGE', w / 2, h * 0.14);
-    ctx.font = `700 ${h * 0.022}px -apple-system, sans-serif`;
-    ctx.globalAlpha = 0.7;
-    ctx.fillText('The Hand hesitates... and draws Kai a door instead.', w / 2, h * 0.185);
-    ctx.globalAlpha = 1;
+    if (o.flags.savedSumi) drawSumi(ctx, w * 0.82, h * 0.92, h * 0.24, 'float', { dir: -1, t: o.t, emotion: 'smile' });
+    endingTitle(ctx, w, h, 'THE BLANK PAGE', 'The Hand hesitates... and draws Kai a door instead.', 0.13);
   },
 };

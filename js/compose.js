@@ -336,7 +336,7 @@ export function composeScene(ctx, w, h, artDef, o) {
     // bubbles fade in slightly after the panel lands
     if (o.phase !== 'done' && t < (b.delay ?? 0.5)) continue;
     speechBubble(ctx, b.text, b.x * w, b.y * h, (b.maxW || 0.6) * w, {
-      fs: Math.max(13, h * (b.fs || 0.045)),
+      fs: Math.min(22, Math.max(13, h * (b.fs || 0.045))),
       jagged: b.jagged || false,
       tail: b.tailX !== undefined ? { x: b.tailX * w, y: b.tailY * h } : null,
     });
