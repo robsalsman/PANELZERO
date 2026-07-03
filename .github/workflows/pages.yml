@@ -1,14 +1,16 @@
 name: Deploy to GitHub Pages
 
+# Publishes the site by force-pushing the repo tree to the gh-pages branch.
+# On a public repo, creating gh-pages auto-enables Pages (branch source),
+# so this needs no admin API access — unlike actions/deploy-pages, whose
+# site-creation call is not permitted for the workflow token here.
 on:
   push:
     branches: [claude/panel-zero-gdd-5m3cp3]
   workflow_dispatch:
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write
 
 concurrency:
   group: pages
@@ -17,19 +19,13 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
-      - name: Configure Pages (auto-enable)
-        uses: actions/configure-pages@v5
-        with:
-          enablement: true
-      - name: Upload site
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: '.'
-      - name: Deploy
-        id: deployment
-        uses: actions/deploy-pages@v4
+      - name: Publish to gh-pages
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout --orphan gh-pages
+          git add -A
+          git commit -m "Deploy ${GITHUB_SHA}"
+          git push -f origin gh-pages
