@@ -1,0 +1,19 @@
+{
+  "name": "panelzero",
+  "version": "1.0.0",
+  "description": "**You're not reading the manga. You're trapped in it.**",
+  "main": "sw.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://local_proxy@127.0.0.1:41729/git/robsalsman/PANELZERO"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "playwright": "^1.61.1"
+  }
+}

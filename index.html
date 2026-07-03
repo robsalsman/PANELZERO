@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <meta name="theme-color" content="#111111">
+  <meta name="description" content="PANEL ZERO — you're not reading the manga. You're trapped in it.">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/icon.svg">
+  <title>PANEL ZERO</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <canvas id="page"></canvas>
+
+  <!-- DOM overlay UI -->
+  <div id="toast" class="toast hidden"></div>
+
+  <div id="title" class="screen">
+    <div class="title-ink">
+      <h1>PANEL<br>ZERO</h1>
+      <p class="tag">You're not reading the manga.<br>You're trapped in it.</p>
+      <button id="btn-start" class="ink-btn">START READING</button>
+      <button id="btn-continue" class="ink-btn hidden">CONTINUE</button>
+    </div>
+  </div>
+
+  <div id="chapter-end" class="screen hidden">
+    <div class="title-ink">
+      <p class="next">NEXT: CHAPTER 2</p>
+      <h2 id="end-title">CHAPTER 1 COMPLETE</h2>
+      <div class="stats">
+        <div class="stat"><span class="stat-label">TIME</span><span id="stat-time">—</span></div>
+        <div class="stat"><span class="stat-label">FAILS</span><span id="stat-fails">—</span></div>
+      </div>
+      <div id="clean-badge" class="badge hidden">✒ CLEAN READ</div>
+      <button id="btn-again" class="ink-btn">READ AGAIN</button>
+    </div>
+  </div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
