@@ -3,7 +3,7 @@
 // Same painter contract as scenes.js.
 import {
   INK, PAPER, C, fillTone, impactStar, drawSFXText, speechBubble, wrapText,
-  drawHandWithEraser, drawSmudge, drawRaft,
+  drawHandWithEraser, drawSmudge, drawRaft, drawSprite,
 } from './art.js';
 import { drawKai, drawSumi, drawRejected, drawKen, drawYuri, drawGoma, drawArtist } from './chars.js';
 import { drawBackdrop } from './compose.js';
@@ -61,57 +61,171 @@ function seaBase(ctx, w, h, t, level = 0.62) {
 
 // serpentine brush-stroke body arcs above the water
 function leviathanBody(ctx, w, h, t, { head = true, hp = 1 } = {}) {
+  // painted sprite first (drop leviathan-rise.webp into assets/sprites/);
+  // the vector serpent below is the fallback
+  if (drawSprite(ctx, head ? 'leviathan-rise' : 'leviathan-lurk',
+    w * 0.52, h * 0.66 + Math.sin(t * 2) * h * 0.015, h * (0.42 + 0.16 * hp), 1)) return;
   ctx.save();
-  ctx.strokeStyle = C.leviathan;
-  ctx.lineCap = 'round';
-  const arcs = [
-    [0.2, 0.5, 0.12], [0.5, 0.42, 0.15], [0.8, 0.52, 0.1],
-  ];
-  for (const [ax, ay, ar] of arcs) {
-    const yy = ay * h + Math.sin(t * 2 + ax * 9) * h * 0.02;
-    // pale rim first — keeps the serpent readable over painted storms
-    ctx.strokeStyle = C.foam;
-    ctx.lineWidth = w * 0.07 * (0.5 + 0.5 * hp) + 7;
+  const bodyDark = '#101a38';
+  const rimGlow = 'rgba(150, 200, 255, 0.55)';
+  const sway = (ph) => Math.sin(t * 2 + ph) * h * 0.02;
+  const thick = 0.5 + 0.5 * hp;
+
+  // one serpent coil: a lean arc of body breaching the surface, leaning
+  // in the direction of travel so the whole silhouette reads as ONE animal
+  const hump = (cx, hw, ht, ph) => {
+    const yy = h * 0.56 + sway(ph);
+    const top = yy - ht;
+    const skew = hw * 0.35; // peak leans toward the head (right)
     ctx.beginPath();
-    ctx.arc(ax * w, yy, ar * w, Math.PI, 0);
-    ctx.stroke();
-    ctx.strokeStyle = C.leviathan;
-    ctx.lineWidth = w * 0.07 * (0.5 + 0.5 * hp);
-    ctx.beginPath();
-    ctx.arc(ax * w, yy, ar * w, Math.PI, 0);
-    ctx.stroke();
-  }
-  if (head) {
-    // brush-tip head with one huge golden eye
-    const hx = w * 0.78;
-    const hy = h * 0.32 + Math.sin(t * 2.2) * h * 0.02;
-    ctx.fillStyle = C.leviathan;
-    ctx.strokeStyle = C.foam;
-    ctx.lineWidth = 4;
-    ctx.beginPath();
-    ctx.moveTo(hx - w * 0.14, hy + h * 0.1);
-    ctx.quadraticCurveTo(hx - w * 0.05, hy - h * 0.12, hx + w * 0.05, hy - h * 0.14);
-    ctx.quadraticCurveTo(hx + w * 0.14, hy - h * 0.15, hx + w * 0.1, hy - h * 0.02);
-    ctx.quadraticCurveTo(hx + w * 0.07, hy + h * 0.1, hx - w * 0.14, hy + h * 0.1);
+    ctx.moveTo(cx - hw, yy + h * 0.02);
+    ctx.bezierCurveTo(cx - hw * 0.55, top + ht * 0.1, cx - hw * 0.1 + skew, top, cx + skew, top);
+    ctx.bezierCurveTo(cx + skew + hw * 0.4, top + ht * 0.15, cx + hw * 0.8, yy - ht * 0.35, cx + hw, yy + h * 0.02);
+    // the underside of the arc curves back up — a coil, not a mound
+    ctx.quadraticCurveTo(cx + hw * 0.45, yy - ht * 0.12, cx + skew * 0.4, yy + h * 0.015);
+    ctx.quadraticCurveTo(cx - hw * 0.5, yy + h * 0.035, cx - hw, yy + h * 0.02);
     ctx.closePath();
+    const grad = ctx.createLinearGradient(0, top, 0, yy + h * 0.05);
+    grad.addColorStop(0, C.leviathan);
+    grad.addColorStop(1, bodyDark);
+    ctx.fillStyle = grad;
+    ctx.strokeStyle = C.foam;
+    ctx.lineWidth = 3.5;
     ctx.fill();
     ctx.stroke();
-    // bristle strands
-    ctx.lineWidth = 3;
-    for (let i = 0; i < 4; i++) {
+    // shark-fin spines riding the ridge line
+    ctx.fillStyle = bodyDark;
+    ctx.strokeStyle = rimGlow;
+    ctx.lineWidth = 2;
+    for (let i = -1; i <= 1; i++) {
+      const sx = cx + skew + i * hw * 0.38;
+      const sy = top + Math.abs(i) * ht * 0.22;
+      const sl = ht * (0.42 - Math.abs(i) * 0.1);
       ctx.beginPath();
-      ctx.moveTo(hx + w * (0.02 + i * 0.025), hy - h * 0.13);
-      ctx.quadraticCurveTo(hx + w * (0.08 + i * 0.03), hy - h * 0.2, hx + w * (0.12 + i * 0.035), hy - h * 0.24);
+      ctx.moveTo(sx - hw * 0.05, sy + 2);
+      ctx.bezierCurveTo(sx + hw * 0.02, sy - sl * 0.9, sx + hw * 0.12, sy - sl, sx + hw * 0.28, sy - sl * 0.55);
+      ctx.quadraticCurveTo(sx + hw * 0.16, sy - sl * 0.3, sx + hw * 0.14, sy + 2);
+      ctx.closePath();
+      ctx.fill();
       ctx.stroke();
     }
-    // the eye — molten gold
-    ctx.fillStyle = C.leviathanEye;
+    // wet highlight tracing the leading edge
+    ctx.strokeStyle = rimGlow;
+    ctx.lineWidth = 2.5;
     ctx.beginPath();
-    ctx.ellipse(hx - w * 0.04, hy - h * 0.02, w * 0.045, w * 0.055, 0, 0, Math.PI * 2);
+    ctx.moveTo(cx - hw * 0.7, yy - ht * 0.25);
+    ctx.quadraticCurveTo(cx - hw * 0.25 + skew, top + ht * 0.12, cx + skew * 1.2, top + ht * 0.1);
+    ctx.stroke();
+    // foam where it breaks the water
+    ctx.fillStyle = 'rgba(247, 244, 236, 0.75)';
+    for (const s of [-1, 1]) {
+      ctx.beginPath();
+      ctx.ellipse(cx + s * hw * 0.95, yy + h * 0.02, hw * 0.16, h * 0.012, 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  };
+
+  hump(w * 0.17, w * 0.11 * thick, h * 0.13 * thick, 0);
+  hump(w * 0.45, w * 0.14 * thick, h * 0.2 * thick, 2.1);
+
+  if (head) {
+    // the head rears out of the water on a neck — an ink-brush dragon
+    const hx = w * 0.78;
+    const hy = h * 0.3 + sway(4.2);
+    const hs = w * 0.13;
+    // slim S-curved neck down into the sea
+    ctx.beginPath();
+    ctx.moveTo(hx - hs * 0.55, hy + hs * 0.35);
+    ctx.bezierCurveTo(hx - hs * 1.15, hy + hs * 1.3, hx - hs * 0.5, hy + hs * 1.9, hx - hs * 0.35, h * 0.62);
+    ctx.lineTo(hx + hs * 0.55, h * 0.62);
+    ctx.bezierCurveTo(hx + hs * 0.45, hy + hs * 1.8, hx + hs * 0.65, hy + hs * 0.9, hx + hs * 0.45, hy + hs * 0.25);
+    ctx.closePath();
+    const nGrad = ctx.createLinearGradient(0, hy, 0, h * 0.62);
+    nGrad.addColorStop(0, C.leviathan);
+    nGrad.addColorStop(1, bodyDark);
+    ctx.fillStyle = nGrad;
+    ctx.strokeStyle = C.foam;
+    ctx.lineWidth = 3.5;
     ctx.fill();
+    ctx.stroke();
+    // skull + long snout, jaw slightly open
+    ctx.beginPath();
+    ctx.moveTo(hx - hs * 0.9, hy + hs * 0.35);            // back of jaw
+    ctx.quadraticCurveTo(hx - hs * 1.05, hy - hs * 0.4, hx - hs * 0.45, hy - hs * 0.62); // crown
+    ctx.quadraticCurveTo(hx + hs * 0.25, hy - hs * 0.78, hx + hs * 1.05, hy - hs * 0.42); // brow to snout tip
+    ctx.quadraticCurveTo(hx + hs * 1.25, hy - hs * 0.32, hx + hs * 1.05, hy - hs * 0.18); // upper lip
+    ctx.lineTo(hx + hs * 0.15, hy - hs * 0.05);           // mouth line back
+    ctx.quadraticCurveTo(hx + hs * 0.7, hy + hs * 0.22, hx + hs * 0.5, hy + hs * 0.32);  // lower jaw
+    ctx.quadraticCurveTo(hx - hs * 0.2, hy + hs * 0.55, hx - hs * 0.9, hy + hs * 0.35);
+    ctx.closePath();
+    const hGrad = ctx.createLinearGradient(0, hy - hs, 0, hy + hs * 0.6);
+    hGrad.addColorStop(0, C.leviathan);
+    hGrad.addColorStop(1, bodyDark);
+    ctx.fillStyle = hGrad;
+    ctx.fill();
+    ctx.stroke();
+    // fang at the snout
+    ctx.fillStyle = C.foam;
+    ctx.beginPath();
+    ctx.moveTo(hx + hs * 0.95, hy - hs * 0.18);
+    ctx.lineTo(hx + hs * 0.88, hy + hs * 0.02);
+    ctx.lineTo(hx + hs * 0.78, hy - hs * 0.14);
+    ctx.closePath();
+    ctx.fill();
+    // swept-back horn
+    ctx.beginPath();
+    ctx.moveTo(hx - hs * 0.35, hy - hs * 0.6);
+    ctx.quadraticCurveTo(hx - hs * 1.1, hy - hs * 1.25, hx - hs * 1.5, hy - hs * 1.1);
+    ctx.quadraticCurveTo(hx - hs * 1.0, hy - hs * 0.85, hx - hs * 0.62, hy - hs * 0.42);
+    ctx.closePath();
+    ctx.fillStyle = bodyDark;
+    ctx.fill();
+    ctx.stroke();
+    // ink-bristle mane flowing off the skull
+    ctx.strokeStyle = rimGlow;
+    ctx.lineWidth = 3;
+    for (let i = 0; i < 5; i++) {
+      ctx.beginPath();
+      ctx.moveTo(hx - hs * (0.5 + i * 0.08), hy - hs * (0.5 - i * 0.1));
+      ctx.quadraticCurveTo(
+        hx - hs * (1.3 + i * 0.12), hy - hs * (0.7 - i * 0.16),
+        hx - hs * (1.8 + i * 0.14), hy - hs * (0.3 - i * 0.18) + Math.sin(t * 3 + i) * hs * 0.08
+      );
+      ctx.stroke();
+    }
+    // whiskers curling from the snout
+    ctx.lineWidth = 2.5;
+    for (const s of [-0.08, 0.14]) {
+      ctx.beginPath();
+      ctx.moveTo(hx + hs * 1.0, hy - hs * 0.25);
+      ctx.bezierCurveTo(
+        hx + hs * 1.5, hy - hs * (0.1 - s), hx + hs * 1.4, hy + hs * (0.35 + s),
+        hx + hs * (1.7 + s), hy + hs * (0.5 + s) + Math.sin(t * 2.4 + s * 9) * hs * 0.06
+      );
+      ctx.stroke();
+    }
+    // molten-gold eye with a slit pupil, glaring forward
+    ctx.fillStyle = C.leviathanEye;
+    ctx.strokeStyle = INK;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.ellipse(hx + hs * 0.05, hy - hs * 0.38, hs * 0.22, hs * 0.16, -0.15, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
     ctx.fillStyle = INK;
     ctx.beginPath();
-    ctx.arc(hx - w * 0.045, hy - h * 0.015, w * 0.02, 0, Math.PI * 2);
+    ctx.ellipse(hx + hs * 0.1, hy - hs * 0.38, hs * 0.05, hs * 0.14, -0.1, 0, Math.PI * 2);
+    ctx.fill();
+    // glow rim above the eye
+    ctx.strokeStyle = rimGlow;
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.arc(hx + hs * 0.05, hy - hs * 0.42, hs * 0.3, Math.PI * 1.15, Math.PI * 1.85);
+    ctx.stroke();
+    // foam collar where the neck pierces the sea
+    ctx.fillStyle = 'rgba(247, 244, 236, 0.8)';
+    ctx.beginPath();
+    ctx.ellipse(hx + hs * 0.1, h * 0.615, hs * 0.85, h * 0.014, 0, 0, Math.PI * 2);
     ctx.fill();
   }
   ctx.restore();

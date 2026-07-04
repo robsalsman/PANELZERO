@@ -265,7 +265,26 @@
       "h": 0.55,
       "art": {
         "bg": [],
-        "ground": 0.88
+        "ground": 0.88,
+        "actors": [
+          {
+            "who": "kai",
+            "pose": "crouch",
+            "x": 0.64,
+            "y": 0.9,
+            "s": 0.32,
+            "dir": -1
+          }
+        ],
+        "props": [
+          {
+            "type": "pagepile",
+            "x": 0.48,
+            "y": 0.92,
+            "w": 0.32,
+            "front": true
+          }
+        ]
       },
       "caption": "He howls \u2014 and the eraser storm answers him. HIDE.",
       "params": {

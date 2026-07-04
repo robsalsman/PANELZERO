@@ -222,12 +222,29 @@
         "ground": 0.88,
         "actors": [
           {
+            "who": "kai",
+            "pose": "crouch",
+            "x": 0.66,
+            "y": 0.88,
+            "s": 0.3,
+            "dir": -1
+          },
+          {
             "who": "sumi",
             "pose": "float",
-            "x": 0.42,
+            "x": 0.34,
             "y": 0.88,
-            "s": 0.28,
-            "dir": -1
+            "s": 0.26,
+            "dir": 1
+          }
+        ],
+        "props": [
+          {
+            "type": "pagepile",
+            "x": 0.52,
+            "y": 0.9,
+            "w": 0.3,
+            "front": true
           }
         ]
       },

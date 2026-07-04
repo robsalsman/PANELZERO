@@ -212,6 +212,52 @@ function drawProp(ctx, w, h, pr, t) {
       ctx.restore();
       break;
     }
+    case 'pagepile': {
+      // a lean-to of torn, crumpled pages — big enough to duck behind
+      const px = pr.x * w;
+      const py = pr.y * h;
+      const pw = (pr.w || 0.3) * w;
+      ctx.save();
+      ctx.strokeStyle = INK;
+      ctx.lineWidth = Math.max(2.5, pw * 0.02);
+      // three leaning sheets, back to front
+      const sheets = [
+        { dx: -pw * 0.18, wRatio: 0.72, hRatio: 0.62, lean: -0.22, tone: '#ddd5c2' },
+        { dx: pw * 0.16, wRatio: 0.8, hRatio: 0.72, lean: 0.18, tone: '#ece5d2' },
+        { dx: 0, wRatio: 0.95, hRatio: 0.85, lean: -0.06, tone: '#f7f4ec' },
+      ];
+      for (const s of sheets) {
+        const sw2 = pw * s.wRatio;
+        const sh = pw * s.hRatio;
+        ctx.save();
+        ctx.translate(px + s.dx, py);
+        ctx.rotate(s.lean);
+        ctx.fillStyle = s.tone;
+        ctx.beginPath();
+        // torn-edged sheet standing on a corner
+        ctx.moveTo(-sw2 / 2, 0);
+        ctx.lineTo(-sw2 * 0.42, -sh * 0.55);
+        ctx.lineTo(-sw2 * 0.18, -sh * 0.48);
+        ctx.lineTo(0, -sh);
+        ctx.lineTo(sw2 * 0.2, -sh * 0.6);
+        ctx.lineTo(sw2 * 0.44, -sh * 0.7);
+        ctx.lineTo(sw2 / 2, 0);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+        // crease lines
+        ctx.globalAlpha = 0.4;
+        ctx.beginPath();
+        ctx.moveTo(-sw2 * 0.2, 0);
+        ctx.lineTo(0, -sh * 0.82);
+        ctx.moveTo(sw2 * 0.15, 0);
+        ctx.lineTo(sw2 * 0.3, -sh * 0.55);
+        ctx.stroke();
+        ctx.restore();
+      }
+      ctx.restore();
+      break;
+    }
     case 'gate': {
       // a torn-open panel border, used as a doorway
       ctx.save();
@@ -248,24 +294,72 @@ function drawProp(ctx, w, h, pr, t) {
       break;
     }
     case 'brush': {
-      // a master's calligraphy brush, adrift
+      // a master's calligraphy brush, adrift — glowing so it reads over dark water
       ctx.save();
       const bx = pr.x * w;
       const by = pr.y * h;
       const bs = (pr.s || 0.25) * h;
+      // soft paper halo behind the relic
+      const halo = ctx.createRadialGradient(bx, by, bs * 0.1, bx, by, bs * 0.85);
+      halo.addColorStop(0, 'rgba(247, 244, 236, 0.95)');
+      halo.addColorStop(0.6, 'rgba(247, 244, 236, 0.45)');
+      halo.addColorStop(1, 'rgba(247, 244, 236, 0)');
+      ctx.fillStyle = halo;
+      ctx.beginPath();
+      ctx.arc(bx, by, bs * 0.85, 0, Math.PI * 2);
+      ctx.fill();
       ctx.translate(bx, by);
       ctx.rotate(0.9 + Math.sin(t * 1.4) * 0.05);
+      // bamboo handle
+      const hw = bs * 0.075;
+      const hGrad = ctx.createLinearGradient(-hw, 0, hw, 0);
+      hGrad.addColorStop(0, '#a8763e');
+      hGrad.addColorStop(0.45, '#d9a968');
+      hGrad.addColorStop(1, '#8a5c2c');
+      ctx.fillStyle = hGrad;
       ctx.strokeStyle = INK;
-      ctx.lineWidth = bs * 0.12;
+      ctx.lineWidth = Math.max(2, bs * 0.03);
       ctx.beginPath();
-      ctx.moveTo(0, bs * 0.5);
-      ctx.lineTo(0, -bs * 0.25);
+      ctx.roundRect(-hw, -bs * 0.22, hw * 2, bs * 0.74, hw);
+      ctx.fill();
       ctx.stroke();
-      ctx.fillStyle = INK;
+      // bamboo joint lines
+      ctx.globalAlpha = 0.5;
       ctx.beginPath();
-      ctx.moveTo(0, -bs * 0.25);
-      ctx.quadraticCurveTo(bs * 0.16, -bs * 0.45, 0, -bs * 0.62);
-      ctx.quadraticCurveTo(-bs * 0.16, -bs * 0.45, 0, -bs * 0.25);
+      ctx.moveTo(-hw, bs * 0.1); ctx.lineTo(hw, bs * 0.1);
+      ctx.moveTo(-hw, bs * 0.32); ctx.lineTo(hw, bs * 0.32);
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+      // gold ferrule
+      ctx.fillStyle = '#e0a63c';
+      ctx.beginPath();
+      ctx.roundRect(-hw * 1.3, -bs * 0.3, hw * 2.6, bs * 0.1, bs * 0.015);
+      ctx.fill();
+      ctx.stroke();
+      // ink-loaded bristles
+      const bGrad = ctx.createLinearGradient(0, -bs * 0.3, 0, -bs * 0.66);
+      bGrad.addColorStop(0, '#4a4a55');
+      bGrad.addColorStop(0.55, '#26262e');
+      bGrad.addColorStop(1, '#101016');
+      ctx.fillStyle = bGrad;
+      ctx.beginPath();
+      ctx.moveTo(-hw * 1.3, -bs * 0.3);
+      ctx.quadraticCurveTo(-hw * 1.7, -bs * 0.46, 0, -bs * 0.66);
+      ctx.quadraticCurveTo(hw * 1.7, -bs * 0.46, hw * 1.3, -bs * 0.3);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+      // wet highlight on the bristle
+      ctx.strokeStyle = 'rgba(160, 190, 255, 0.7)';
+      ctx.lineWidth = Math.max(1.5, bs * 0.02);
+      ctx.beginPath();
+      ctx.moveTo(-hw * 0.5, -bs * 0.36);
+      ctx.quadraticCurveTo(-hw * 0.8, -bs * 0.48, 0, -bs * 0.6);
+      ctx.stroke();
+      // a bead of ink about to drop
+      ctx.fillStyle = '#1c1c26';
+      ctx.beginPath();
+      ctx.ellipse(0, -bs * (0.68 + Math.sin(t * 2.2) * 0.015), bs * 0.028, bs * 0.038, 0, 0, Math.PI * 2);
       ctx.fill();
       ctx.restore();
       break;
@@ -375,8 +469,11 @@ export function composeScene(ctx, w, h, artDef, o) {
     ctx.stroke();
   }
 
-  for (const pr of def.props || []) drawProp(ctx, w, h, pr, t);
+  const props = def.props || [];
+  for (const pr of props) if (!pr.front) drawProp(ctx, w, h, pr, t);
   for (const a of def.actors || []) drawActor(ctx, w, h, a, t, o.flags);
+  // foreground props overlap the cast — hiding spots, debris in front
+  for (const pr of props) if (pr.front) drawProp(ctx, w, h, pr, t);
 
   const drawnBubbles = [];
   for (const b of def.bubbles || []) {
