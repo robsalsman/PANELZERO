@@ -4,6 +4,7 @@ import { chromium } from 'playwright';
 import { spawn } from 'node:child_process';
 
 const FLAGSETS = {
+  coauthors: ['route_sea', 'brush', 'mercy', 'savedSumi', 'duel_ken', 'recruit', 'side_sumi', 'empathy', 'finish'],
   artist: ['route_sea', 'brush', 'mercy', 'savedSumi', 'finish'],
   escape: ['route_cut', 'nib', 'keptWeapon', 'eraseAll'],
   blank: ['route_sea', 'brush', 'slain', 'savedSumi', 'finish'],
@@ -25,9 +26,9 @@ await page.click('#btn-start');
 await page.waitForFunction(() => window.__pz.phase !== 'title');
 await page.evaluate((flags) => {
   for (const f of flags) window.__pz.setFlag(f);
-  return window.__pz.beginChapter('ch5', 11); // the ending spread
+  return window.__pz.beginChapter('ch5', 14); // the ending spread
 }, FLAGSETS[name]);
-await page.waitForFunction(() => window.__pz.phase === 'active' && window.__pz.current === 11, { timeout: 10000 });
+await page.waitForFunction(() => window.__pz.phase === 'active' && window.__pz.current === 14, { timeout: 10000 });
 await page.waitForTimeout(3200);
 await page.screenshot({ path: `tests/shots/ending-${name}.png` });
 await browser.close();

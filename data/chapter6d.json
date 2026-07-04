@@ -77,10 +77,10 @@
             "actors": [
               {
                 "who": "yuri",
-                "pose": "stand",
+                "pose": "fight",
                 "x": 0.66,
                 "y": 0.9,
-                "s": 0.46,
+                "s": 0.5,
                 "dir": -1
               }
             ]
@@ -352,10 +352,10 @@
             "actors": [
               {
                 "who": "yuri",
-                "pose": "stand",
+                "pose": "fight",
                 "x": 0.64,
                 "y": 0.9,
-                "s": 0.46,
+                "s": 0.5,
                 "dir": -1
               }
             ]
@@ -458,8 +458,9 @@
               {
                 "text": "...for once, Goma says nothing at all.",
                 "x": 0.4,
-                "y": 0.36,
-                "maxW": 0.6
+                "y": 0.46,
+                "maxW": 0.6,
+                "tailY": 0.62
               }
             ]
           }

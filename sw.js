@@ -1,5 +1,5 @@
 // Service worker: cache-first so the whole manga is playable offline after first read.
-const CACHE = 'panelzero-v5';
+const CACHE = 'panelzero-v6';
 const ASSETS = [
   '.',
   'index.html',
@@ -45,6 +45,24 @@ const ASSETS = [
   'assets/bg/void.webp',
   'assets/sprites/meta.json',
   'assets/sprites/hand-eraser.webp',
+  'assets/sprites/artist-kneel.webp',
+  'assets/sprites/artist-sit.webp',
+  'assets/sprites/artist-smile.webp',
+  'assets/sprites/artist-stand.webp',
+  'assets/sprites/goma-cheer.webp',
+  'assets/sprites/goma-sad.webp',
+  'assets/sprites/goma-serious.webp',
+  'assets/sprites/goma-stand.webp',
+  'assets/sprites/ken-fight.webp',
+  'assets/sprites/ken-guard.webp',
+  'assets/sprites/ken-kneel.webp',
+  'assets/sprites/ken-smile.webp',
+  'assets/sprites/ken-stand.webp',
+  'assets/sprites/yuri-fight.webp',
+  'assets/sprites/yuri-kneel.webp',
+  'assets/sprites/yuri-point.webp',
+  'assets/sprites/yuri-smile.webp',
+  'assets/sprites/yuri-stand.webp',
   'assets/sprites/kai-brace.webp',
   'assets/sprites/kai-crouch.webp',
   'assets/sprites/kai-dodge.webp',

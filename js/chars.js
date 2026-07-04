@@ -720,7 +720,8 @@ export function drawSumi(ctx, x, y, s, pose = 'float', o = {}) {
 
 export function drawKen(ctx, x, y, s, pose = 'stand', o = {}) {
   const dir = o.dir ?? -1;
-  const name = pose === 'fight' ? 'ken-fight' : pose === 'kneel' ? 'ken-kneel' : 'ken-stand';
+  const name = pose === 'fight' ? 'ken-fight' : pose === 'kneel' ? 'ken-kneel'
+    : pose === 'guard' ? 'ken-guard' : (o.emotion === 'smile' ? 'ken-smile' : 'ken-stand');
   if (drawSprite(ctx, name, x, y, s, dir === 0 ? 1 : dir)) return;
   // vector Ken is BUILT — draw 12% bigger and lower so he looms
   drawBody(ctx, x, y, s * 1.12, pose, { dir, style: 'ken', weapon: o.weapon || null, emotion: o.emotion || 'determined' });
@@ -728,14 +729,17 @@ export function drawKen(ctx, x, y, s, pose = 'stand', o = {}) {
 
 export function drawYuri(ctx, x, y, s, pose = 'stand', o = {}) {
   const dir = o.dir ?? -1;
-  const name = pose === 'fight' ? 'yuri-fight' : pose === 'kneel' ? 'yuri-kneel' : 'yuri-stand';
+  const name = pose === 'fight' ? 'yuri-fight' : pose === 'kneel' ? 'yuri-kneel'
+    : pose === 'point' ? 'yuri-point' : (o.emotion === 'smile' ? 'yuri-smile' : 'yuri-stand');
   if (drawSprite(ctx, name, x, y, s, dir === 0 ? 1 : dir)) return;
   drawBody(ctx, x, y, s, pose, { dir, style: 'yuri', weapon: o.weapon || null, emotion: o.emotion || 'neutral' });
 }
 
 export function drawArtist(ctx, x, y, s, pose = 'stand', o = {}) {
   const dir = o.dir ?? -1;
-  if (drawSprite(ctx, pose === 'kneel' ? 'artist-kneel' : 'artist-stand', x, y, s, dir === 0 ? 1 : dir)) return;
+  const name = pose === 'kneel' ? 'artist-kneel' : pose === 'sit' ? 'artist-sit'
+    : (o.emotion === 'smile' ? 'artist-smile' : 'artist-stand');
+  if (drawSprite(ctx, name, x, y, s, dir === 0 ? 1 : dir)) return;
   drawBody(ctx, x, y, s, pose, { dir, style: 'artist', weapon: null, emotion: o.emotion || 'sad' });
 }
 
@@ -743,7 +747,9 @@ export function drawArtist(ctx, x, y, s, pose = 'stand', o = {}) {
 export function drawGoma(ctx, x, y, s, o = {}) {
   const mood = o.emotion || 'smile'; // smile | shock | sad | serious
   const t = o.t || 0;
-  if (drawSprite(ctx, mood === 'serious' ? 'goma-serious' : 'goma-stand', x, y, s, o.dir ?? -1)) return;
+  const sprite = mood === 'serious' ? 'goma-serious' : mood === 'sad' ? 'goma-sad'
+    : (o.emotion === 'cheer' || o.emotion === 'smile') ? 'goma-cheer' : 'goma-stand';
+  if (drawSprite(ctx, sprite, x, y, s, o.dir ?? -1)) return;
   const r = s * 0.42;
   const cy = y - r * 0.95;
   const squish = 1 + Math.sin(t * 3) * 0.03;

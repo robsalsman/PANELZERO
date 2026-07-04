@@ -44,7 +44,7 @@ const SCENARIOS = {
   },
 };
 
-const name = process.argv[2] || 'artist';
+const name = process.argv[2] || 'coauthors';
 const scenario = SCENARIOS[name];
 if (!scenario) {
   console.error(`unknown scenario ${name}`);
