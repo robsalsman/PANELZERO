@@ -131,10 +131,15 @@ function tapChallenge(def, api) {
       const a = hitArea(w, h);
       const t = performance.now() / 1000;
       const pulse = 1 + Math.sin(t * 5) * 0.08;
+      // paper halo under the ink ring — visible over painted backdrops
+      ctx.strokeStyle = 'rgba(247,244,236,0.85)';
+      ctx.lineWidth = 6;
+      ctx.beginPath();
+      ctx.arc(a.x, a.y, a.r * pulse, 0, Math.PI * 2);
+      ctx.stroke();
       ctx.strokeStyle = INK;
       ctx.setLineDash([8, 7]);
       ctx.lineWidth = 2.5;
-      ctx.globalAlpha = 0.55;
       ctx.beginPath();
       ctx.arc(a.x, a.y, a.r * pulse, 0, Math.PI * 2);
       ctx.stroke();
@@ -156,12 +161,14 @@ function tapChallenge(def, api) {
           ctx.globalAlpha = 1;
         } else {
           const frac = Math.max(0, timeLeft / p.time);
+          ctx.fillStyle = 'rgba(247,244,236,0.85)';
+          ctx.fillRect(10, h - 13, w - 20, 10);
           ctx.fillStyle = INK;
-          ctx.globalAlpha = 0.75;
-          ctx.fillRect(12, h - 10, (w - 24) * frac, 5);
-          // pulse red-alert style when low (thicker + blinking)
-          if (frac < 0.3 && Math.sin(t * 12) > 0) ctx.fillRect(12, h - 13, (w - 24) * frac, 8);
-          ctx.globalAlpha = 1;
+          ctx.fillRect(12, h - 11, (w - 24) * frac, 6);
+          if (frac < 0.3 && Math.sin(t * 12) > 0) {
+            ctx.fillStyle = '#c8392e';
+            ctx.fillRect(12, h - 11, (w - 24) * frac, 6);
+          }
         }
       }
 
@@ -418,6 +425,10 @@ function holdChallenge(def, api) {
       const cx = w / 2;
       const cy = h - 34;
       const frac = Math.min(1, (this.sweepsDone + (this._sweepT > 0 ? this._sweepT / p.sweepTime : 0)) / p.sweeps);
+      ctx.fillStyle = 'rgba(247,244,236,0.85)';
+      ctx.beginPath();
+      ctx.arc(cx, cy, 27, 0, Math.PI * 2);
+      ctx.fill();
       ctx.strokeStyle = INK;
       ctx.globalAlpha = 0.3;
       ctx.lineWidth = 5;
@@ -546,9 +557,16 @@ function traceChallenge(def, api) {
         ctx.stroke();
       }
       ctx.globalAlpha = 1;
-      // dotted guide
+      // paper halo, then the dotted ink guide
+      ctx.strokeStyle = 'rgba(247,244,236,0.8)';
+      ctx.lineWidth = 9;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(pts[0][0], pts[0][1]);
+      for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]);
+      ctx.stroke();
       ctx.strokeStyle = INK;
-      ctx.globalAlpha = 0.45;
+      ctx.globalAlpha = 0.6;
       ctx.lineWidth = 4;
       ctx.setLineDash([9, 10]);
       ctx.beginPath();

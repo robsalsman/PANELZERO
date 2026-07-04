@@ -4,96 +4,364 @@
   "subtitle": "THE CUT PANELS",
   "panels": [
     {
-      "id": "p01", "page": 1, "type": "cutscene", "h": 0.55,
-      "art": { "bg": ["deadpanels", "toneL"], "ground": 0.9, "actors": [
-        { "who": "kai", "pose": "walk", "x": 0.3, "y": 0.9, "s": 0.4, "dir": 1 },
-        { "who": "sumi", "pose": "float", "x": 0.46, "y": 0.9, "s": 0.32, "dir": 1 }
-      ] },
+      "id": "p01",
+      "page": 1,
+      "type": "cutscene",
+      "h": 0.55,
+      "art": {
+        "bg": [],
+        "ground": 0.9,
+        "actors": [
+          {
+            "who": "kai",
+            "pose": "walk",
+            "x": 0.3,
+            "y": 0.9,
+            "s": 0.4,
+            "dir": 1
+          },
+          {
+            "who": "sumi",
+            "pose": "float",
+            "x": 0.46,
+            "y": 0.9,
+            "s": 0.32,
+            "dir": 1
+          }
+        ]
+      },
       "caption": "The Cut Panels: scenes murdered in revision. Nobody here got an ending.",
-      "params": { "duration": 3.2 }
+      "params": {
+        "duration": 3.2
+      },
+      "img": "assets/bg/cut-panels.webp"
     },
     {
-      "id": "p02", "page": 1, "type": "hold", "h": 0.55,
-      "art": { "bg": ["deadpanels", "toneD"], "ground": 0.88, "actors": [
-        { "who": "sumi", "pose": "float", "x": 0.44, "y": 0.88, "s": 0.26, "dir": -1 }
-      ] },
+      "id": "p02",
+      "page": 1,
+      "type": "hold",
+      "h": 0.55,
+      "art": {
+        "bg": [],
+        "ground": 0.88,
+        "actors": [
+          {
+            "who": "sumi",
+            "pose": "float",
+            "x": 0.44,
+            "y": 0.88,
+            "s": 0.26,
+            "dir": -1
+          }
+        ]
+      },
       "caption": "Eraser patrols. Don't move. Don't breathe.",
-      "params": { "sweeps": 2, "sweepTime": 1.5, "overlay": "pencil" }
+      "params": {
+        "sweeps": 2,
+        "sweepTime": 1.5,
+        "overlay": "pencil"
+      },
+      "img": "assets/bg/cut-panels.webp"
     },
     {
-      "id": "p03", "page": 1, "type": "trace", "h": 0.55,
-      "art": { "bg": ["deadpanels"], "actors": [
-        { "who": "kai", "pose": "stand", "x": 0.1, "y": 0.85, "s": 0.34, "dir": 1 }
-      ] },
+      "id": "p03",
+      "page": 1,
+      "type": "trace",
+      "h": 0.55,
+      "art": {
+        "bg": [],
+        "actors": [
+          {
+            "who": "kai",
+            "pose": "stand",
+            "x": 0.1,
+            "y": 0.85,
+            "s": 0.34,
+            "dir": 1
+          }
+        ]
+      },
       "caption": "The gutter here is shredded. Redraw the crossing.",
-      "params": { "tol": 48, "path": [ [0.12, 0.62], [0.4, 0.52], [0.68, 0.58], [0.9, 0.46] ] }
+      "params": {
+        "tol": 48,
+        "path": [
+          [
+            0.12,
+            0.62
+          ],
+          [
+            0.4,
+            0.52
+          ],
+          [
+            0.68,
+            0.58
+          ],
+          [
+            0.9,
+            0.46
+          ]
+        ]
+      },
+      "img": "assets/bg/cut-panels.webp"
     },
     {
-      "id": "p04", "page": 1, "type": "tap", "h": 0.5,
-      "art": { "bg": ["deadpanels"], "props": [ { "type": "nib", "x": 0.64, "y": 0.58, "s": 0.22 } ] },
+      "id": "p04",
+      "page": 1,
+      "type": "tap",
+      "h": 0.5,
+      "art": {
+        "bg": [],
+        "props": [
+          {
+            "type": "nib",
+            "x": 0.64,
+            "y": 0.58,
+            "s": 0.22
+          }
+        ]
+      },
       "caption": "A dead panel still holds its hero's pen nib. Take it.",
-      "params": { "count": 1, "target": { "x": 0.64, "y": 0.58, "r": 0.17 } },
-      "setFlags": ["nib"]
+      "params": {
+        "count": 1,
+        "target": {
+          "x": 0.64,
+          "y": 0.58,
+          "r": 0.17
+        }
+      },
+      "setFlags": [
+        "nib"
+      ],
+      "img": "assets/bg/cut-panels.webp"
     },
     {
-      "id": "p05", "page": 1, "type": "cutscene", "h": 0.6,
-      "art": { "bg": ["deadpanels", "toneD"], "ground": 0.9, "actors": [
-        { "who": "rejected", "pose": "stand", "x": 0.68, "y": 0.9, "s": 0.5, "dir": -1 },
-        { "who": "kai", "pose": "stand", "x": 0.22, "y": 0.9, "s": 0.44, "dir": 1, "emotion": "shock", "weapon": "nib" }
-      ], "bubbles": [
-        { "text": "\"A NEW protagonist? I was FIRST. I was BETTER.\"", "x": 0.56, "y": 0.16, "maxW": 0.8, "jagged": true, "tailX": 0.66, "tailY": 0.4 }
-      ] },
-      "params": { "duration": 3.6 }
+      "id": "p05",
+      "page": 1,
+      "type": "cutscene",
+      "h": 0.6,
+      "art": {
+        "bg": [],
+        "ground": 0.9,
+        "actors": [
+          {
+            "who": "rejected",
+            "pose": "stand",
+            "x": 0.68,
+            "y": 0.9,
+            "s": 0.5,
+            "dir": -1
+          },
+          {
+            "who": "kai",
+            "pose": "stand",
+            "x": 0.22,
+            "y": 0.9,
+            "s": 0.44,
+            "dir": 1,
+            "emotion": "shock",
+            "weapon": "nib"
+          }
+        ],
+        "bubbles": [
+          {
+            "text": "\"A NEW protagonist? I was FIRST. I was BETTER.\"",
+            "x": 0.56,
+            "y": 0.16,
+            "maxW": 0.8,
+            "jagged": true,
+            "tailX": 0.66,
+            "tailY": 0.4
+          }
+        ]
+      },
+      "params": {
+        "duration": 3.6
+      },
+      "img": "assets/bg/cut-panels.webp"
     },
     {
-      "id": "p06", "page": 1, "type": "swipe", "h": 0.6,
-      "art": { "bg": ["speedh", "toneD"], "ground": 0.88 },
-      "caption": "His panels come with him — thrown like blades.",
-      "params": { "hazards": [ { "text": "REJECT", "from": "right", "dir": "left", "time": 1.35 } ] }
+      "id": "p06",
+      "page": 1,
+      "type": "swipe",
+      "h": 0.6,
+      "art": {
+        "bg": [
+          "speedh"
+        ],
+        "ground": 0.88
+      },
+      "caption": "His panels come with him \u2014 thrown like blades.",
+      "params": {
+        "hazards": [
+          {
+            "text": "REJECT",
+            "from": "right",
+            "dir": "left",
+            "time": 1.35
+          }
+        ]
+      },
+      "img": "assets/bg/cut-panels.webp"
     },
     {
-      "id": "p07", "page": 2, "type": "swipe", "h": 0.6,
-      "art": { "bg": ["speedh", "toneD"], "ground": 0.88 },
-      "params": { "hazards": [ { "text": "DELETE", "from": "left", "dir": "right", "time": 1.25 } ] }
+      "id": "p07",
+      "page": 2,
+      "type": "swipe",
+      "h": 0.6,
+      "art": {
+        "bg": [
+          "speedh"
+        ],
+        "ground": 0.88
+      },
+      "params": {
+        "hazards": [
+          {
+            "text": "DELETE",
+            "from": "left",
+            "dir": "right",
+            "time": 1.25
+          }
+        ]
+      },
+      "img": "assets/bg/cut-panels.webp"
     },
     {
-      "id": "p08", "page": 2, "type": "tap", "h": 0.6,
-      "art": { "bg": ["deadpanels"], "ground": 0.86, "actors": [
-        { "who": "rejected", "pose": "fight", "x": 0.68, "y": 0.86, "s": 0.5, "dir": -1 }
-      ] },
+      "id": "p08",
+      "page": 2,
+      "type": "tap",
+      "h": 0.6,
+      "art": {
+        "bg": [],
+        "ground": 0.86,
+        "actors": [
+          {
+            "who": "rejected",
+            "pose": "fight",
+            "x": 0.68,
+            "y": 0.86,
+            "s": 0.5,
+            "dir": -1
+          }
+        ]
+      },
       "caption": "Duel him. He fights exactly like you. Five strikes.",
-      "params": { "count": 5, "time": 6, "target": { "x": 0.68, "y": 0.6, "r": 0.18 } }
+      "params": {
+        "count": 5,
+        "time": 6,
+        "target": {
+          "x": 0.68,
+          "y": 0.6,
+          "r": 0.18
+        }
+      },
+      "img": "assets/bg/cut-panels-arena.webp"
     },
     {
-      "id": "p09", "page": 2, "type": "hold", "h": 0.55,
-      "art": { "bg": ["deadpanels", "toneD"], "ground": 0.88 },
-      "caption": "He howls — and the eraser storm answers him. HIDE.",
-      "params": { "sweeps": 2, "sweepTime": 1.5, "overlay": "pencil" }
+      "id": "p09",
+      "page": 2,
+      "type": "hold",
+      "h": 0.55,
+      "art": {
+        "bg": [],
+        "ground": 0.88
+      },
+      "caption": "He howls \u2014 and the eraser storm answers him. HIDE.",
+      "params": {
+        "sweeps": 2,
+        "sweepTime": 1.5,
+        "overlay": "pencil"
+      },
+      "img": "assets/bg/cut-panels-arena.webp"
     },
     {
-      "id": "p10", "page": 2, "type": "cutscene", "h": 0.55,
-      "art": { "bg": ["deadpanels"], "ground": 0.86, "actors": [
-        { "who": "rejected", "pose": "kneel", "x": 0.64, "y": 0.86, "s": 0.46, "dir": -1, "emotion": "sad" },
-        { "who": "kai", "pose": "stand", "x": 0.24, "y": 0.86, "s": 0.44, "dir": 1, "weapon": "nib" }
-      ], "bubbles": [
-        { "text": "\"Half a line... hurts. Finish me — or fix me.\"", "x": 0.56, "y": 0.16, "maxW": 0.78, "tailX": 0.62, "tailY": 0.42 }
-      ] },
-      "params": { "duration": 3.4 }
+      "id": "p10",
+      "page": 2,
+      "type": "cutscene",
+      "h": 0.55,
+      "art": {
+        "bg": [],
+        "ground": 0.86,
+        "actors": [
+          {
+            "who": "rejected",
+            "pose": "kneel",
+            "x": 0.64,
+            "y": 0.86,
+            "s": 0.46,
+            "dir": -1,
+            "emotion": "sad"
+          },
+          {
+            "who": "kai",
+            "pose": "stand",
+            "x": 0.24,
+            "y": 0.86,
+            "s": 0.44,
+            "dir": 1,
+            "weapon": "nib"
+          }
+        ],
+        "bubbles": [
+          {
+            "text": "\"Half a line... hurts. Finish me \u2014 or fix me.\"",
+            "x": 0.56,
+            "y": 0.16,
+            "maxW": 0.78,
+            "tailX": 0.62,
+            "tailY": 0.42
+          }
+        ]
+      },
+      "params": {
+        "duration": 3.4
+      },
+      "img": "assets/bg/cut-panels-arena.webp"
     },
     {
-      "id": "p11", "page": 2, "type": "choose", "h": 0.5,
-      "art": { "bg": ["toneL"], "actors": [
-        { "who": "kai", "pose": "stand", "x": 0.5, "y": 0.97, "s": 0.34, "dir": 0 }
-      ] },
+      "id": "p11",
+      "page": 2,
+      "type": "choose",
+      "h": 0.5,
+      "art": {
+        "bg": [],
+        "actors": [
+          {
+            "who": "kai",
+            "pose": "stand",
+            "x": 0.5,
+            "y": 0.97,
+            "s": 0.34,
+            "dir": 0
+          }
+        ]
+      },
       "caption": "The nib can cut... or draw.",
-      "params": { "options": [
-        { "text": "Fix his line.", "flag": "mercy" },
-        { "text": "Let him fade.", "flag": "faded" }
-      ] }
+      "params": {
+        "options": [
+          {
+            "text": "Fix his line.",
+            "flag": "mercy"
+          },
+          {
+            "text": "Let him fade.",
+            "flag": "faded"
+          }
+        ]
+      },
+      "img": "assets/bg/cut-panels-arena.webp"
     },
     {
-      "id": "p12", "page": 2, "type": "spread", "h": 1.0, "art": "rejected_end",
-      "params": { "duration": 3.4 }
+      "id": "p12",
+      "page": 2,
+      "type": "spread",
+      "h": 1.0,
+      "art": "rejected_end",
+      "params": {
+        "duration": 3.4
+      },
+      "img": "assets/bg/cut-panels-arena.webp"
     }
   ]
 }

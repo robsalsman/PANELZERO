@@ -377,6 +377,19 @@ export const scenes = {
 
   /* p14 — full-viewport spread: the Hand descends */
   hand_descends(ctx, w, h, o) {
+    if (o.hasImg) {
+      const dur2 = 2.6;
+      const p2 = o.phase === 'done' ? 1 : Math.min(1, o.t / dur2);
+      drawHandWithEraser(ctx, w, h, p2 * p2 * 0.85);
+      drawKai(ctx, w * 0.5, h * 0.92, h * 0.16, 'stand', { dir: 0 });
+      if (p2 >= 1) {
+        ctx.fillStyle = INK;
+        ctx.font = `900 ${Math.min(h * 0.024, w * 0.052)}px -apple-system, sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.fillText('NEXT: CHAPTER 2', w / 2, h * 0.985);
+      }
+      return;
+    }
     // radial drama lines from top center
     ctx.save();
     ctx.globalAlpha = 0.25;

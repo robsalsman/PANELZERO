@@ -6,6 +6,7 @@ import {
   drawHandWithEraser, drawSmudge,
 } from './art.js';
 import { drawKai, drawSumi, drawRejected } from './chars.js';
+import { drawBackdrop } from './compose.js';
 
 const clamp01 = (v) => Math.max(0, Math.min(1, v));
 
@@ -20,12 +21,21 @@ function endingTitle(ctx, w, h, title, sub, yTitle) {
     fs *= 0.94;
     ctx.font = `900 ${fs}px -apple-system, "Arial Black", sans-serif`;
   }
+  ctx.lineJoin = 'round';
+  ctx.strokeStyle = PAPER;
+  ctx.lineWidth = fs * 0.28;
+  ctx.strokeText(title, w / 2, yTitle * h);
   ctx.fillText(title, w / 2, yTitle * h);
   const sfs = Math.min(h * 0.02, w * 0.042);
   ctx.font = `700 ${sfs}px -apple-system, sans-serif`;
-  ctx.globalAlpha = 0.7;
+  ctx.lineWidth = sfs * 0.45;
   const lines = wrapText(ctx, sub, w * 0.86);
-  lines.forEach((l, i) => ctx.fillText(l, w / 2, yTitle * h + fs * 0.9 + i * sfs * 1.35));
+  lines.forEach((l, i) => {
+    ctx.strokeText(l, w / 2, yTitle * h + fs * 0.9 + i * sfs * 1.35);
+    ctx.globalAlpha = 0.85;
+    ctx.fillText(l, w / 2, yTitle * h + fs * 0.9 + i * sfs * 1.35);
+    ctx.globalAlpha = 1;
+  });
   ctx.restore();
 }
 
@@ -58,9 +68,17 @@ function leviathanBody(ctx, w, h, t, { head = true, hp = 1 } = {}) {
     [0.2, 0.5, 0.12], [0.5, 0.42, 0.15], [0.8, 0.52, 0.1],
   ];
   for (const [ax, ay, ar] of arcs) {
+    const yy = ay * h + Math.sin(t * 2 + ax * 9) * h * 0.02;
+    // pale rim first — keeps the serpent readable over painted storms
+    ctx.strokeStyle = C.foam;
+    ctx.lineWidth = w * 0.07 * (0.5 + 0.5 * hp) + 7;
+    ctx.beginPath();
+    ctx.arc(ax * w, yy, ar * w, Math.PI, 0);
+    ctx.stroke();
+    ctx.strokeStyle = C.leviathan;
     ctx.lineWidth = w * 0.07 * (0.5 + 0.5 * hp);
     ctx.beginPath();
-    ctx.arc(ax * w, ay * h + Math.sin(t * 2 + ax * 9) * h * 0.02, ar * w, Math.PI, 0);
+    ctx.arc(ax * w, yy, ar * w, Math.PI, 0);
     ctx.stroke();
   }
   if (head) {
@@ -68,6 +86,8 @@ function leviathanBody(ctx, w, h, t, { head = true, hp = 1 } = {}) {
     const hx = w * 0.78;
     const hy = h * 0.32 + Math.sin(t * 2.2) * h * 0.02;
     ctx.fillStyle = C.leviathan;
+    ctx.strokeStyle = C.foam;
+    ctx.lineWidth = 4;
     ctx.beginPath();
     ctx.moveTo(hx - w * 0.14, hy + h * 0.1);
     ctx.quadraticCurveTo(hx - w * 0.05, hy - h * 0.12, hx + w * 0.05, hy - h * 0.14);
@@ -75,6 +95,7 @@ function leviathanBody(ctx, w, h, t, { head = true, hp = 1 } = {}) {
     ctx.quadraticCurveTo(hx + w * 0.07, hy + h * 0.1, hx - w * 0.14, hy + h * 0.1);
     ctx.closePath();
     ctx.fill();
+    ctx.stroke();
     // bristle strands
     ctx.lineWidth = 3;
     for (let i = 0; i < 4; i++) {
@@ -100,12 +121,14 @@ export const setpieces = {
   /* ch2 — an ink puddle rises and becomes Sumi */
   sumi_rise(ctx, w, h, o) {
     const p = o.phase === 'done' ? 1 : clamp01(o.t / 2.2);
-    ctx.strokeStyle = INK;
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    ctx.moveTo(0, h * 0.86);
-    ctx.lineTo(w, h * 0.86);
-    ctx.stroke();
+    if (!o.hasImg) {
+      ctx.strokeStyle = INK;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(0, h * 0.86);
+      ctx.lineTo(w, h * 0.86);
+      ctx.stroke();
+    }
     drawKai(ctx, w * 0.22, h * 0.86, h * 0.48, 'stand', { dir: 1, emotion: p > 0.7 ? 'shock' : 'neutral' });
     // the puddle
     ctx.fillStyle = INK;
@@ -135,6 +158,25 @@ export const setpieces = {
 
   /* ch2 — the road forks: Ink Sea to the left, Cut Panels to the right */
   route_split(ctx, w, h, o) {
+    if (o.hasImg) {
+      // the painted fork carries the scene — just label the two fates
+      ctx.fillStyle = PAPER;
+      ctx.strokeStyle = INK;
+      ctx.lineWidth = 3;
+      ctx.font = `900 ${h * 0.042}px -apple-system, sans-serif`;
+      ctx.textAlign = 'center';
+      for (const [tx, ty, label] of [[0.26, 0.76, 'THE INK SEA'], [0.74, 0.7, 'THE CUT PANELS']]) {
+        const tw2 = ctx.measureText(label).width;
+        ctx.fillRect(tx * w - tw2 / 2 - 10, ty * h - h * 0.032, tw2 + 20, h * 0.055);
+        ctx.strokeRect(tx * w - tw2 / 2 - 10, ty * h - h * 0.032, tw2 + 20, h * 0.055);
+        ctx.fillStyle = INK;
+        ctx.fillText(label, tx * w, ty * h + h * 0.012);
+        ctx.fillStyle = PAPER;
+      }
+      drawKai(ctx, w * 0.42, h * 0.99, h * 0.3, 'stand', { dir: 0, emotion: 'neutral' });
+      drawSumi(ctx, w * 0.58, h * 0.99, h * 0.27, 'float', { dir: 0, t: o.t });
+      return;
+    }
     // left gate: waves
     ctx.save();
     ctx.beginPath();
@@ -222,7 +264,7 @@ export const setpieces = {
 
   /* ch3a — something enormous under the water */
   leviathan_lurk(ctx, w, h, o) {
-    seaBase(ctx, w, h, o.t, 0.55);
+    if (!o.hasImg) seaBase(ctx, w, h, o.t, 0.55);
     // coil silhouettes below the surface
     ctx.save();
     ctx.fillStyle = PAPER;
@@ -262,7 +304,7 @@ export const setpieces = {
 
   /* ch3a — the boss above the waves (backdrop for its attack panels) */
   leviathan_rise(ctx, w, h, o) {
-    seaBase(ctx, w, h, o.t, 0.68);
+    if (!o.hasImg) seaBase(ctx, w, h, o.t, 0.68);
     leviathanBody(ctx, w, h, o.t, { head: true, hp: 1 });
     if (o.phase === 'done') {
       impactStar(ctx, w * 0.74, h * 0.3, w * 0.1, 9);
@@ -272,7 +314,7 @@ export const setpieces = {
   /* ch3a resolution — calmed into a finished picture, or scattered */
   leviathan_end(ctx, w, h, o) {
     if (o.flags.mercy) {
-      seaBase(ctx, w, h, o.t, 0.7);
+      if (!o.hasImg) seaBase(ctx, w, h, o.t, 0.7);
       // finished as a proper dragon-koi, leaping with joy
       ctx.save();
       ctx.strokeStyle = C.leviathan;
@@ -308,7 +350,7 @@ export const setpieces = {
       ctx.restore();
       speechBubble(ctx, 'It just wanted to be finished.', w * 0.34, h * 0.16, w * 0.55, { fs: Math.min(20, Math.max(13, h * 0.042)) });
     } else {
-      seaBase(ctx, w, h, o.t, 0.72);
+      if (!o.hasImg) seaBase(ctx, w, h, o.t, 0.72);
       // scattered stroke fragments raining
       ctx.fillStyle = INK;
       const p = o.phase === 'done' ? 1 : clamp01(o.t / 2.5);
@@ -330,13 +372,15 @@ export const setpieces = {
 
   /* ch3b resolution — the Rejected One, fixed or fading */
   rejected_end(ctx, w, h, o) {
-    fillTone(ctx, 0, 0, w, h, 'light', 0.25);
-    ctx.strokeStyle = INK;
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    ctx.moveTo(0, h * 0.86);
-    ctx.lineTo(w, h * 0.86);
-    ctx.stroke();
+    if (!o.hasImg) {
+      fillTone(ctx, 0, 0, w, h, 'light', 0.25);
+      ctx.strokeStyle = INK;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(0, h * 0.86);
+      ctx.lineTo(w, h * 0.86);
+      ctx.stroke();
+    }
     drawKai(ctx, w * 0.24, h * 0.86, h * 0.46, 'stand', { dir: 1, emotion: o.flags.mercy ? 'smile' : 'sad', weapon: 'nib' });
     if (o.flags.mercy) {
       drawRejected(ctx, w * 0.68, h * 0.86, h * 0.48, 'stand', { dir: -1, emotion: 'smile', restored: true });
@@ -362,6 +406,12 @@ export const setpieces = {
 
   /* ch4 — climbing OUT of the manga onto the desk */
   desk_climb(ctx, w, h, o) {
+    if (o.hasImg) {
+      const p2 = o.phase === 'done' ? 1 : clamp01(o.t / 2.2);
+      drawKai(ctx, w * 0.38, h * (0.92 - p2 * 0.06), h * 0.4, p2 > 0.7 ? 'stand' : 'crouch', { dir: 1, emotion: 'shock' });
+      drawSumi(ctx, w * 0.6, h * (0.9 - p2 * 0.05), h * 0.34, 'float', { dir: -1, t: o.t, emotion: 'shock' });
+      return;
+    }
     // the page seen edge-on, world beyond is the desk
     ctx.save();
     ctx.fillStyle = 'rgba(17,17,17,0.12)';
@@ -418,19 +468,21 @@ export const setpieces = {
 
   /* ch4 spread — the blank first page, the Hand with pencil AND eraser */
   panelzero_gate(ctx, w, h, o) {
-    // radial dread
-    ctx.save();
-    ctx.globalAlpha = 0.2;
-    ctx.strokeStyle = INK;
-    for (let i = 0; i < 26; i++) {
-      const a = Math.PI * (0.1 + (i / 26) * 0.8);
-      ctx.lineWidth = 1 + (i % 3);
-      ctx.beginPath();
-      ctx.moveTo(w / 2 + Math.cos(a) * w * 0.12, h * 0.08 + Math.sin(a) * w * 0.12);
-      ctx.lineTo(w / 2 + Math.cos(a) * h, h * 0.08 + Math.sin(a) * h);
-      ctx.stroke();
+    if (!o.hasImg) {
+      // radial dread
+      ctx.save();
+      ctx.globalAlpha = 0.2;
+      ctx.strokeStyle = INK;
+      for (let i = 0; i < 26; i++) {
+        const a = Math.PI * (0.1 + (i / 26) * 0.8);
+        ctx.lineWidth = 1 + (i % 3);
+        ctx.beginPath();
+        ctx.moveTo(w / 2 + Math.cos(a) * w * 0.12, h * 0.08 + Math.sin(a) * w * 0.12);
+        ctx.lineTo(w / 2 + Math.cos(a) * h, h * 0.08 + Math.sin(a) * h);
+        ctx.stroke();
+      }
+      ctx.restore();
     }
-    ctx.restore();
     const drop = o.phase === 'done' ? 1 : clamp01(o.t / 2.6) ** 2;
     drawHandWithEraser(ctx, w, h, drop * 0.85);
     // the pencil in the other hand, angled in from the side
@@ -471,54 +523,52 @@ export const setpieces = {
   },
 
   ending_artist(ctx, w, h, o) {
-    // Kai, pencil in hand, finishing the manga — Sumi and friends redrawn
-    ctx.save();
-    ctx.globalAlpha = 0.15;
-    ctx.strokeStyle = INK;
-    for (let i = 0; i < 20; i++) {
-      const a = (i / 20) * Math.PI * 2;
+    const painted = drawBackdrop(ctx, w, h, 'assets/bg/ending-artist.webp');
+    if (!painted) {
+      ctx.save();
+      ctx.globalAlpha = 0.15;
+      ctx.strokeStyle = INK;
+      for (let i = 0; i < 20; i++) {
+        const a = (i / 20) * Math.PI * 2;
+        ctx.beginPath();
+        ctx.moveTo(w / 2 + Math.cos(a) * w * 0.2, h * 0.4 + Math.sin(a) * w * 0.2);
+        ctx.lineTo(w / 2 + Math.cos(a) * h, h * 0.4 + Math.sin(a) * h);
+        ctx.stroke();
+      }
+      ctx.restore();
+      ctx.strokeStyle = INK;
+      ctx.lineWidth = 4;
+      ctx.strokeRect(w * 0.08, h * 0.12, w * 0.32, h * 0.2);
+      ctx.strokeRect(w * 0.6, h * 0.16, w * 0.3, h * 0.18);
+      ctx.setLineDash([12, 8]);
+      ctx.lineWidth = 2.5;
+      ctx.strokeRect(w * 0.34, h * 0.4, w * 0.32, h * 0.16);
+      ctx.setLineDash([]);
+    }
+    // the pair, small against the blooming world
+    drawKai(ctx, w * 0.36, h * 0.66, h * 0.22, 'stand', { dir: 1, weapon: null, emotion: 'smile' });
+    drawSumi(ctx, w * 0.62, h * 0.66, h * 0.19, 'float', { dir: -1, t: o.t, emotion: 'smile' });
+    if (!painted) {
+      // vector world: sketch the koi and the pencil
+      ctx.strokeStyle = INK;
+      ctx.lineWidth = w * 0.02;
+      ctx.lineCap = 'round';
       ctx.beginPath();
-      ctx.moveTo(w / 2 + Math.cos(a) * w * 0.2, h * 0.4 + Math.sin(a) * w * 0.2);
-      ctx.lineTo(w / 2 + Math.cos(a) * h, h * 0.4 + Math.sin(a) * h);
+      ctx.moveTo(w * 0.12, h * 0.28);
+      ctx.bezierCurveTo(w * 0.2, h * 0.16, w * 0.32, h * 0.16, w * 0.38, h * 0.26);
       ctx.stroke();
     }
-    ctx.restore();
-    // fresh panels being drawn around them
-    ctx.strokeStyle = INK;
-    ctx.lineWidth = 4;
-    ctx.strokeRect(w * 0.08, h * 0.12, w * 0.32, h * 0.2);
-    ctx.strokeRect(w * 0.6, h * 0.16, w * 0.3, h * 0.18);
-    ctx.setLineDash([12, 8]);
-    ctx.lineWidth = 2.5;
-    ctx.strokeRect(w * 0.34, h * 0.4, w * 0.32, h * 0.16);
-    ctx.setLineDash([]);
-    // Kai wielding the great pencil, Sumi beside him — kept clear of the title
-    drawKai(ctx, w * 0.38, h * 0.66, h * 0.24, 'fight', { dir: 1, weapon: null, emotion: 'smile' });
-    ctx.save();
-    ctx.fillStyle = INK;
-    ctx.translate(w * 0.55, h * 0.4); // held high, clear of his face
-    ctx.rotate(0.8);
-    ctx.fillRect(-w * 0.015, 0, w * 0.03, h * 0.15);
-    ctx.beginPath();
-    ctx.moveTo(-w * 0.015, 0);
-    ctx.lineTo(0, -h * 0.03);
-    ctx.lineTo(w * 0.015, 0);
-    ctx.closePath();
-    ctx.fill();
-    ctx.restore();
-    drawSumi(ctx, w * 0.62, h * 0.66, h * 0.2, 'float', { dir: -1, t: o.t, emotion: 'smile' });
-    // the finished leviathan-koi arcs across a fresh sky panel
-    ctx.strokeStyle = INK;
-    ctx.lineWidth = w * 0.02;
-    ctx.lineCap = 'round';
-    ctx.beginPath();
-    ctx.moveTo(w * 0.12, h * 0.28);
-    ctx.bezierCurveTo(w * 0.2, h * 0.16, w * 0.32, h * 0.16, w * 0.38, h * 0.26);
-    ctx.stroke();
-    endingTitle(ctx, w, h, 'THE NEW ARTIST', 'Kai picks up the pencil. This story gets an ending — his.', 0.8);
+    endingTitle(ctx, w, h, 'THE NEW ARTIST', 'Kai picks up the pencil. This story gets an ending — his.', 0.85);
   },
 
   ending_escape(ctx, w, h, o) {
+    if (drawBackdrop(ctx, w, h, 'assets/bg/ending-escape.webp')) {
+      const wpn2 = o.flags.brush ? 'brush' : o.flags.nib ? 'nib' : 'club';
+      drawKai(ctx, w * 0.5, h * 0.6, h * 0.34, 'run', { dir: 1, emotion: 'determined', weapon: wpn2 });
+      drawSFXText(ctx, 'SHATTER', w * 0.5, h * 0.14, Math.min(w, h) * 0.085, -0.05);
+      endingTitle(ctx, w, h, 'THE ESCAPE', 'Kai breaks the border and walks out of the story — alone.', 0.89);
+      return;
+    }
     // the broken border and the white beyond
     ctx.strokeStyle = INK;
     ctx.lineWidth = 8;
@@ -565,6 +615,13 @@ export const setpieces = {
   },
 
   ending_blank(ctx, w, h, o) {
+    if (drawBackdrop(ctx, w, h, 'assets/bg/ending-blank.webp')) {
+      // the painted door stands alone; the cast says goodbye
+      drawKai(ctx, w * 0.22, h * 0.9, h * 0.3, 'stand', { dir: 1, emotion: 'sad', weapon: null });
+      if (o.flags.savedSumi) drawSumi(ctx, w * 0.82, h * 0.9, h * 0.24, 'float', { dir: -1, t: o.t, emotion: 'smile' });
+      endingTitle(ctx, w, h, 'THE BLANK PAGE', 'The Hand hesitates... and draws Kai a door instead.', 0.12);
+      return;
+    }
     // the Hand, gentled, draws a door
     const p = o.phase === 'done' ? 1 : clamp01(o.t / 2.5);
     // a pencil drawing a door, mid-stroke

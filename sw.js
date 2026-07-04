@@ -1,5 +1,5 @@
 // Service worker: cache-first so the whole manga is playable offline after first read.
-const CACHE = 'panelzero-v3';
+const CACHE = 'panelzero-v4';
 const ASSETS = [
   '.',
   'index.html',
@@ -24,6 +24,21 @@ const ASSETS = [
   'data/chapter4.json',
   'data/chapter5.json',
   'manifest.webmanifest',
+  'assets/bg/cut-panels-arena.webp',
+  'assets/bg/cut-panels.webp',
+  'assets/bg/desk-edge.webp',
+  'assets/bg/desk.webp',
+  'assets/bg/ending-artist.webp',
+  'assets/bg/ending-blank.webp',
+  'assets/bg/ending-escape.webp',
+  'assets/bg/ink-sea-storm.webp',
+  'assets/bg/ink-sea.webp',
+  'assets/bg/margin-dark.webp',
+  'assets/bg/margin-road.webp',
+  'assets/bg/panel-zero.webp',
+  'assets/bg/paper-room.webp',
+  'assets/bg/route-split.webp',
+  'assets/bg/void.webp',
   'assets/sprites/meta.json',
   'assets/sprites/hand-eraser.webp',
   'assets/sprites/kai-brace.webp',

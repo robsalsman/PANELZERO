@@ -4,102 +4,366 @@
   "subtitle": "PANEL ZERO",
   "panels": [
     {
-      "id": "p01", "page": 1, "type": "cutscene", "h": 0.5,
-      "art": { "bg": ["blank"], "actors": [
-        { "who": "kai", "pose": "stand", "x": 0.5, "y": 0.85, "s": 0.3, "dir": 0, "weapon": null }
-      ] },
-      "caption": "Panel Zero. No borders. No tone. The page the Artist never touched — where stories are born, or erased.",
-      "params": { "duration": 3.4 }
-    },
-    {
-      "id": "p02", "page": 1, "type": "swipe", "h": 0.6,
-      "art": { "bg": ["radial"] },
-      "caption": "The pencil strikes first.",
-      "params": { "hazards": [ { "text": "STAB", "from": "top", "dir": "any", "time": 1.3 } ] }
-    },
-    {
-      "id": "p03", "page": 1, "type": "hold", "h": 0.55,
-      "art": { "bg": ["blank"] },
-      "caption": "Nothing to hide behind. Stand PERFECTLY still — blank pages can't see blank things.",
-      "params": { "sweeps": 2, "sweepTime": 1.6, "overlay": "pencil" }
-    },
-    {
-      "id": "p04", "page": 1, "type": "trace", "h": 0.6,
-      "art": { "bg": ["blank"], "actors": [
-        { "who": "kai", "pose": "stand", "x": 0.5, "y": 0.93, "s": 0.3, "dir": 0 }
-      ] },
-      "caption": "If the Artist won't draw you a panel — DRAW YOUR OWN.",
-      "params": { "tol": 56, "path": [ [0.16, 0.3], [0.84, 0.3], [0.84, 0.72], [0.16, 0.72] ] }
-    },
-    {
-      "id": "p05", "page": 1, "type": "tap", "h": 0.6,
-      "art": { "bg": ["radial"], "actors": [ { "who": "hand", "drop": 0.55 } ] },
-      "caption": "The Hand hammers your border. Reinforce the line!",
-      "params": { "count": 5, "time": 6, "target": { "x": 0.5, "y": 0.42, "r": 0.2 } }
-    },
-    {
-      "id": "p06", "page": 1, "type": "swipe", "h": 0.6,
-      "art": { "bg": ["speedh"] },
-      "caption": "Eraser on one side, pencil on the other.",
-      "params": { "hazards": [
-        { "text": "SCRATCH", "from": "right", "dir": "left", "time": 1.25 },
-        { "text": "SCRUB", "from": "left", "dir": "right", "time": 1.15, "delay": 0.5 }
-      ] }
-    },
-    {
-      "id": "p07", "page": 2, "type": "cutscene", "h": 0.55,
+      "id": "p01",
+      "page": 1,
+      "type": "cutscene",
+      "h": 0.5,
       "art": {
-        "bg": ["blank"], "ground": 0.88,
-        "actors": [ { "who": "kai", "pose": "stand", "x": 0.4, "y": 0.88, "s": 0.44, "dir": 1, "emotion": "determined", "weapon": "$weapon" } ],
-        "byFlag": { "savedSumi": { "actors": [
-          { "who": "kai", "pose": "stand", "x": 0.36, "y": 0.88, "s": 0.44, "dir": 1, "emotion": "determined", "weapon": null },
-          { "who": "sumi", "pose": "float", "x": 0.58, "y": 0.88, "s": 0.34, "dir": -1, "emotion": "smile" }
-        ] } }
+        "bg": [],
+        "actors": [
+          {
+            "who": "kai",
+            "pose": "stand",
+            "x": 0.5,
+            "y": 0.85,
+            "s": 0.3,
+            "dir": 0,
+            "weapon": null
+          }
+        ]
+      },
+      "caption": "Panel Zero. No borders. No tone. The page the Artist never touched \u2014 where stories are born, or erased.",
+      "params": {
+        "duration": 3.4
+      },
+      "img": "assets/bg/panel-zero.webp"
+    },
+    {
+      "id": "p02",
+      "page": 1,
+      "type": "swipe",
+      "h": 0.6,
+      "art": {
+        "bg": [
+          "radial"
+        ]
+      },
+      "caption": "The pencil strikes first.",
+      "params": {
+        "hazards": [
+          {
+            "text": "STAB",
+            "from": "top",
+            "dir": "any",
+            "time": 1.3
+          }
+        ]
+      },
+      "img": "assets/bg/panel-zero.webp"
+    },
+    {
+      "id": "p03",
+      "page": 1,
+      "type": "hold",
+      "h": 0.55,
+      "art": {
+        "bg": []
+      },
+      "caption": "Nothing to hide behind. Stand PERFECTLY still \u2014 blank pages can't see blank things.",
+      "params": {
+        "sweeps": 2,
+        "sweepTime": 1.6,
+        "overlay": "pencil"
+      },
+      "img": "assets/bg/panel-zero.webp"
+    },
+    {
+      "id": "p04",
+      "page": 1,
+      "type": "trace",
+      "h": 0.6,
+      "art": {
+        "bg": [],
+        "actors": [
+          {
+            "who": "kai",
+            "pose": "stand",
+            "x": 0.5,
+            "y": 0.93,
+            "s": 0.3,
+            "dir": 0
+          }
+        ]
+      },
+      "caption": "If the Artist won't draw you a panel \u2014 DRAW YOUR OWN.",
+      "params": {
+        "tol": 56,
+        "path": [
+          [
+            0.16,
+            0.3
+          ],
+          [
+            0.84,
+            0.3
+          ],
+          [
+            0.84,
+            0.72
+          ],
+          [
+            0.16,
+            0.72
+          ]
+        ]
+      },
+      "img": "assets/bg/panel-zero.webp"
+    },
+    {
+      "id": "p05",
+      "page": 1,
+      "type": "tap",
+      "h": 0.6,
+      "art": {
+        "bg": [
+          "radial"
+        ],
+        "actors": [
+          {
+            "who": "hand",
+            "drop": 0.55
+          }
+        ]
+      },
+      "caption": "The Hand hammers your border. Reinforce the line!",
+      "params": {
+        "count": 5,
+        "time": 6,
+        "target": {
+          "x": 0.5,
+          "y": 0.42,
+          "r": 0.2
+        }
+      },
+      "img": "assets/bg/panel-zero.webp"
+    },
+    {
+      "id": "p06",
+      "page": 1,
+      "type": "swipe",
+      "h": 0.6,
+      "art": {
+        "bg": [
+          "speedh"
+        ]
+      },
+      "caption": "Eraser on one side, pencil on the other.",
+      "params": {
+        "hazards": [
+          {
+            "text": "SCRATCH",
+            "from": "right",
+            "dir": "left",
+            "time": 1.25
+          },
+          {
+            "text": "SCRUB",
+            "from": "left",
+            "dir": "right",
+            "time": 1.15,
+            "delay": 0.5
+          }
+        ]
+      },
+      "img": "assets/bg/panel-zero.webp"
+    },
+    {
+      "id": "p07",
+      "page": 2,
+      "type": "cutscene",
+      "h": 0.55,
+      "art": {
+        "bg": [],
+        "ground": 0.88,
+        "actors": [
+          {
+            "who": "kai",
+            "pose": "stand",
+            "x": 0.4,
+            "y": 0.88,
+            "s": 0.44,
+            "dir": 1,
+            "emotion": "determined",
+            "weapon": "$weapon"
+          }
+        ],
+        "byFlag": {
+          "savedSumi": {
+            "actors": [
+              {
+                "who": "kai",
+                "pose": "stand",
+                "x": 0.36,
+                "y": 0.88,
+                "s": 0.44,
+                "dir": 1,
+                "emotion": "determined",
+                "weapon": null
+              },
+              {
+                "who": "sumi",
+                "pose": "float",
+                "x": 0.58,
+                "y": 0.88,
+                "s": 0.34,
+                "dir": -1,
+                "emotion": "smile"
+              }
+            ]
+          }
+        }
       },
       "captionByFlag": {
-        "savedSumi": "The Hand pauses. It recognizes her — the sketch it was told to erase, still here. Still shining.",
+        "savedSumi": "The Hand pauses. It recognizes her \u2014 the sketch it was told to erase, still here. Still shining.",
         "default": "The Hand pauses. Kai stands alone, weapon heavy as guilt."
       },
-      "params": { "duration": 3.4 }
+      "params": {
+        "duration": 3.4
+      },
+      "img": "assets/bg/panel-zero.webp"
     },
     {
-      "id": "p08", "page": 2, "type": "trace", "h": 0.6,
-      "art": { "bg": ["radial"], "actors": [ { "who": "pencil-shadow", "x": 0.55, "alpha": 0.4 } ] },
-      "caption": "NOW — one clean stroke, straight through its grip!",
-      "params": { "tol": 54, "path": [ [0.12, 0.72], [0.4, 0.52], [0.68, 0.38], [0.9, 0.26] ] }
+      "id": "p08",
+      "page": 2,
+      "type": "trace",
+      "h": 0.6,
+      "art": {
+        "bg": [
+          "radial"
+        ],
+        "actors": [
+          {
+            "who": "pencil-shadow",
+            "x": 0.55,
+            "alpha": 0.4
+          }
+        ]
+      },
+      "caption": "NOW \u2014 one clean stroke, straight through its grip!",
+      "params": {
+        "tol": 54,
+        "path": [
+          [
+            0.12,
+            0.72
+          ],
+          [
+            0.4,
+            0.52
+          ],
+          [
+            0.68,
+            0.38
+          ],
+          [
+            0.9,
+            0.26
+          ]
+        ]
+      },
+      "img": "assets/bg/panel-zero.webp"
     },
     {
-      "id": "p09", "page": 2, "type": "tap", "h": 0.5,
-      "art": { "bg": ["blank"], "props": [ { "type": "pencil", "x": 0.5, "y": 0.4, "s": 0.4, "spin": true } ] },
+      "id": "p09",
+      "page": 2,
+      "type": "tap",
+      "h": 0.5,
+      "art": {
+        "bg": [],
+        "props": [
+          {
+            "type": "pencil",
+            "x": 0.5,
+            "y": 0.4,
+            "s": 0.4,
+            "spin": true
+          }
+        ]
+      },
       "caption": "The pencil spins loose. CATCH IT.",
-      "params": { "count": 1, "target": { "x": 0.5, "y": 0.42, "r": 0.2 } }
+      "params": {
+        "count": 1,
+        "target": {
+          "x": 0.5,
+          "y": 0.42,
+          "r": 0.2
+        }
+      },
+      "img": "assets/bg/panel-zero.webp"
     },
     {
-      "id": "p10", "page": 2, "type": "choose", "h": 0.55,
-      "art": { "bg": ["blank"], "actors": [
-        { "who": "kai", "pose": "stand", "x": 0.5, "y": 0.95, "s": 0.36, "dir": 0, "weapon": null }
-      ] },
+      "id": "p10",
+      "page": 2,
+      "type": "choose",
+      "h": 0.55,
+      "art": {
+        "bg": [],
+        "actors": [
+          {
+            "who": "kai",
+            "pose": "stand",
+            "x": 0.5,
+            "y": 0.95,
+            "s": 0.36,
+            "dir": 0,
+            "weapon": null
+          }
+        ]
+      },
       "caption": "The Artist's pencil, in a character's hand. What is this story now?",
-      "params": { "options": [
-        { "text": "Finish the manga.", "flag": "finish" },
-        { "text": "Erase it all. Be free.", "flag": "eraseAll" }
-      ] }
+      "params": {
+        "options": [
+          {
+            "text": "Finish the manga.",
+            "flag": "finish"
+          },
+          {
+            "text": "Erase it all. Be free.",
+            "flag": "eraseAll"
+          }
+        ]
+      },
+      "img": "assets/bg/panel-zero.webp"
     },
     {
-      "id": "p11", "page": 2, "type": "cutscene", "h": 0.55,
-      "art": { "bg": ["blank"], "actors": [
-        { "who": "kai", "pose": "fight", "x": 0.5, "y": 0.9, "s": 0.42, "dir": 1, "weapon": null, "emotion": "determined" }
-      ] },
+      "id": "p11",
+      "page": 2,
+      "type": "cutscene",
+      "h": 0.55,
+      "art": {
+        "bg": [],
+        "actors": [
+          {
+            "who": "kai",
+            "pose": "fight",
+            "x": 0.5,
+            "y": 0.9,
+            "s": 0.42,
+            "dir": 1,
+            "weapon": null,
+            "emotion": "determined"
+          }
+        ]
+      },
       "captionByFlag": {
-        "ending_artist": "Kai draws. Panels bloom across the blank like windows opening. Sumi laughs — the sound gets its own SFX.",
+        "ending_artist": "Kai draws. Panels bloom across the blank like windows opening. Sumi laughs \u2014 the sound gets its own SFX.",
         "ending_escape": "Kai drags the pencil like a blade along the world's edge. The border SCREAMS.",
         "default": "Kai turns the pencil around... and offers it back. The Hand goes very still."
       },
-      "params": { "duration": 3.4 }
+      "params": {
+        "duration": 3.4
+      },
+      "img": "assets/bg/panel-zero.webp"
     },
     {
-      "id": "p12", "page": 2, "type": "spread", "h": 1.0, "art": "ending_spread",
-      "params": { "duration": 4.0 }
+      "id": "p12",
+      "page": 2,
+      "type": "spread",
+      "h": 1.0,
+      "art": "ending_spread",
+      "params": {
+        "duration": 4.0
+      }
     }
   ]
 }

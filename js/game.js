@@ -6,7 +6,7 @@ import { Input } from './input.js';
 import { createChallenge } from './verbs.js';
 import { scenes } from './scenes.js';
 import { setpieces } from './setpieces.js';
-import { composeScene } from './compose.js';
+import { composeScene, drawBackdrop } from './compose.js';
 import { INK, PAPER, C, caption as drawCaption, drawVerbIcon } from './art.js';
 import { sfx, buzz, initAudio } from './sfx.js';
 import { saveGet, saveSet } from './save.js';
@@ -644,10 +644,12 @@ export class Game {
     }
 
     ctx.translate(r.x, r.y);
+    const hasImg = def.img ? drawBackdrop(ctx, r.w, r.h, def.img) : false;
     const o = {
       t: isCurrent ? this.activeT : 999,
       phase: done ? 'done' : 'active',
       flags: this.flags,
+      hasImg,
       ch: isCurrent ? this.challenge : null,
       line: def.linesByFlag ? (this.flags.aware ? def.linesByFlag.aware : def.linesByFlag.default) : null,
     };

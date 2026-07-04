@@ -4,107 +4,365 @@
   "subtitle": "THE MARGIN ROAD",
   "panels": [
     {
-      "id": "p01", "page": 1, "type": "cutscene", "h": 0.5,
-      "art": { "bg": ["toneL"], "ground": 0.86, "actors": [
-        { "who": "kai", "pose": "walk", "x": 0.38, "y": 0.86, "s": 0.48, "dir": 1 }
-      ] },
-      "caption": "The margin — the white road beside the panels. Kai walks off the edge of his page.",
-      "params": { "duration": 2.8 }
-    },
-    {
-      "id": "p02", "page": 1, "type": "swipe", "h": 0.6,
-      "art": { "bg": ["speedv"], "ground": 0.88 },
-      "caption": "Loose panel frames rain from the pages above.",
-      "params": { "hazards": [ { "text": "CLATTER", "from": "top", "dir": "any", "time": 1.5 } ] }
-    },
-    {
-      "id": "p03", "page": 1, "type": "cutscene", "h": 0.55, "art": "sumi_rise",
-      "caption": "Something has been following him through the gutter. Something made of ink.",
-      "params": { "duration": 3.0 }
-    },
-    {
-      "id": "p04", "page": 1, "type": "choose", "h": 0.45,
-      "art": { "bg": ["toneL"], "actors": [
-        { "who": "kai", "pose": "stand", "x": 0.3, "y": 0.97, "s": 0.4, "dir": 1, "emotion": "shock" },
-        { "who": "sumi", "pose": "float", "x": 0.7, "y": 0.97, "s": 0.36, "dir": -1 }
-      ] },
-      "toast": "Tap a bubble.",
-      "params": { "options": [
-        { "text": "Who are you?", "flag": "friendly" },
-        { "text": "Stay back!", "flag": null }
-      ] }
-    },
-    {
-      "id": "p05", "page": 1, "type": "cutscene", "h": 0.55,
+      "id": "p01",
+      "page": 1,
+      "type": "cutscene",
+      "h": 0.5,
       "art": {
-        "bg": ["toneL"], "ground": 0.88,
+        "bg": [],
+        "ground": 0.86,
         "actors": [
-          { "who": "kai", "pose": "stand", "x": 0.24, "y": 0.88, "s": 0.44, "dir": 1 },
-          { "who": "sumi", "pose": "float", "x": 0.66, "y": 0.88, "s": 0.4, "dir": -1 }
+          {
+            "who": "kai",
+            "pose": "walk",
+            "x": 0.38,
+            "y": 0.86,
+            "s": 0.48,
+            "dir": 1
+          }
+        ]
+      },
+      "caption": "The margin \u2014 the white road beside the panels. Kai walks off the edge of his page.",
+      "params": {
+        "duration": 2.8
+      },
+      "img": "assets/bg/margin-road.webp"
+    },
+    {
+      "id": "p02",
+      "page": 1,
+      "type": "swipe",
+      "h": 0.6,
+      "art": {
+        "bg": [
+          "speedv"
+        ],
+        "ground": 0.88
+      },
+      "caption": "Loose panel frames rain from the pages above.",
+      "params": {
+        "hazards": [
+          {
+            "text": "CLATTER",
+            "from": "top",
+            "dir": "any",
+            "time": 1.5
+          }
+        ]
+      },
+      "img": "assets/bg/margin-road.webp"
+    },
+    {
+      "id": "p03",
+      "page": 1,
+      "type": "cutscene",
+      "h": 0.55,
+      "art": "sumi_rise",
+      "caption": "Something has been following him through the gutter. Something made of ink.",
+      "params": {
+        "duration": 3.0
+      },
+      "img": "assets/bg/margin-road.webp"
+    },
+    {
+      "id": "p04",
+      "page": 1,
+      "type": "choose",
+      "h": 0.45,
+      "art": {
+        "bg": [],
+        "actors": [
+          {
+            "who": "kai",
+            "pose": "stand",
+            "x": 0.3,
+            "y": 0.97,
+            "s": 0.4,
+            "dir": 1,
+            "emotion": "shock"
+          },
+          {
+            "who": "sumi",
+            "pose": "float",
+            "x": 0.7,
+            "y": 0.97,
+            "s": 0.36,
+            "dir": -1
+          }
+        ]
+      },
+      "toast": "Tap a bubble.",
+      "params": {
+        "options": [
+          {
+            "text": "Who are you?",
+            "flag": "friendly"
+          },
+          {
+            "text": "Stay back!",
+            "flag": null
+          }
+        ]
+      },
+      "img": "assets/bg/margin-road.webp"
+    },
+    {
+      "id": "p05",
+      "page": 1,
+      "type": "cutscene",
+      "h": 0.55,
+      "art": {
+        "bg": [],
+        "ground": 0.88,
+        "actors": [
+          {
+            "who": "kai",
+            "pose": "stand",
+            "x": 0.24,
+            "y": 0.88,
+            "s": 0.44,
+            "dir": 1
+          },
+          {
+            "who": "sumi",
+            "pose": "float",
+            "x": 0.66,
+            "y": 0.88,
+            "s": 0.4,
+            "dir": -1
+          }
         ],
         "bubbles": [
-          { "text": "I'm Sumi. The Artist drew me, then scrapped me. Now the Hand erases whatever's left.", "x": 0.5, "y": 0.2, "maxW": 0.85, "tailX": 0.64, "tailY": 0.46 }
+          {
+            "text": "I'm Sumi. The Artist drew me, then scrapped me. Now the Hand erases whatever's left.",
+            "x": 0.5,
+            "y": 0.2,
+            "maxW": 0.85,
+            "tailX": 0.64,
+            "tailY": 0.46
+          }
         ],
-        "byFlag": { "friendly": { "bubbles": [
-          { "text": "You asked. Nobody asks. I'm Sumi — scrapped in the second draft. The Hand erases whatever's left.", "x": 0.5, "y": 0.2, "maxW": 0.85, "tailX": 0.64, "tailY": 0.5 }
-        ] } }
+        "byFlag": {
+          "friendly": {
+            "bubbles": [
+              {
+                "text": "You asked. Nobody asks. I'm Sumi \u2014 scrapped in the second draft. The Hand erases whatever's left.",
+                "x": 0.5,
+                "y": 0.2,
+                "maxW": 0.85,
+                "tailX": 0.64,
+                "tailY": 0.5
+              }
+            ]
+          }
+        }
       },
-      "params": { "duration": 3.4 }
+      "params": {
+        "duration": 3.4
+      },
+      "img": "assets/bg/margin-road.webp"
     },
     {
-      "id": "p06", "page": 1, "type": "trace", "h": 0.55,
-      "art": { "bg": ["toneL"], "actors": [
-        { "who": "sumi", "pose": "float", "x": 0.2, "y": 0.42, "s": 0.3, "dir": 1 },
-        { "who": "kai", "pose": "stand", "x": 0.12, "y": 0.92, "s": 0.36, "dir": 1 }
-      ] },
-      "caption": "\"The margin is torn ahead. Ink can mend it — trace.\"",
-      "params": { "tol": 48, "path": [ [0.18, 0.78], [0.42, 0.64], [0.68, 0.68], [0.9, 0.56] ] }
+      "id": "p06",
+      "page": 1,
+      "type": "trace",
+      "h": 0.55,
+      "art": {
+        "bg": [],
+        "actors": [
+          {
+            "who": "sumi",
+            "pose": "float",
+            "x": 0.2,
+            "y": 0.42,
+            "s": 0.3,
+            "dir": 1
+          },
+          {
+            "who": "kai",
+            "pose": "stand",
+            "x": 0.12,
+            "y": 0.92,
+            "s": 0.36,
+            "dir": 1
+          }
+        ]
+      },
+      "caption": "\"The margin is torn ahead. Ink can mend it \u2014 trace.\"",
+      "params": {
+        "tol": 48,
+        "path": [
+          [
+            0.18,
+            0.78
+          ],
+          [
+            0.42,
+            0.64
+          ],
+          [
+            0.68,
+            0.68
+          ],
+          [
+            0.9,
+            0.56
+          ]
+        ]
+      },
+      "img": "assets/bg/margin-road.webp"
     },
     {
-      "id": "p07", "page": 2, "type": "hold", "h": 0.55,
-      "art": { "bg": ["toneD"], "ground": 0.88, "actors": [
-        { "who": "sumi", "pose": "float", "x": 0.42, "y": 0.88, "s": 0.28, "dir": -1 }
-      ] },
+      "id": "p07",
+      "page": 2,
+      "type": "hold",
+      "h": 0.55,
+      "art": {
+        "bg": [],
+        "ground": 0.88,
+        "actors": [
+          {
+            "who": "sumi",
+            "pose": "float",
+            "x": 0.42,
+            "y": 0.88,
+            "s": 0.28,
+            "dir": -1
+          }
+        ]
+      },
       "caption": "An eraser patrol drags overhead.",
       "toast": "Hold to hide.",
-      "params": { "sweeps": 2, "sweepTime": 1.5, "overlay": "pencil" }
+      "params": {
+        "sweeps": 2,
+        "sweepTime": 1.5,
+        "overlay": "pencil"
+      },
+      "img": "assets/bg/margin-dark.webp"
     },
     {
-      "id": "p08", "page": 2, "type": "tap", "h": 0.55,
-      "art": { "bg": ["speedh"], "ground": 0.84, "actors": [
-        { "who": "kai", "pose": "fight", "x": 0.24, "y": 0.84, "s": 0.5, "dir": 1, "weapon": "club" }
-      ] },
+      "id": "p08",
+      "page": 2,
+      "type": "tap",
+      "h": 0.55,
+      "art": {
+        "bg": [
+          "speedh"
+        ],
+        "ground": 0.84,
+        "actors": [
+          {
+            "who": "kai",
+            "pose": "fight",
+            "x": 0.24,
+            "y": 0.84,
+            "s": 0.5,
+            "dir": 1,
+            "weapon": "club"
+          }
+        ]
+      },
       "caption": "A smudge lunges out of the torn margin!",
-      "params": { "count": 4, "time": 7, "target": { "x": 0.66, "y": 0.66, "r": 0.19 }, "wobble": true, "creature": "smudge" }
+      "params": {
+        "count": 4,
+        "time": 7,
+        "target": {
+          "x": 0.66,
+          "y": 0.66,
+          "r": 0.19
+        },
+        "wobble": true,
+        "creature": "smudge"
+      },
+      "img": "assets/bg/margin-dark.webp"
     },
     {
-      "id": "p09", "page": 2, "type": "swipe", "h": 0.6,
-      "art": { "bg": ["speedh"], "ground": 0.88 },
+      "id": "p09",
+      "page": 2,
+      "type": "swipe",
+      "h": 0.6,
+      "art": {
+        "bg": [
+          "speedh"
+        ],
+        "ground": 0.88
+      },
       "caption": "The margin itself snaps at their heels.",
-      "params": { "hazards": [
-        { "text": "SNAP", "from": "right", "dir": "left", "time": 1.4 },
-        { "text": "CRACK", "from": "left", "dir": "right", "time": 1.3, "delay": 0.5 }
-      ] }
+      "params": {
+        "hazards": [
+          {
+            "text": "SNAP",
+            "from": "right",
+            "dir": "left",
+            "time": 1.4
+          },
+          {
+            "text": "CRACK",
+            "from": "left",
+            "dir": "right",
+            "time": 1.3,
+            "delay": 0.5
+          }
+        ]
+      },
+      "img": "assets/bg/margin-dark.webp"
     },
     {
-      "id": "p10", "page": 2, "type": "cutscene", "h": 0.6, "art": "route_split",
+      "id": "p10",
+      "page": 2,
+      "type": "cutscene",
+      "h": 0.6,
+      "art": "route_split",
       "caption": "The margin forks. Both roads lead to Page One.",
-      "params": { "duration": 3.2 }
+      "params": {
+        "duration": 3.2
+      },
+      "img": "assets/bg/route-split.webp"
     },
     {
-      "id": "p11", "page": 2, "type": "choose", "h": 0.5,
-      "art": { "bg": ["radial"], "actors": [
-        { "who": "kai", "pose": "stand", "x": 0.5, "y": 0.97, "s": 0.32, "dir": 0 }
-      ] },
+      "id": "p11",
+      "page": 2,
+      "type": "choose",
+      "h": 0.5,
+      "art": {
+        "bg": [
+          "radial"
+        ],
+        "actors": [
+          {
+            "who": "kai",
+            "pose": "stand",
+            "x": 0.5,
+            "y": 0.97,
+            "s": 0.32,
+            "dir": 0
+          }
+        ]
+      },
       "caption": "THIS choice changes your story.",
-      "params": { "options": [
-        { "text": "Dive into the Ink Sea.", "flag": "route_sea" },
-        { "text": "Enter the Cut Panels.", "flag": "route_cut" }
-      ] }
+      "params": {
+        "options": [
+          {
+            "text": "Dive into the Ink Sea.",
+            "flag": "route_sea"
+          },
+          {
+            "text": "Enter the Cut Panels.",
+            "flag": "route_cut"
+          }
+        ]
+      },
+      "img": "assets/bg/route-split.webp"
     },
     {
-      "id": "p12", "page": 2, "type": "spread", "h": 1.0, "art": "route_spread",
-      "params": { "duration": 3.2 }
+      "id": "p12",
+      "page": 2,
+      "type": "spread",
+      "h": 1.0,
+      "art": "route_spread",
+      "params": {
+        "duration": 3.2
+      }
     }
   ]
 }

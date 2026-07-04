@@ -337,9 +337,9 @@ function drawProp(ctx, w, h, pr, t) {
   }
 }
 
-// raster backdrop cache (for future image assets — AI-generated or drawn)
+// raster backdrop cache (AI-painted scene art), cover-fit
 const imgCache = new Map();
-function backdrop(ctx, w, h, src) {
+export function drawBackdrop(ctx, w, h, src) {
   let img = imgCache.get(src);
   if (!img) {
     img = new Image();
@@ -352,7 +352,9 @@ function backdrop(ctx, w, h, src) {
     const dw = img.naturalWidth * sc;
     const dh = img.naturalHeight * sc;
     ctx.drawImage(img, (w - dw) / 2, (h - dh) / 2, dw, dh);
+    return true;
   }
+  return false;
 }
 
 export function composeScene(ctx, w, h, artDef, o) {
@@ -367,7 +369,7 @@ export function composeScene(ctx, w, h, artDef, o) {
 
   const t = o.t === 999 ? 3 : o.t; // completed panels freeze at a settled moment
 
-  if (def.img) backdrop(ctx, w, h, def.img);
+  if (def.img) drawBackdrop(ctx, w, h, def.img);
   const bgs = Array.isArray(def.bg) ? def.bg : def.bg ? [def.bg] : [];
   for (const bg of bgs) drawBg(ctx, w, h, bg, t);
 
