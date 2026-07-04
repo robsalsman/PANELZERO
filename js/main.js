@@ -2,6 +2,7 @@
 import { Game } from './game.js';
 import { saveGet } from './save.js';
 import { initAudio } from './sfx.js';
+import { initSprites } from './art.js';
 
 const chapterCache = new Map();
 async function loadChapter(file) {
@@ -12,6 +13,7 @@ async function loadChapter(file) {
 }
 
 async function boot() {
+  initSprites(); // start streaming the painted character sprites
   const story = await fetch('data/story.json').then((r) => r.json());
 
   const canvas = document.getElementById('page');

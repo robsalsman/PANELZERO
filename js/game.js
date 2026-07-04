@@ -520,6 +520,8 @@ export class Game {
   render() {
     const { ctx, W, H } = this;
     ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
     ctx.fillStyle = '#e9e6df';
     ctx.fillRect(0, 0, W, H);
     if (!this.panels.length || !this.chapter) return;

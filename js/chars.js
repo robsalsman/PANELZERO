@@ -2,7 +2,7 @@
 // costumes (jacket + tee, ink dress, pencil-sketch rags); heads get skin tones,
 // two-tone hair with sheen, and gradient irises with highlights. All vector —
 // crisp at any resolution, no image assets.
-import { INK, PAPER, C } from './art.js';
+import { INK, PAPER, C, drawSprite } from './art.js';
 
 /* per-character costume + face palette */
 const STYLES = {
@@ -622,17 +622,56 @@ function drawBody(ctx, x, y, s, pose, o) {
 }
 
 /* ============================ public API ============================ */
+// AI-painted sprites first (consistent hand-drawn cast); vector fallback
+// covers any pose/expression combination without a sprite.
+function kaiSpriteName(pose, emotion, weapon) {
+  switch (pose) {
+    case 'stand':
+      return emotion === 'shock' ? 'kai-stand-shock' : emotion === 'smile' ? 'kai-stand-smile' : 'kai-stand';
+    case 'walk': return 'kai-walk';
+    case 'run': return 'kai-run';
+    case 'lying': return 'kai-lying';
+    case 'sit': return 'kai-sit';
+    case 'crouch': return 'kai-crouch';
+    case 'touch': return 'kai-touch';
+    case 'dodge': return 'kai-dodge';
+    case 'brace': return 'kai-brace';
+    case 'point': return 'kai-point';
+    case 'kneel': return 'kai-kneel';
+    case 'fight':
+      return weapon === 'brush' ? 'kai-fight-brush' : weapon === 'nib' ? 'kai-fight-nib'
+        : weapon === 'club' ? 'kai-fight-club' : 'kai-point';
+    case 'hold-club':
+      return weapon === 'brush' ? 'kai-fight-brush' : weapon === 'nib' ? 'kai-fight-nib' : 'kai-idle-club';
+    default: return 'kai-stand';
+  }
+}
+
 export function drawKai(ctx, x, y, s, pose = 'stand', o = {}) {
   const emotion = o.emotion || (o.awake === false ? 'sleep' : pose === 'dodge' || pose === 'brace' ? 'shock' : pose === 'fight' ? 'determined' : 'neutral');
   const weapon = o.weapon !== undefined ? o.weapon : (pose === 'fight' || pose === 'hold-club' ? 'club' : null);
-  drawBody(ctx, x, y, s, pose, { dir: o.dir ?? 1, style: 'kai', weapon, emotion });
+  const dir = o.dir ?? 1;
+  const name = kaiSpriteName(pose, emotion, weapon);
+  const mode = pose === 'lying' ? 'width' : 'height';
+  const size = pose === 'lying' ? s * 1.6 : s;
+  if (drawSprite(ctx, name, x, y, size, dir === 0 ? 1 : dir, mode)) return;
+  drawBody(ctx, x, y, s, pose, { dir, style: 'kai', weapon, emotion });
 }
 
 export function drawSumi(ctx, x, y, s, pose = 'float', o = {}) {
   const bob = o.t !== undefined ? Math.sin(o.t * 2) * s * 0.02 : 0;
-  drawBody(ctx, x, y + bob, s, pose, { dir: o.dir ?? -1, style: 'sumi', emotion: o.emotion || 'smile' });
+  const emotion = o.emotion || 'smile';
+  const dir = o.dir ?? -1;
+  const name = pose === 'brace' ? 'sumi-brace'
+    : emotion === 'shock' ? 'sumi-float-shock' : emotion === 'sad' ? 'sumi-float-sad' : 'sumi-float';
+  if (drawSprite(ctx, name, x, y + bob, s, dir === 0 ? 1 : dir)) return;
+  drawBody(ctx, x, y + bob, s, pose, { dir, style: 'sumi', emotion });
 }
 
 export function drawRejected(ctx, x, y, s, pose = 'stand', o = {}) {
-  drawBody(ctx, x, y, s, pose, { dir: o.dir ?? -1, style: 'rejected', weapon: o.weapon || null, emotion: o.emotion || 'determined', restored: o.restored || false });
+  const dir = o.dir ?? -1;
+  const name = o.restored ? 'rejected-restored'
+    : pose === 'fight' ? 'rejected-fight' : pose === 'kneel' ? 'rejected-kneel' : 'rejected-stand';
+  if (drawSprite(ctx, name, x, y, s, dir === 0 ? 1 : dir)) return;
+  drawBody(ctx, x, y, s, pose, { dir, style: 'rejected', weapon: o.weapon || null, emotion: o.emotion || 'determined', restored: o.restored || false });
 }

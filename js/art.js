@@ -22,6 +22,62 @@ export const C = {
   gold: '#e0a63c', red: '#c8392e',
 };
 
+/* ---------------- sprite layer (AI-painted characters) ---------------- */
+// Sprites are WebP with alpha; meta.json holds each sprite's alpha bounding
+// box so we can anchor feet precisely. Vector renderers remain the fallback
+// while images stream in (and for any pose without a sprite).
+let SPRITE_META = null;
+const spriteImgs = new Map();
+
+export function initSprites() {
+  if (SPRITE_META !== null || typeof document === 'undefined') return;
+  SPRITE_META = {};
+  fetch('assets/sprites/meta.json')
+    .then((r) => (r.ok ? r.json() : {}))
+    .then((m) => {
+      SPRITE_META = m;
+      for (const name of Object.keys(m)) spriteImg(name); // warm the cache
+    })
+    .catch(() => {});
+}
+
+function spriteImg(name) {
+  let img = spriteImgs.get(name);
+  if (!img) {
+    img = new Image();
+    img.src = `assets/sprites/${name}.webp`;
+    spriteImgs.set(name, img);
+  }
+  return img;
+}
+
+// draw sprite `name` with the figure's feet (alpha-bbox bottom-center) at
+// (x, y) and the figure scaled to height s. dir < 0 mirrors (sprites face
+// right). mode 'width' scales the bbox WIDTH to s instead (lying poses).
+export function drawSprite(ctx, name, x, y, s, dir = 1, mode = 'height') {
+  const m = SPRITE_META?.[name];
+  if (!m) return false;
+  const img = spriteImg(name);
+  if (!img.complete || !img.naturalWidth) return false;
+  const ar = img.naturalWidth / img.naturalHeight;
+  let dh;
+  if (mode === 'width') {
+    const dw0 = s / m.bw;
+    dh = dw0 / ar;
+  } else {
+    dh = s / m.bh;
+  }
+  const dw = dh * ar;
+  const fx = (m.bx + m.bw / 2) * dw;
+  const fy = (m.by + m.bh) * dh;
+  ctx.save();
+  ctx.translate(x, y);
+  if (dir < 0) ctx.scale(-1, 1);
+  ctx.drawImage(img, -fx, -fy, dw, dh);
+  ctx.restore();
+  return true;
+}
+
 /* ---------------- screentone ---------------- */
 const toneCache = new Map();
 export function tonePattern(ctx, density) {
@@ -253,6 +309,7 @@ export function drawPencilShadow(ctx, w, h, sweepX, alpha = 0.4) {
 
 export function drawHandWithEraser(ctx, w, h, drop) {
   // drop: 0 (offscreen top) -> 1 (fully descended). Spread/boss visual.
+  if (drawSprite(ctx, 'hand-eraser', w * 0.5, drop * h * 0.62, h * 0.52, 1)) return;
   ctx.save();
   const cx = w * 0.5;
   const y = -h * 1.0 + drop * h * 1.32;
@@ -296,6 +353,15 @@ export function drawHandWithEraser(ctx, w, h, drop) {
 
 /* ---------------- smudge creature ---------------- */
 export function drawSmudge(ctx, x, y, r, t, hpFrac = 1) {
+  // AI sprite with a living wobble; vector scribble as fallback
+  const name = hpFrac < 0.55 ? 'smudge-hurt' : 'smudge-idle';
+  ctx.save();
+  ctx.translate(x, y + r * 0.85);
+  ctx.rotate(Math.sin(t * 5) * 0.05);
+  ctx.scale(1 + Math.sin(t * 6) * 0.03, 1 - Math.sin(t * 6) * 0.03);
+  const ok = drawSprite(ctx, name, 0, 0, r * 1.9, 1);
+  ctx.restore();
+  if (ok) return;
   ctx.save();
   ctx.translate(x, y);
   const wob = Math.sin(t * 6) * r * 0.06;
