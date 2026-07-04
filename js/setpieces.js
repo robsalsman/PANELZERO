@@ -2,7 +2,7 @@
 // both route bosses, the desk, and the three ending spreads.
 // Same painter contract as scenes.js.
 import {
-  INK, PAPER, fillTone, impactStar, drawSFXText, speechBubble, wrapText,
+  INK, PAPER, C, fillTone, impactStar, drawSFXText, speechBubble, wrapText,
   drawHandWithEraser, drawSmudge,
 } from './art.js';
 import { drawKai, drawSumi, drawRejected } from './chars.js';
@@ -31,8 +31,11 @@ function endingTitle(ctx, w, h, title, sub, yTitle) {
 
 function seaBase(ctx, w, h, t, level = 0.62) {
   ctx.save();
-  ctx.fillStyle = INK;
-  ctx.globalAlpha = 0.85;
+  const grad = ctx.createLinearGradient(0, h * level, 0, h);
+  grad.addColorStop(0, C.sea1);
+  grad.addColorStop(1, C.sea2);
+  ctx.fillStyle = grad;
+  ctx.globalAlpha = 0.95;
   ctx.beginPath();
   const yb = h * level;
   ctx.moveTo(0, h);
@@ -49,7 +52,7 @@ function seaBase(ctx, w, h, t, level = 0.62) {
 // serpentine brush-stroke body arcs above the water
 function leviathanBody(ctx, w, h, t, { head = true, hp = 1 } = {}) {
   ctx.save();
-  ctx.strokeStyle = INK;
+  ctx.strokeStyle = C.leviathan;
   ctx.lineCap = 'round';
   const arcs = [
     [0.2, 0.5, 0.12], [0.5, 0.42, 0.15], [0.8, 0.52, 0.1],
@@ -61,10 +64,10 @@ function leviathanBody(ctx, w, h, t, { head = true, hp = 1 } = {}) {
     ctx.stroke();
   }
   if (head) {
-    // brush-tip head with one huge eye
+    // brush-tip head with one huge golden eye
     const hx = w * 0.78;
     const hy = h * 0.32 + Math.sin(t * 2.2) * h * 0.02;
-    ctx.fillStyle = INK;
+    ctx.fillStyle = C.leviathan;
     ctx.beginPath();
     ctx.moveTo(hx - w * 0.14, hy + h * 0.1);
     ctx.quadraticCurveTo(hx - w * 0.05, hy - h * 0.12, hx + w * 0.05, hy - h * 0.14);
@@ -80,8 +83,8 @@ function leviathanBody(ctx, w, h, t, { head = true, hp = 1 } = {}) {
       ctx.quadraticCurveTo(hx + w * (0.08 + i * 0.03), hy - h * 0.2, hx + w * (0.12 + i * 0.035), hy - h * 0.24);
       ctx.stroke();
     }
-    // the eye
-    ctx.fillStyle = PAPER;
+    // the eye — molten gold
+    ctx.fillStyle = C.leviathanEye;
     ctx.beginPath();
     ctx.ellipse(hx - w * 0.04, hy - h * 0.02, w * 0.045, w * 0.055, 0, 0, Math.PI * 2);
     ctx.fill();
@@ -192,7 +195,7 @@ export const setpieces = {
     } else {
       seaBase(ctx, w, h, o.t, 0.55);
       // great wave curling above
-      ctx.fillStyle = INK;
+      ctx.fillStyle = C.sea1;
       ctx.beginPath();
       ctx.moveTo(0, h * 0.55);
       ctx.bezierCurveTo(w * 0.1, h * 0.15, w * 0.55, h * 0.05, w * 0.72, h * 0.22);
@@ -200,7 +203,7 @@ export const setpieces = {
       ctx.quadraticCurveTo(w * 0.3, h * 0.42, w * 0.28, h * 0.55);
       ctx.closePath();
       ctx.fill();
-      ctx.strokeStyle = PAPER;
+      ctx.strokeStyle = C.foam;
       ctx.lineWidth = 3;
       for (let i = 0; i < 4; i++) {
         ctx.beginPath();
@@ -272,7 +275,7 @@ export const setpieces = {
       seaBase(ctx, w, h, o.t, 0.7);
       // finished as a proper dragon-koi, leaping with joy
       ctx.save();
-      ctx.strokeStyle = INK;
+      ctx.strokeStyle = C.leviathan;
       ctx.lineWidth = w * 0.05;
       ctx.lineCap = 'round';
       ctx.beginPath();
@@ -290,7 +293,7 @@ export const setpieces = {
         ctx.stroke();
       }
       // happy eye + whiskers
-      ctx.fillStyle = PAPER;
+      ctx.fillStyle = C.leviathanEye;
       ctx.beginPath();
       ctx.arc(w * 0.75, h * 0.27, w * 0.035, 0, Math.PI * 2);
       ctx.fill();

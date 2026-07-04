@@ -1,8 +1,26 @@
 // Procedural ink art (M3). Black/white vector shapes, dot screentone, SFX text
 // as physical objects, the Artist's Hand. No image assets — everything is drawn.
 
-export const INK = '#111111';
+export const INK = '#1c1c26';
 export const PAPER = '#f7f4ec';
+
+// full-color manga palette — modern webtoon color over paper
+export const C = {
+  // Kai
+  kaiHair: '#252b40', kaiSheen: '#51628c', kaiSkin: '#f6d9ba', kaiSkinShade: '#e9c096',
+  kaiEye: '#d4791f', kaiJacket: '#c8392e', kaiJacketShade: '#992a21', kaiTee: '#f4f1ea',
+  kaiPants: '#2b2f40', kaiShoe: '#c8392e',
+  // Sumi
+  sumiHair: '#2c2545', sumiSheen: '#6a55a3', sumiSkin: '#f7ece4', sumiEye: '#7a5fc0',
+  sumiDress: '#262243', sumiGlow: '#6fd8e6',
+  // Rejected One (unfinished — desaturated pencil)
+  rejHair: '#565049', rejSkin: '#e6ddcd', rejCloth: '#93897a', rejEye: '#6b6156',
+  // world
+  smudge: '#544a63', leviathan: '#233156', leviathanEye: '#e0a63c',
+  sea1: '#1d2c5e', sea2: '#0e1738', foam: '#bfe3ee',
+  wood1: '#c09059', wood2: '#a37a49',
+  gold: '#e0a63c', red: '#c8392e',
+};
 
 /* ---------------- screentone ---------------- */
 const toneCache = new Map();
@@ -96,7 +114,7 @@ export function impactStar(ctx, x, y, r, spikes = 9) {
 }
 
 /* ---------------- SFX text (physical objects) ---------------- */
-export function drawSFXText(ctx, text, x, y, size, rot = 0) {
+export function drawSFXText(ctx, text, x, y, size, rot = 0, fill = PAPER, outline = INK) {
   ctx.save();
   ctx.translate(x, y);
   ctx.rotate(rot);
@@ -110,10 +128,10 @@ export function drawSFXText(ctx, text, x, y, size, rot = 0) {
     ctx.save();
     ctx.translate(x0 + i * step, Math.cos(i * 7.7) * size * 0.07);
     ctx.rotate(Math.sin(i * 12.9 + text.length) * 0.1);
-    ctx.strokeStyle = INK;
+    ctx.strokeStyle = outline;
     ctx.lineWidth = size * 0.18;
     ctx.strokeText(text[i], 0, 0);
-    ctx.fillStyle = PAPER;
+    ctx.fillStyle = fill;
     ctx.fillText(text[i], 0, 0);
     ctx.restore();
   }
@@ -281,8 +299,8 @@ export function drawSmudge(ctx, x, y, r, t, hpFrac = 1) {
   ctx.save();
   ctx.translate(x, y);
   const wob = Math.sin(t * 6) * r * 0.06;
-  // scribbly gray body
-  ctx.fillStyle = 'rgba(17,17,17,0.55)';
+  // scribbly graphite-violet body
+  ctx.fillStyle = 'rgba(84,74,99,0.8)';
   ctx.beginPath();
   const n = 14;
   for (let i = 0; i <= n; i++) {
@@ -295,7 +313,7 @@ export function drawSmudge(ctx, x, y, r, t, hpFrac = 1) {
   ctx.closePath();
   ctx.fill();
   // scribble strokes on top
-  ctx.strokeStyle = 'rgba(17,17,17,0.7)';
+  ctx.strokeStyle = 'rgba(38,32,50,0.85)';
   ctx.lineWidth = 2;
   for (let i = 0; i < 6; i++) {
     ctx.beginPath();
@@ -305,7 +323,7 @@ export function drawSmudge(ctx, x, y, r, t, hpFrac = 1) {
     ctx.stroke();
   }
   // angry eyes
-  ctx.fillStyle = PAPER;
+  ctx.fillStyle = '#ffe9a8';
   ctx.beginPath();
   ctx.ellipse(-r * 0.25, -r * 0.15 + wob, r * 0.14, r * 0.18, 0.2, 0, Math.PI * 2);
   ctx.ellipse(r * 0.25, -r * 0.15 + wob, r * 0.14, r * 0.18, -0.2, 0, Math.PI * 2);

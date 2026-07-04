@@ -3,7 +3,7 @@
 // `done` (merged when the panel is complete) and `byFlag` (merged when a
 // story flag is set) variants. Positions are normalized to the panel.
 import {
-  INK, PAPER, fillTone, speedLinesV, speedLinesH, impactStar, drawSFXText,
+  INK, PAPER, C, fillTone, speedLinesV, speedLinesH, impactStar, drawSFXText,
   drawPencilShadow, drawHandWithEraser, drawSmudge, speechBubble,
 } from './art.js';
 import { drawKai, drawSumi, drawRejected } from './chars.js';
@@ -42,8 +42,10 @@ function drawBg(ctx, w, h, bg, t) {
       break;
     }
     case 'deadpanels': {
-      // graveyard of tilted, abandoned panels
+      // graveyard of tilted, abandoned panels — cold violet-gray air
       ctx.save();
+      ctx.fillStyle = 'rgba(84,74,99,0.12)';
+      ctx.fillRect(0, 0, w, h);
       ctx.strokeStyle = INK;
       const boxes = [
         [0.06, 0.15, 0.26, 0.3, -0.12], [0.4, 0.08, 0.22, 0.34, 0.08],
@@ -69,10 +71,18 @@ function drawBg(ctx, w, h, bg, t) {
       break;
     }
     case 'sea': {
-      // ink sea: dark rolling waves over the lower half
+      // the ink sea: deep indigo swell under a pale sky
       ctx.save();
-      ctx.fillStyle = INK;
-      ctx.globalAlpha = 0.85;
+      const sky = ctx.createLinearGradient(0, 0, 0, h * 0.62);
+      sky.addColorStop(0, 'rgba(111,216,230,0.18)');
+      sky.addColorStop(1, 'rgba(111,216,230,0)');
+      ctx.fillStyle = sky;
+      ctx.fillRect(0, 0, w, h * 0.62);
+      const grad = ctx.createLinearGradient(0, h * 0.55, 0, h);
+      grad.addColorStop(0, C.sea1);
+      grad.addColorStop(1, C.sea2);
+      ctx.fillStyle = grad;
+      ctx.globalAlpha = 0.95;
       ctx.beginPath();
       const yBase = h * 0.62;
       ctx.moveTo(0, h);
@@ -87,8 +97,8 @@ function drawBg(ctx, w, h, bg, t) {
       ctx.closePath();
       ctx.fill();
       // foam highlights
-      ctx.strokeStyle = PAPER;
-      ctx.globalAlpha = 0.5;
+      ctx.strokeStyle = C.foam;
+      ctx.globalAlpha = 0.6;
       ctx.lineWidth = 2.5;
       for (let i = 0; i < 3; i++) {
         ctx.beginPath();
@@ -103,10 +113,22 @@ function drawBg(ctx, w, h, bg, t) {
       break;
     }
     case 'desk': {
-      // meta: the manga page lies on the Artist's desk
+      // meta: the manga page lies on the Artist's warm wooden desk
       ctx.save();
-      ctx.fillStyle = 'rgba(17,17,17,0.14)';
+      const wood = ctx.createLinearGradient(0, 0, 0, h * 0.32);
+      wood.addColorStop(0, C.wood1);
+      wood.addColorStop(1, C.wood2);
+      ctx.fillStyle = wood;
       ctx.fillRect(0, 0, w, h * 0.32); // desk beyond the page edge
+      // grain
+      ctx.strokeStyle = 'rgba(90,60,30,0.25)';
+      ctx.lineWidth = 1.5;
+      for (let gy2 = h * 0.05; gy2 < h * 0.3; gy2 += h * 0.055) {
+        ctx.beginPath();
+        ctx.moveTo(0, gy2);
+        ctx.bezierCurveTo(w * 0.3, gy2 - 4, w * 0.6, gy2 + 4, w, gy2);
+        ctx.stroke();
+      }
       ctx.strokeStyle = INK;
       ctx.lineWidth = 4;
       ctx.beginPath();
@@ -136,7 +158,17 @@ function drawBg(ctx, w, h, bg, t) {
       ctx.restore();
       break;
     }
-    case 'blank': break; // pure paper — Panel Zero
+    case 'blank': {
+      // Panel Zero: white void with a faint golden dawn at its heart
+      const g2 = ctx.createRadialGradient(w / 2, h * 0.4, 0, w / 2, h * 0.4, Math.max(w, h) * 0.8);
+      g2.addColorStop(0, 'rgba(224,166,60,0.14)');
+      g2.addColorStop(1, 'rgba(224,166,60,0)');
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, w, h);
+      ctx.fillStyle = g2;
+      ctx.fillRect(0, 0, w, h);
+      break;
+    }
   }
 }
 
@@ -305,6 +337,24 @@ function drawProp(ctx, w, h, pr, t) {
   }
 }
 
+// raster backdrop cache (for future image assets — AI-generated or drawn)
+const imgCache = new Map();
+function backdrop(ctx, w, h, src) {
+  let img = imgCache.get(src);
+  if (!img) {
+    img = new Image();
+    img.src = src;
+    imgCache.set(src, img);
+  }
+  if (img.complete && img.naturalWidth) {
+    // cover-fit
+    const sc = Math.max(w / img.naturalWidth, h / img.naturalHeight);
+    const dw = img.naturalWidth * sc;
+    const dh = img.naturalHeight * sc;
+    ctx.drawImage(img, (w - dw) / 2, (h - dh) / 2, dw, dh);
+  }
+}
+
 export function composeScene(ctx, w, h, artDef, o) {
   // resolve variants: byFlag merges (first matching flag wins per key), done merges last
   let def = artDef;
@@ -317,6 +367,7 @@ export function composeScene(ctx, w, h, artDef, o) {
 
   const t = o.t === 999 ? 3 : o.t; // completed panels freeze at a settled moment
 
+  if (def.img) backdrop(ctx, w, h, def.img);
   const bgs = Array.isArray(def.bg) ? def.bg : def.bg ? [def.bg] : [];
   for (const bg of bgs) drawBg(ctx, w, h, bg, t);
 

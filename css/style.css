@@ -111,8 +111,8 @@ html, body {
   font-weight: 900;
   letter-spacing: 0.12em;
   color: #f4f1ea;
-  background: #111;
-  border: 3px solid #111;
+  background: #c8392e;
+  border: 3px solid #1c1c26;
   padding: 14px 34px;
   border-radius: 3px;
   box-shadow: 4px 4px 0 rgba(17,17,17,0.3);
@@ -142,7 +142,8 @@ html, body {
   text-shadow: 5px 5px 0 rgba(17,17,17,0.18);
   animation: rank-in 0.45s cubic-bezier(0.2, 2.2, 0.4, 1);
 }
-.rank[data-rank="S"] { font-size: 92px; }
+.rank[data-rank="S"] { font-size: 92px; color: #e0a63c; }
+.rank[data-rank="A"] { color: #c8392e; }
 @keyframes rank-in {
   from { transform: rotate(-6deg) scale(2.4); opacity: 0; }
   to   { transform: rotate(-6deg) scale(1); opacity: 1; }
@@ -160,7 +161,9 @@ html, body {
   display: inline-block;
   margin-bottom: 20px;
   padding: 8px 20px;
-  border: 3px solid #111;
+  color: #9a6b12;
+  border: 3px solid #e0a63c;
+  background: rgba(224,166,60,0.12);
   border-radius: 999px;
   font-weight: 900;
   letter-spacing: 0.1em;

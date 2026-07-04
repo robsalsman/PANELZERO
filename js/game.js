@@ -7,7 +7,7 @@ import { createChallenge } from './verbs.js';
 import { scenes } from './scenes.js';
 import { setpieces } from './setpieces.js';
 import { composeScene } from './compose.js';
-import { INK, PAPER, caption as drawCaption, drawVerbIcon } from './art.js';
+import { INK, PAPER, C, caption as drawCaption, drawVerbIcon } from './art.js';
 import { sfx, buzz, initAudio } from './sfx.js';
 import { saveGet, saveSet } from './save.js';
 
@@ -21,8 +21,9 @@ const SAVE_KEY = 'save2';
 const PAINTERS = { ...scenes, ...setpieces };
 const ease = (t) => 1 - Math.pow(1 - t, 3);
 
-// manga-style action stamp: fat text, paper outline over ink
+// manga-style action stamp: fat colored text, paper halo, ink edge
 function drawStamp(ctx, text) {
+  const color = text.startsWith('PERFECT') ? C.gold : text === 'CLOSE!' ? C.red : INK;
   ctx.font = '900 30px -apple-system, "Arial Black", sans-serif';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
@@ -31,9 +32,9 @@ function drawStamp(ctx, text) {
   ctx.lineWidth = 9;
   ctx.strokeText(text, 0, 0);
   ctx.strokeStyle = INK;
-  ctx.lineWidth = 2.5;
+  ctx.lineWidth = 3.5;
   ctx.strokeText(text, 0, 0);
-  ctx.fillStyle = INK;
+  ctx.fillStyle = color;
   ctx.fillText(text, 0, 0);
 }
 
@@ -88,7 +89,7 @@ export class Game {
 
   /* ---------------- layout ---------------- */
   layout() {
-    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    const dpr = Math.min(3, window.devicePixelRatio || 1); // full-resolution rendering
     this.W = window.innerWidth;
     this.H = window.innerHeight;
     this.canvas.width = Math.round(this.W * dpr);
@@ -591,7 +592,7 @@ export class Game {
       ctx.strokeStyle = PAPER;
       ctx.lineWidth = 6;
       ctx.strokeText(`${this.combo} COMBO`, 0, 0);
-      ctx.fillStyle = INK;
+      ctx.fillStyle = C.red;
       ctx.fillText(`${this.combo} COMBO`, 0, 0);
       ctx.restore();
     }
