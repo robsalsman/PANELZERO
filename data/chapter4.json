@@ -106,7 +106,17 @@
         "bg": [
           "speedh"
         ],
-        "ground": 0.86
+        "ground": 0.86,
+        "actors": [
+          {
+            "who": "kai",
+            "pose": "fight",
+            "x": 0.22,
+            "y": 0.92,
+            "s": 0.42,
+            "dir": 1
+          }
+        ]
       },
       "caption": "Eraser crumbs \u2014 and they're ALIVE.",
       "params": {

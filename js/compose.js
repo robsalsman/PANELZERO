@@ -4,7 +4,7 @@
 // story flag is set) variants. Positions are normalized to the panel.
 import {
   INK, PAPER, C, fillTone, speedLinesV, speedLinesH, impactStar, drawSFXText,
-  drawPencilShadow, drawHandWithEraser, drawSmudge, speechBubble,
+  drawPencilShadow, drawHandWithEraser, drawSmudge, speechBubble, drawRaft,
 } from './art.js';
 import { drawKai, drawSumi, drawRejected, drawKen, drawYuri, drawGoma, drawArtist } from './chars.js';
 
@@ -204,22 +204,11 @@ function drawProp(ctx, w, h, pr, t) {
       impactStar(ctx, pr.x * w, pr.y * h, (pr.r || 0.12) * Math.min(w, h), pr.spikes || 9);
       break;
     case 'raft': {
-      // a torn panel used as a raft
+      // a torn manga page used as a raft
       ctx.save();
       ctx.translate(pr.x * w, pr.y * h + Math.sin(t * 1.5) * h * 0.012);
       ctx.rotate(Math.sin(t * 1.2) * 0.03);
-      const rw = (pr.w || 0.5) * w;
-      ctx.fillStyle = PAPER;
-      ctx.strokeStyle = INK;
-      ctx.lineWidth = 4;
-      ctx.beginPath();
-      ctx.moveTo(-rw / 2, 0);
-      ctx.lineTo(rw / 2, 0);
-      ctx.lineTo(rw / 2 - 8, h * 0.05);
-      ctx.lineTo(-rw / 2 + 6, h * 0.045);
-      ctx.closePath();
-      ctx.fill();
-      ctx.stroke();
+      drawRaft(ctx, 0, 0, (pr.w || 0.5) * w, t);
       ctx.restore();
       break;
     }

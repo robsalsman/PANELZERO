@@ -11,7 +11,78 @@
       "art": {
         "bg": [
           "radial"
-        ]
+        ],
+        "actors": [
+          {
+            "who": "kai",
+            "pose": "stand",
+            "x": 0.26,
+            "y": 0.92,
+            "s": 0.38,
+            "dir": 1
+          }
+        ],
+        "byFlag": {
+          "duel_ken": {
+            "actors": [
+              {
+                "who": "kai",
+                "pose": "stand",
+                "x": 0.26,
+                "y": 0.92,
+                "s": 0.38,
+                "dir": 1
+              },
+              {
+                "who": "ken",
+                "pose": "kneel",
+                "x": 0.7,
+                "y": 0.92,
+                "s": 0.46,
+                "dir": -1
+              }
+            ]
+          },
+          "duel_yuri": {
+            "actors": [
+              {
+                "who": "kai",
+                "pose": "stand",
+                "x": 0.26,
+                "y": 0.92,
+                "s": 0.38,
+                "dir": 1
+              },
+              {
+                "who": "yuri",
+                "pose": "stand",
+                "x": 0.7,
+                "y": 0.92,
+                "s": 0.46,
+                "dir": -1
+              }
+            ]
+          },
+          "duel_goma": {
+            "actors": [
+              {
+                "who": "kai",
+                "pose": "stand",
+                "x": 0.26,
+                "y": 0.92,
+                "s": 0.38,
+                "dir": 1
+              },
+              {
+                "who": "goma",
+                "x": 0.7,
+                "y": 0.92,
+                "s": 0.4,
+                "emotion": "serious"
+              }
+            ]
+          }
+        }
       },
       "captionByFlag": {
         "duel_ken": "No bell. Ken bows \u2014 a real one, ninety degrees \u2014 then the ground leaves.",
@@ -32,7 +103,44 @@
       "art": {
         "bg": [
           "speedh"
-        ]
+        ],
+        "byFlag": {
+          "duel_ken": {
+            "actors": [
+              {
+                "who": "ken",
+                "pose": "fight",
+                "x": 0.72,
+                "y": 0.92,
+                "s": 0.48,
+                "dir": -1
+              }
+            ]
+          },
+          "duel_yuri": {
+            "actors": [
+              {
+                "who": "yuri",
+                "pose": "fight",
+                "x": 0.72,
+                "y": 0.92,
+                "s": 0.48,
+                "dir": -1
+              }
+            ]
+          },
+          "duel_goma": {
+            "actors": [
+              {
+                "who": "goma",
+                "x": 0.72,
+                "y": 0.92,
+                "s": 0.408,
+                "emotion": "serious"
+              }
+            ]
+          }
+        }
       },
       "boss": {
         "name": "THE DRAFT \u2014 OPENING BARRAGE",
@@ -203,7 +311,44 @@
       "art": {
         "bg": [
           "speedh"
-        ]
+        ],
+        "byFlag": {
+          "duel_ken": {
+            "actors": [
+              {
+                "who": "ken",
+                "pose": "fight",
+                "x": 0.5,
+                "y": 0.92,
+                "s": 0.42,
+                "dir": -1
+              }
+            ]
+          },
+          "duel_yuri": {
+            "actors": [
+              {
+                "who": "yuri",
+                "pose": "fight",
+                "x": 0.5,
+                "y": 0.92,
+                "s": 0.42,
+                "dir": -1
+              }
+            ]
+          },
+          "duel_goma": {
+            "actors": [
+              {
+                "who": "goma",
+                "x": 0.5,
+                "y": 0.92,
+                "s": 0.357,
+                "emotion": "serious"
+              }
+            ]
+          }
+        }
       },
       "boss": {
         "name": "THE DRAFT \u2014 CROSS RUSH",
@@ -287,7 +432,78 @@
       "art": {
         "bg": [
           "toneD"
-        ]
+        ],
+        "actors": [
+          {
+            "who": "kai",
+            "pose": "brace",
+            "x": 0.24,
+            "y": 0.92,
+            "s": 0.38,
+            "dir": 1
+          }
+        ],
+        "byFlag": {
+          "duel_ken": {
+            "actors": [
+              {
+                "who": "kai",
+                "pose": "brace",
+                "x": 0.24,
+                "y": 0.92,
+                "s": 0.38,
+                "dir": 1
+              },
+              {
+                "who": "ken",
+                "pose": "fight",
+                "x": 0.72,
+                "y": 0.92,
+                "s": 0.48,
+                "dir": -1
+              }
+            ]
+          },
+          "duel_yuri": {
+            "actors": [
+              {
+                "who": "kai",
+                "pose": "brace",
+                "x": 0.24,
+                "y": 0.92,
+                "s": 0.38,
+                "dir": 1
+              },
+              {
+                "who": "yuri",
+                "pose": "fight",
+                "x": 0.72,
+                "y": 0.92,
+                "s": 0.48,
+                "dir": -1
+              }
+            ]
+          },
+          "duel_goma": {
+            "actors": [
+              {
+                "who": "kai",
+                "pose": "brace",
+                "x": 0.24,
+                "y": 0.92,
+                "s": 0.38,
+                "dir": 1
+              },
+              {
+                "who": "goma",
+                "x": 0.72,
+                "y": 0.92,
+                "s": 0.408,
+                "emotion": "serious"
+              }
+            ]
+          }
+        }
       },
       "captionByFlag": {
         "duel_ken": "\"FINAL LESSON: IGNITION FIST.\" The air itself inhales. Do not be here when it lands.",
@@ -309,7 +525,44 @@
       "art": {
         "bg": [
           "speedh"
-        ]
+        ],
+        "byFlag": {
+          "duel_ken": {
+            "actors": [
+              {
+                "who": "ken",
+                "pose": "fight",
+                "x": 0.72,
+                "y": 0.92,
+                "s": 0.48,
+                "dir": -1
+              }
+            ]
+          },
+          "duel_yuri": {
+            "actors": [
+              {
+                "who": "yuri",
+                "pose": "fight",
+                "x": 0.72,
+                "y": 0.92,
+                "s": 0.48,
+                "dir": -1
+              }
+            ]
+          },
+          "duel_goma": {
+            "actors": [
+              {
+                "who": "goma",
+                "x": 0.72,
+                "y": 0.92,
+                "s": 0.408,
+                "emotion": "serious"
+              }
+            ]
+          }
+        }
       },
       "boss": {
         "name": "THE DRAFT \u2014 LOW SCYTHE",

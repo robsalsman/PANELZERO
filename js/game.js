@@ -7,7 +7,7 @@ import { createChallenge } from './verbs.js';
 import { scenes } from './scenes.js';
 import { setpieces } from './setpieces.js';
 import { composeScene, drawBackdrop } from './compose.js';
-import { INK, PAPER, C, caption as drawCaption, drawVerbIcon } from './art.js';
+import { INK, PAPER, C, caption as drawCaption, drawVerbIcon, setBubbleMinTop } from './art.js';
 import { sfx, buzz, initAudio } from './sfx.js';
 import { saveGet, saveSet } from './save.js';
 
@@ -677,6 +677,11 @@ export class Game {
     }
 
     ctx.translate(r.x, r.y);
+    // measure the caption first so every bubble in this panel clamps below it
+    const capText = this.captionFor(def);
+    const capY = def.boss ? 44 : 10;
+    const capFs = Math.min(19, Math.max(12, r.h * 0.042));
+    setBubbleMinTop(capText ? capY + drawCaption(ctx, capText, r.w, capY, capFs, true) + 8 : 0);
     const hasImg = def.img ? drawBackdrop(ctx, r.w, r.h, def.img) : false;
     const o = {
       t: isCurrent ? this.activeT : 999,
@@ -692,8 +697,7 @@ export class Game {
       composeScene(ctx, r.w, r.h, def.art, o);
     }
 
-    const capText = this.captionFor(def);
-    if (capText) drawCaption(ctx, capText, r.w, def.boss ? 44 : 10, Math.min(19, Math.max(12, r.h * 0.042)));
+    if (capText) drawCaption(ctx, capText, r.w, capY, capFs);
 
     if (isCurrent && this.phase === 'active' && this.challenge) {
       this.challenge.draw(ctx, r.w, r.h);

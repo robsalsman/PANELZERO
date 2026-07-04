@@ -147,6 +147,25 @@
       "art": {
         "bg": [
           "toneD"
+        ],
+        "actors": [
+          {
+            "who": "kai",
+            "pose": "brace",
+            "x": 0.28,
+            "y": 0.92,
+            "s": 0.36,
+            "dir": 1
+          },
+          {
+            "who": "artist",
+            "pose": "sit",
+            "x": 0.68,
+            "y": 0.9,
+            "s": 0.44,
+            "dir": -1,
+            "emotion": "sleep"
+          }
         ]
       },
       "caption": "The Hand passes THROUGH the room. It was never a monster. It's what's left of a person when she stops fighting. Hold on until it passes.",
@@ -165,6 +184,16 @@
       "art": {
         "bg": [
           "speedv"
+        ],
+        "actors": [
+          {
+            "who": "kai",
+            "pose": "run",
+            "x": 0.24,
+            "y": 0.92,
+            "s": 0.4,
+            "dir": 1
+          }
         ]
       },
       "caption": "The room begins to erase itself \u2014 twelve years of pages lifting off the desk. CATCH THEM. ALL OF THEM.",

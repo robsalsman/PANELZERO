@@ -226,6 +226,24 @@
       "art": {
         "bg": [
           "toneD"
+        ],
+        "actors": [
+          {
+            "who": "kai",
+            "pose": "stand",
+            "x": 0.3,
+            "y": 0.92,
+            "s": 0.36,
+            "dir": 1
+          },
+          {
+            "who": "sumi",
+            "pose": "float",
+            "x": 0.62,
+            "y": 0.88,
+            "s": 0.3,
+            "dir": 1
+          }
         ]
       },
       "caption": "Far off, something drags across the sky. Neither of them mentions it. Hold the quiet.",

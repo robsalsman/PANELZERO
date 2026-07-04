@@ -51,11 +51,15 @@
         "options": [
           {
             "text": "Where am I?",
-            "flag": null
+            "flag": null,
+            "x": 0.26,
+            "y": 0.13
           },
           {
             "text": "...I'm in a manga.",
-            "flag": "aware"
+            "flag": "aware",
+            "x": 0.24,
+            "y": 0.5
           }
         ]
       }

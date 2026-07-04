@@ -210,6 +210,11 @@ export function wrapText(ctx, text, maxW) {
   return lines;
 }
 
+// Bubbles never cover the panel caption: game.js sets this to the caption's
+// bottom edge each frame and every bubble drawn below shifts down past it.
+let bubbleMinTop = 0;
+export function setBubbleMinTop(v) { bubbleMinTop = v; }
+
 export function speechBubble(ctx, text, x, y, maxW, opts = {}) {
   const { tail = null, jagged = false, fs = 15, selected = false, faded = false } = opts;
   ctx.save();
@@ -220,7 +225,11 @@ export function speechBubble(ctx, text, x, y, maxW, opts = {}) {
   const bw = tw + fs * 1.6;
   const bh = lines.length * lh + fs * 1.1;
   const bx = x - bw / 2;
-  const by = y - bh / 2;
+  let by = y - bh / 2;
+  if (bubbleMinTop && by < bubbleMinTop) {
+    y += bubbleMinTop - by;
+    by = bubbleMinTop;
+  }
 
   ctx.globalAlpha = faded ? 0.3 : 1;
   ctx.fillStyle = PAPER;
@@ -264,11 +273,16 @@ export function speechBubble(ctx, text, x, y, maxW, opts = {}) {
   return { x: bx, y: by, w: bw, h: bh };
 }
 
-export function caption(ctx, text, w, y, fs = 14) {
+export function caption(ctx, text, w, y, fs = 14, measureOnly = false) {
   ctx.save();
   ctx.font = `700 ${fs}px -apple-system, "Segoe UI", sans-serif`;
   const pad = fs * 0.8;
-  const lines = wrapText(ctx, text, w * 0.8);
+  // keep the box clear of the verb icon in the top-right corner
+  const lines = wrapText(ctx, text, Math.min(w * 0.8, w - 100));
+  if (measureOnly) {
+    ctx.restore();
+    return lines.length * fs * 1.35 + pad;
+  }
   const tw = Math.max(...lines.map((l) => ctx.measureText(l).width));
   const bw = tw + pad * 2;
   const bh = lines.length * fs * 1.35 + pad;
@@ -352,6 +366,105 @@ export function drawHandWithEraser(ctx, w, h, drop) {
 }
 
 /* ---------------- smudge creature ---------------- */
+// A torn manga page riding the ink sea. (cx, cy) is the deck's top-center,
+// rw the deck width; bob/tilt animation is applied by the caller via t.
+export function drawRaft(ctx, cx, cy, rw, t = 0) {
+  const dh = rw * 0.09; // deck depth (perspective)
+  const th = rw * 0.05; // paper thickness
+  // jagged torn outline offsets (fixed pattern so it doesn't shimmer)
+  const jag = [0, 0.4, -0.3, 0.55, -0.15, 0.35, -0.45, 0.2, -0.25, 0.5];
+  const j = (i, amp) => jag[((i % jag.length) + jag.length) % jag.length] * amp;
+  ctx.save();
+  ctx.translate(cx, cy);
+
+  // shadow on the water
+  ctx.fillStyle = 'rgba(8, 12, 30, 0.35)';
+  ctx.beginPath();
+  ctx.ellipse(0, dh + th * 1.4, rw * 0.55, th * 1.1, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  // torn deck silhouette — front edge dips, all edges jagged
+  const deck = new Path2D();
+  const steps = 8;
+  deck.moveTo(-rw / 2, 0);
+  for (let i = 1; i <= steps; i++) { // back edge (top)
+    deck.lineTo(-rw / 2 + (rw * i) / steps, j(i, rw * 0.018));
+  }
+  deck.lineTo(rw / 2 - rw * 0.06 + j(1, rw * 0.02), dh); // right torn corner
+  for (let i = steps - 1; i >= 0; i--) { // front edge
+    deck.lineTo(-rw / 2 + rw * 0.05 + (rw * 0.9 * i) / steps, dh + j(i + 3, rw * 0.02));
+  }
+  deck.closePath();
+
+  // paper side (thickness) under the front edge
+  ctx.fillStyle = '#d9d2c0';
+  ctx.strokeStyle = INK;
+  ctx.lineWidth = Math.max(2, rw * 0.012);
+  ctx.save();
+  ctx.translate(0, th);
+  ctx.fill(deck);
+  ctx.stroke(deck);
+  ctx.restore();
+
+  // deck top
+  const grad = ctx.createLinearGradient(-rw / 2, 0, rw / 2, dh);
+  grad.addColorStop(0, '#f9f6ee');
+  grad.addColorStop(1, '#e8e1cf');
+  ctx.fillStyle = grad;
+  ctx.fill(deck);
+  ctx.stroke(deck);
+
+  // relics of the page it was torn from: a broken panel border...
+  ctx.save();
+  ctx.clip(deck);
+  ctx.strokeStyle = INK;
+  ctx.globalAlpha = 0.75;
+  ctx.lineWidth = Math.max(2.5, rw * 0.016);
+  ctx.beginPath();
+  ctx.moveTo(-rw * 0.34, dh * 0.18);
+  ctx.lineTo(rw * 0.05, dh * 0.05);
+  ctx.moveTo(rw * 0.16, dh * 0.1);
+  ctx.lineTo(rw * 0.4, dh * 0.3);
+  ctx.stroke();
+  // ...a patch of halftone tone...
+  ctx.globalAlpha = 0.3;
+  ctx.fillStyle = INK;
+  for (let gx = 0; gx < 6; gx++) {
+    for (let gy = 0; gy < 3; gy++) {
+      ctx.beginPath();
+      ctx.arc(-rw * 0.42 + gx * rw * 0.045, dh * 0.35 + gy * rw * 0.04, rw * 0.008, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+  // ...and a scrap of speech-bubble edge
+  ctx.globalAlpha = 0.5;
+  ctx.strokeStyle = INK;
+  ctx.lineWidth = Math.max(2, rw * 0.01);
+  ctx.beginPath();
+  ctx.arc(rw * 0.3, dh * 0.85, rw * 0.14, Math.PI * 1.1, Math.PI * 1.9);
+  ctx.stroke();
+  ctx.restore();
+
+  // foam at the waterline — bright rim so the hull reads against dark water
+  ctx.strokeStyle = 'rgba(247, 244, 236, 0.85)';
+  ctx.lineWidth = Math.max(2, rw * 0.014);
+  ctx.beginPath();
+  for (let i = 0; i <= 10; i++) {
+    const fx = -rw * 0.55 + (rw * 1.1 * i) / 10;
+    const fy = dh + th * 1.15 + Math.sin(t * 3 + i * 1.7) * th * 0.35;
+    if (i === 0) ctx.moveTo(fx, fy); else ctx.lineTo(fx, fy);
+  }
+  ctx.stroke();
+  ctx.fillStyle = 'rgba(247, 244, 236, 0.7)';
+  for (let i = 0; i < 5; i++) {
+    const fx = -rw * 0.5 + rw * 0.25 * i + Math.sin(t * 2 + i * 2.1) * rw * 0.02;
+    ctx.beginPath();
+    ctx.arc(fx, dh + th * (1.2 + (i % 2) * 0.5), rw * (0.014 + (i % 3) * 0.006), 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.restore();
+}
+
 export function drawSmudge(ctx, x, y, r, t, hpFrac = 1) {
   // AI sprite with a living wobble; vector scribble as fallback
   const name = hpFrac < 0.55 ? 'smudge-hurt' : 'smudge-idle';

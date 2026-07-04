@@ -84,6 +84,16 @@
       "art": {
         "bg": [
           "speedh"
+        ],
+        "actors": [
+          {
+            "who": "ken",
+            "pose": "fight",
+            "x": 0.78,
+            "y": 0.9,
+            "s": 0.46,
+            "dir": -1
+          }
         ]
       },
       "caption": "Ken's greeting crosses the arena before his voice does.",
@@ -214,6 +224,16 @@
       "art": {
         "bg": [
           "speedv"
+        ],
+        "actors": [
+          {
+            "who": "kai",
+            "pose": "dodge",
+            "x": 0.24,
+            "y": 0.92,
+            "s": 0.4,
+            "dir": 1
+          }
         ]
       },
       "caption": "The arena tests entrants first. The floor throws itself at you.",
@@ -235,7 +255,25 @@
       "type": "hold",
       "h": 0.55,
       "art": {
-        "bg": []
+        "bg": [],
+        "actors": [
+          {
+            "who": "kai",
+            "pose": "brace",
+            "x": 0.26,
+            "y": 0.92,
+            "s": 0.38,
+            "dir": 1
+          },
+          {
+            "who": "yuri",
+            "pose": "stand",
+            "x": 0.72,
+            "y": 0.9,
+            "s": 0.46,
+            "dir": -1
+          }
+        ]
       },
       "caption": "Yuri skips a beat of time, just to watch you flinch. Hold still through the missing panel.",
       "params": {
@@ -299,6 +337,39 @@
       "art": {
         "bg": [
           "toneD"
+        ],
+        "actors": [
+          {
+            "who": "kai",
+            "pose": "stand",
+            "x": 0.2,
+            "y": 0.92,
+            "s": 0.36,
+            "dir": 1
+          },
+          {
+            "who": "ken",
+            "pose": "stand",
+            "x": 0.62,
+            "y": 0.9,
+            "s": 0.44,
+            "dir": -1
+          },
+          {
+            "who": "yuri",
+            "pose": "stand",
+            "x": 0.8,
+            "y": 0.88,
+            "s": 0.4,
+            "dir": -1
+          },
+          {
+            "who": "goma",
+            "x": 0.46,
+            "y": 0.9,
+            "s": 0.3,
+            "emotion": "smile"
+          }
         ]
       },
       "caption": "A thousand balled-up pages lean in from the stands. This is the largest audience any of them ever got.",

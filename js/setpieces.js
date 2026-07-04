@@ -3,7 +3,7 @@
 // Same painter contract as scenes.js.
 import {
   INK, PAPER, C, fillTone, impactStar, drawSFXText, speechBubble, wrapText,
-  drawHandWithEraser, drawSmudge,
+  drawHandWithEraser, drawSmudge, drawRaft,
 } from './art.js';
 import { drawKai, drawSumi, drawRejected, drawKen, drawYuri, drawGoma, drawArtist } from './chars.js';
 import { drawBackdrop } from './compose.js';
@@ -287,17 +287,7 @@ export const setpieces = {
     ctx.restore();
     // raft + crew
     const ry = h * 0.53 + Math.sin(o.t * 1.5) * h * 0.012;
-    ctx.fillStyle = PAPER;
-    ctx.strokeStyle = INK;
-    ctx.lineWidth = 4;
-    ctx.beginPath();
-    ctx.moveTo(w * 0.14, ry);
-    ctx.lineTo(w * 0.56, ry);
-    ctx.lineTo(w * 0.53, ry + h * 0.04);
-    ctx.lineTo(w * 0.17, ry + h * 0.04);
-    ctx.closePath();
-    ctx.fill();
-    ctx.stroke();
+    drawRaft(ctx, w * 0.35, ry, w * 0.44, o.t);
     drawKai(ctx, w * 0.28, ry, h * 0.36, 'crouch', { dir: 1, emotion: 'shock' });
     drawSumi(ctx, w * 0.45, ry, h * 0.3, 'float', { dir: 1, t: o.t, emotion: 'shock' });
   },

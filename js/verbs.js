@@ -662,11 +662,14 @@ function chooseChallenge(def, api) {
       const fs = Math.max(14, Math.min(w, h) * 0.055);
       const positions = CHOICE_POS[n] || CHOICE_POS[2];
       for (let i = 0; i < n; i++) {
-        rects[i] = speechBubble(ctx, opts[i].text, positions[i][0] * w, positions[i][1] * h, w * 0.46, {
+        // per-option x/y in the chapter JSON overrides the default layout
+        const px = (opts[i].x ?? positions[i][0]) * w;
+        const py = (opts[i].y ?? positions[i][1]) * h;
+        rects[i] = speechBubble(ctx, opts[i].text, px, py, w * 0.46, {
           fs,
           selected: chosen === i,
           faded: chosen >= 0 && chosen !== i,
-          tail: i === 0 ? { x: w * 0.5, y: h * 0.58 } : null,
+          tail: i === 0 && opts[i].x == null ? { x: w * 0.5, y: h * 0.58 } : null,
         });
       }
     },

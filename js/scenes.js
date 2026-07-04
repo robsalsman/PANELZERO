@@ -4,7 +4,7 @@
 // ctx is already translated to the panel's top-left and clipped to it.
 import {
   INK, PAPER, fillTone, speedLinesV, speedLinesH, impactStar, drawSFXText,
-  drawPencilShadow, drawHandWithEraser, drawSmudge, speechBubble,
+  drawPencilShadow, drawHandWithEraser, drawSmudge, speechBubble, drawSprite,
 } from './art.js';
 import { drawKai } from './chars.js';
 
@@ -185,6 +185,9 @@ export const scenes = {
   /* p04 — close-up for the first Choose */
   kai_face(ctx, w, h, o) {
     fillTone(ctx, 0, 0, w, h, 'light', 0.25);
+    // painted close-up: sprite scaled way up, feet anchored below the panel
+    // so the head-and-shoulders crop fills the frame
+    if (drawSprite(ctx, 'kai-stand-shock', w * 0.68, h * 2.6, h * 2.75, 1)) return;
     bigFace(ctx, w * 0.5, h * 0.68, Math.min(w, h) * 0.26, { mouth: 'open', sweat: true });
   },
 
