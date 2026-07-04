@@ -138,13 +138,22 @@ async function main() {
       case 'choose': {
         await page.waitForTimeout(450); // bubbles land fast now
         const idx = scenario.choices[key] ?? 0;
-        // mirror CHOICE_POS in js/verbs.js; per-option x/y overrides win
-        const layout = (p.options?.length ?? 2) >= 3
-          ? [[0.3, 0.14], [0.7, 0.3], [0.4, 0.46]]
-          : [[0.27, 0.2], [0.73, 0.32]];
-        const opt = p.options?.[idx];
-        const pos = opt?.x != null ? [opt.x, opt.y] : (layout[idx] ?? layout[0]);
-        const pt = toClient(rect, scroll, pos[0], pos[1]);
+        // ask the running challenge for the real bubble rects (they shift to
+        // dodge captions and each other), fall back to the static layout
+        const br = await page.evaluate((i) => {
+          const r = window.__pz.challenge?.bubbleRects?.()[i];
+          return r ? { fx: null, x: r.x + r.w / 2, y: r.y + r.h / 2 } : null;
+        }, idx);
+        let pt;
+        if (br) {
+          pt = { x: rect.x + br.x, y: rect.y + br.y - scroll };
+        } else {
+          const layout = (p.options?.length ?? 2) >= 3
+            ? [[0.3, 0.14], [0.7, 0.3], [0.4, 0.46]]
+            : [[0.27, 0.2], [0.73, 0.32]];
+          const pos = layout[idx] ?? layout[0];
+          pt = toClient(rect, scroll, pos[0], pos[1]);
+        }
         await page.mouse.click(pt.x, pt.y);
         break;
       }

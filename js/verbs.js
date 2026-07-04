@@ -637,6 +637,8 @@ function chooseChallenge(def, api) {
   const rects = [null, null, null];
 
   return {
+    // real, post-layout bubble rects — the test driver taps these
+    bubbleRects() { return rects; },
     update(dt) {
       if (doneTimer !== null) {
         doneTimer -= dt;
@@ -670,6 +672,7 @@ function chooseChallenge(def, api) {
           selected: chosen === i,
           faded: chosen >= 0 && chosen !== i,
           tail: i === 0 && opts[i].x == null ? { x: w * 0.5, y: h * 0.58 } : null,
+          avoid: rects.slice(0, i),
         });
       }
     },

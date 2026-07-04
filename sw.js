@@ -1,5 +1,5 @@
 // Service worker: cache-first so the whole manga is playable offline after first read.
-const CACHE = 'panelzero-v6';
+const CACHE = 'panelzero-v7';
 const ASSETS = [
   '.',
   'index.html',

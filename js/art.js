@@ -230,6 +230,14 @@ export function speechBubble(ctx, text, x, y, maxW, opts = {}) {
     y += bubbleMinTop - by;
     by = bubbleMinTop;
   }
+  // dodge earlier bubbles in the same panel (they may have shifted too)
+  for (const av of opts.avoid || []) {
+    if (av && bx < av.x + av.w && bx + bw > av.x && by < av.y + av.h && by + bh > av.y) {
+      const shift = av.y + av.h + 8 - by;
+      y += shift;
+      by += shift;
+    }
+  }
 
   ctx.globalAlpha = faded ? 0.3 : 1;
   ctx.fillStyle = PAPER;
