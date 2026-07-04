@@ -1,19 +1,91 @@
 {
   "start": "ch1",
   "endings": [
-    { "id": "ending_artist", "name": "THE NEW ARTIST" },
-    { "id": "ending_escape", "name": "THE ESCAPE" },
-    { "id": "ending_blank", "name": "THE BLANK PAGE" }
+    {
+      "id": "ending_coauthors",
+      "name": "\u5171\u7b46 THE CO-AUTHORS"
+    },
+    {
+      "id": "ending_artist",
+      "name": "THE NEW ARTIST"
+    },
+    {
+      "id": "ending_published",
+      "name": "THE PUBLISHED"
+    },
+    {
+      "id": "ending_blank",
+      "name": "THE BLANK PAGE"
+    },
+    {
+      "id": "ending_escape",
+      "name": "THE ESCAPE"
+    },
+    {
+      "id": "ending_newhand",
+      "name": "\u65b0\u3057\u3044\u624b THE NEW HAND"
+    }
   ],
   "chapters": {
-    "ch1": { "file": "data/chapter1.json", "next": "ch2" },
+    "ch1": {
+      "file": "data/chapter1.json",
+      "next": "ch2"
+    },
     "ch2": {
       "file": "data/chapter2.json",
-      "next": { "byFlag": [["route_cut", "ch3b"], ["route_sea", "ch3a"]], "default": "ch3a" }
+      "next": {
+        "byFlag": [
+          [
+            "route_cut",
+            "ch3b"
+          ],
+          [
+            "route_sea",
+            "ch3a"
+          ]
+        ],
+        "default": "ch3a"
+      }
     },
-    "ch3a": { "file": "data/chapter3a.json", "next": "ch4" },
-    "ch3b": { "file": "data/chapter3b.json", "next": "ch4" },
-    "ch4": { "file": "data/chapter4.json", "next": "ch5" },
-    "ch5": { "file": "data/chapter5.json", "next": null }
+    "ch3a": {
+      "file": "data/chapter3a.json",
+      "next": "ch4"
+    },
+    "ch3b": {
+      "file": "data/chapter3b.json",
+      "next": "ch4"
+    },
+    "ch4": {
+      "file": "data/chapter4.json",
+      "next": "g1"
+    },
+    "g1": {
+      "file": "data/chapter5g.json",
+      "next": "g2"
+    },
+    "g2": {
+      "file": "data/chapter6d.json",
+      "next": {
+        "byFlag": [
+          [
+            "side_sumi",
+            "s1"
+          ]
+        ],
+        "default": "g3"
+      }
+    },
+    "s1": {
+      "file": "data/chapter6s.json",
+      "next": "g3"
+    },
+    "g3": {
+      "file": "data/chapter7a.json",
+      "next": "ch5"
+    },
+    "ch5": {
+      "file": "data/chapter5.json",
+      "next": null
+    }
   }
 }

@@ -21,6 +21,24 @@ const STYLES = {
     eye: C.rejEye, top: C.rejCloth, topShade: '#7a7060', under: '#c9c0af',
     pants: '#6f675c', shoe: '#565049',
   },
+  // Draft 1 — '90s hot-blood battle manga
+  ken: {
+    hair: '#7e2415', sheen: '#c4523b', skin: '#e8b184', skinShade: '#cf9464',
+    eye: '#b8452b', top: '#3a3f4a', topShade: '#282c34', under: '#e8e2d6',
+    pants: '#5a4632', shoe: '#332a22',
+  },
+  // Draft 2 — bizarre reality-bender
+  yuri: {
+    hair: '#ece6ea', sheen: '#c9b9dd', skin: '#f4e4dc', skinShade: '#e0c8bd',
+    eye: '#c03b52', top: '#3d2f52', topShade: '#2a2038', under: '#d8cfe8',
+    pants: '#3d2f52', shoe: '#2a2038', glow: '#c9b9dd',
+  },
+  // the burned-out mangaka
+  artist: {
+    hair: '#4a3b33', sheen: '#7a675b', skin: '#f2ddc8', skinShade: '#dcc0a4',
+    eye: '#5d4a3a', top: '#7d8a93', topShade: '#5f6a72', under: '#efe9dd',
+    pants: '#454d55', shoe: '#333940',
+  },
 };
 
 /* ============================ heads ============================ */
@@ -62,7 +80,7 @@ export function animeHead(ctx, cx, cy, r, o = {}) {
 
   /* ---- hair ---- */
   ctx.fillStyle = pal.hair;
-  if (style === 'kai' || style === 'rejected') {
+  if (style === 'kai' || style === 'rejected' || style === 'ken') {
     // solid dome cap down to the brow
     ctx.beginPath();
     ctx.arc(cx + d * 0.3, cy - r * 0.05, r * 1.03, Math.PI * 1.0, Math.PI * 2.0);
@@ -76,6 +94,8 @@ export function animeHead(ctx, cx, cy, r, o = {}) {
     // spikes rooted well inside the dome
     const spikes = style === 'rejected'
       ? [[-0.7, -0.3, -1.3, -0.7], [-0.3, -0.55, -0.5, -1.5], [0.1, -0.6, 0.25, -1.55], [0.55, -0.4, 1.05, -1.0]]
+      : style === 'ken'
+      ? [[-0.35, -0.7, -0.42, -1.85], [0.0, -0.78, 0.0, -2.0], [0.35, -0.7, 0.42, -1.85]] // mohawk crest
       : [[-0.7, -0.35, -1.25, -0.85], [-0.42, -0.6, -0.7, -1.45], [-0.05, -0.7, -0.08, -1.6],
          [0.32, -0.62, 0.5, -1.45], [0.62, -0.4, 1.1, -0.95]];
     for (const [bx, by, tx, ty] of spikes) {
@@ -110,7 +130,27 @@ export function animeHead(ctx, cx, cy, r, o = {}) {
       ctx.stroke();
       ctx.restore();
     }
-  } else if (style === 'sumi') {
+  } else if (style === 'artist') {
+    // tired bun: soft dome + knot, strands escaping
+    ctx.beginPath();
+    ctx.arc(cx + d * 0.3, cy - r * 0.02, r * 1.04, Math.PI * 1.0, Math.PI * 2.0);
+    ctx.lineTo(cx + r * 0.66 + d * 0.5, cy - r * 0.18);
+    ctx.lineTo(cx + r * 0.2 + d * 0.5, cy - r * 0.4);
+    ctx.lineTo(cx - r * 0.3 + d * 0.5, cy - r * 0.34);
+    ctx.lineTo(cx - r * 0.68, cy - r * 0.16);
+    ctx.closePath();
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(cx - r * 0.55, cy - r * 1.0, r * 0.42, 0, Math.PI * 2);
+    ctx.fill();
+    // loose strands
+    ctx.strokeStyle = pal.hair;
+    ctx.lineWidth = r * 0.07;
+    ctx.beginPath();
+    ctx.moveTo(cx + r * 0.85, cy - r * 0.35);
+    ctx.quadraticCurveTo(cx + r * 1.05, cy + r * 0.15, cx + r * 0.9, cy + r * 0.5);
+    ctx.stroke();
+  } else if (style === 'sumi' || style === 'yuri') {
     // long flowing ink hair with drip ends
     ctx.beginPath();
     ctx.moveTo(cx - r * 0.95, cy - r * 0.15);
@@ -144,6 +184,16 @@ export function animeHead(ctx, cx, cy, r, o = {}) {
     ctx.beginPath();
     ctx.moveTo(cx - r * 0.82, cy + r * 0.6);
     ctx.quadraticCurveTo(cx - r * 0.92, cy + r * 1.3, cx - r * 1.02, cy + r * 1.9);
+    ctx.stroke();
+  }
+
+  if (style === 'ken') {
+    // the scar across his cheek — proof of the fights that made him
+    ctx.strokeStyle = '#b8745a';
+    ctx.lineWidth = r * 0.07;
+    ctx.beginPath();
+    ctx.moveTo(cx - r * 0.7 + d, cy + r * 0.05);
+    ctx.lineTo(cx - r * 0.3 + d, cy + r * 0.55);
     ctx.stroke();
   }
 
@@ -666,6 +716,119 @@ export function drawSumi(ctx, x, y, s, pose = 'float', o = {}) {
     : emotion === 'shock' ? 'sumi-float-shock' : emotion === 'sad' ? 'sumi-float-sad' : 'sumi-float';
   if (drawSprite(ctx, name, x, y + bob, s, dir === 0 ? 1 : dir)) return;
   drawBody(ctx, x, y + bob, s, pose, { dir, style: 'sumi', emotion });
+}
+
+export function drawKen(ctx, x, y, s, pose = 'stand', o = {}) {
+  const dir = o.dir ?? -1;
+  const name = pose === 'fight' ? 'ken-fight' : pose === 'kneel' ? 'ken-kneel' : 'ken-stand';
+  if (drawSprite(ctx, name, x, y, s, dir === 0 ? 1 : dir)) return;
+  // vector Ken is BUILT — draw 12% bigger and lower so he looms
+  drawBody(ctx, x, y, s * 1.12, pose, { dir, style: 'ken', weapon: o.weapon || null, emotion: o.emotion || 'determined' });
+}
+
+export function drawYuri(ctx, x, y, s, pose = 'stand', o = {}) {
+  const dir = o.dir ?? -1;
+  const name = pose === 'fight' ? 'yuri-fight' : pose === 'kneel' ? 'yuri-kneel' : 'yuri-stand';
+  if (drawSprite(ctx, name, x, y, s, dir === 0 ? 1 : dir)) return;
+  drawBody(ctx, x, y, s, pose, { dir, style: 'yuri', weapon: o.weapon || null, emotion: o.emotion || 'neutral' });
+}
+
+export function drawArtist(ctx, x, y, s, pose = 'stand', o = {}) {
+  const dir = o.dir ?? -1;
+  if (drawSprite(ctx, pose === 'kneel' ? 'artist-kneel' : 'artist-stand', x, y, s, dir === 0 ? 1 : dir)) return;
+  drawBody(ctx, x, y, s, pose, { dir, style: 'artist', weapon: null, emotion: o.emotion || 'sad' });
+}
+
+// GOMA — draft 3, the gag blob. Round, cream, band-aid, enormous feelings.
+export function drawGoma(ctx, x, y, s, o = {}) {
+  const mood = o.emotion || 'smile'; // smile | shock | sad | serious
+  const t = o.t || 0;
+  if (drawSprite(ctx, mood === 'serious' ? 'goma-serious' : 'goma-stand', x, y, s, o.dir ?? -1)) return;
+  const r = s * 0.42;
+  const cy = y - r * 0.95;
+  const squish = 1 + Math.sin(t * 3) * 0.03;
+  ctx.save();
+  ctx.translate(x, cy);
+  ctx.scale(squish, 2 - squish);
+  // body
+  ctx.fillStyle = '#f2e3c0';
+  ctx.strokeStyle = INK;
+  ctx.lineWidth = Math.max(2.5, s * 0.035);
+  ctx.beginPath();
+  ctx.ellipse(0, 0, r, r * 0.95, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+  // belly shade
+  ctx.fillStyle = '#e3cd9e';
+  ctx.globalAlpha = 0.6;
+  ctx.beginPath();
+  ctx.ellipse(-r * 0.2, r * 0.4, r * 0.6, r * 0.4, 0.2, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.globalAlpha = 1;
+  // band-aid (the joke that isn't one)
+  ctx.save();
+  ctx.translate(r * 0.45, -r * 0.5);
+  ctx.rotate(0.6);
+  ctx.fillStyle = '#d9b98c';
+  ctx.fillRect(-r * 0.28, -r * 0.1, r * 0.56, r * 0.2);
+  ctx.strokeRect(-r * 0.28, -r * 0.1, r * 0.56, r * 0.2);
+  ctx.restore();
+  // tiny arms
+  ctx.strokeStyle = INK;
+  ctx.lineWidth = Math.max(3, s * 0.05);
+  ctx.beginPath();
+  ctx.moveTo(-r * 0.9, r * 0.1);
+  ctx.lineTo(-r * 1.25, mood === 'shock' ? -r * 0.4 : r * 0.35);
+  ctx.moveTo(r * 0.9, r * 0.1);
+  ctx.lineTo(r * 1.25, mood === 'shock' ? -r * 0.4 : r * 0.35);
+  ctx.stroke();
+  // face
+  const ey = -r * 0.15;
+  if (mood === 'serious') {
+    ctx.lineWidth = Math.max(2.5, s * 0.04);
+    ctx.beginPath();
+    ctx.moveTo(-r * 0.45, ey - r * 0.15);
+    ctx.lineTo(-r * 0.12, ey);
+    ctx.moveTo(r * 0.45, ey - r * 0.15);
+    ctx.lineTo(r * 0.12, ey);
+    ctx.stroke();
+    ctx.fillStyle = INK;
+    ctx.beginPath();
+    ctx.arc(-r * 0.28, ey + r * 0.08, r * 0.09, 0, Math.PI * 2);
+    ctx.arc(r * 0.28, ey + r * 0.08, r * 0.09, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(-r * 0.18, r * 0.45);
+    ctx.lineTo(r * 0.18, r * 0.45);
+    ctx.stroke();
+  } else if (mood === 'sad') {
+    ctx.lineWidth = Math.max(2.5, s * 0.04);
+    ctx.beginPath();
+    ctx.arc(-r * 0.28, ey + r * 0.1, r * 0.14, Math.PI * 1.1, Math.PI * 1.9);
+    ctx.arc(r * 0.28, ey + r * 0.1, r * 0.14, Math.PI * 1.1, Math.PI * 1.9);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(0, r * 0.5, r * 0.14, Math.PI * 1.1, Math.PI * 1.9);
+    ctx.stroke();
+    // one fat tear
+    ctx.fillStyle = '#6fd8e6';
+    ctx.beginPath();
+    ctx.ellipse(-r * 0.42, ey + r * 0.35, r * 0.07, r * 0.12, 0, 0, Math.PI * 2);
+    ctx.fill();
+  } else {
+    ctx.fillStyle = INK;
+    ctx.beginPath();
+    const er = mood === 'shock' ? r * 0.16 : r * 0.1;
+    ctx.arc(-r * 0.28, ey, er, 0, Math.PI * 2);
+    ctx.arc(r * 0.28, ey, er, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.lineWidth = Math.max(2.5, s * 0.04);
+    ctx.beginPath();
+    if (mood === 'shock') ctx.ellipse(0, r * 0.42, r * 0.16, r * 0.22, 0, 0, Math.PI * 2);
+    else ctx.arc(0, r * 0.3, r * 0.32, Math.PI * 0.15, Math.PI * 0.85);
+    ctx.stroke();
+  }
+  ctx.restore();
 }
 
 export function drawRejected(ctx, x, y, s, pose = 'stand', o = {}) {

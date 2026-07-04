@@ -5,7 +5,7 @@ import {
   INK, PAPER, C, fillTone, impactStar, drawSFXText, speechBubble, wrapText,
   drawHandWithEraser, drawSmudge,
 } from './art.js';
-import { drawKai, drawSumi, drawRejected } from './chars.js';
+import { drawKai, drawSumi, drawRejected, drawKen, drawYuri, drawGoma, drawArtist } from './chars.js';
 import { drawBackdrop } from './compose.js';
 
 const clamp01 = (v) => Math.max(0, Math.min(1, v));
@@ -517,9 +517,105 @@ export const setpieces = {
 
   /* ch5 — one spread, three endings; the derived ending flag picks the art */
   ending_spread(ctx, w, h, o) {
-    if (o.flags.ending_artist) setpieces.ending_artist(ctx, w, h, o);
+    if (o.flags.ending_coauthors) setpieces.ending_coauthors(ctx, w, h, o);
+    else if (o.flags.ending_newhand) setpieces.ending_newhand(ctx, w, h, o);
+    else if (o.flags.ending_published) setpieces.ending_published(ctx, w, h, o);
+    else if (o.flags.ending_artist) setpieces.ending_artist(ctx, w, h, o);
     else if (o.flags.ending_escape) setpieces.ending_escape(ctx, w, h, o);
     else setpieces.ending_blank(ctx, w, h, o);
+  },
+
+  /* the true ending — they draw the next chapter TOGETHER */
+  ending_coauthors(ctx, w, h, o) {
+    drawBackdrop(ctx, w, h, 'assets/bg/ending-artist.webp');
+    drawArtist(ctx, w * 0.3, h * 0.68, h * 0.24, 'stand', { dir: 1, emotion: 'smile' });
+    drawKai(ctx, w * 0.48, h * 0.7, h * 0.22, 'stand', { dir: -1, weapon: null, emotion: 'smile' });
+    drawSumi(ctx, w * 0.66, h * 0.68, h * 0.19, 'float', { dir: -1, t: o.t, emotion: 'smile' });
+    if (o.flags.duel_goma) drawGoma(ctx, w * 0.82, h * 0.68, h * 0.14, { emotion: 'smile', t: o.t });
+    else if (o.flags.duel_yuri) drawYuri(ctx, w * 0.82, h * 0.68, h * 0.18, 'stand', { dir: -1 });
+    else drawKen(ctx, w * 0.84, h * 0.68, h * 0.19, 'stand', { dir: -1, emotion: 'smile' });
+    endingTitle(ctx, w, h, '共筆 THE CO-AUTHORS', 'Two hands on one pencil. The story gets a chapter two — and so does she.', 0.86);
+  },
+
+  /* the golden epilogue — she wakes, and finishes it for real */
+  ending_published(ctx, w, h, o) {
+    drawBackdrop(ctx, w, h, 'assets/bg/desk.webp');
+    // the printed volume, standing proud on the desk
+    ctx.save();
+    ctx.translate(w * 0.5, h * 0.55);
+    ctx.rotate(-0.04);
+    ctx.fillStyle = PAPER;
+    ctx.strokeStyle = INK;
+    ctx.lineWidth = 5;
+    ctx.fillRect(-w * 0.2, -h * 0.17, w * 0.4, h * 0.34);
+    ctx.strokeRect(-w * 0.2, -h * 0.17, w * 0.4, h * 0.34);
+    ctx.fillStyle = C.red;
+    ctx.fillRect(-w * 0.2, -h * 0.17, w * 0.4, h * 0.05);
+    ctx.fillStyle = INK;
+    ctx.font = `900 ${w * 0.052}px -apple-system, "Arial Black", sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.fillText('PANEL ZERO', 0, h * 0.005);
+    ctx.font = `700 ${w * 0.026}px -apple-system, sans-serif`;
+    ctx.fillText('VOL. 1  —  AOKI', 0, h * 0.05);
+    ctx.font = `700 ${w * 0.02}px -apple-system, sans-serif`;
+    ctx.globalAlpha = 0.6;
+    ctx.fillText('1st printing', 0, h * 0.09);
+    ctx.restore();
+    endingTitle(ctx, w, h, 'THE PUBLISHED', 'Months later, on a bookstore shelf: her name on the spine. Somewhere inside, a boy waves from panel one.', 0.88);
+  },
+
+  /* the dark mirror — Kai takes the eraser */
+  ending_newhand(ctx, w, h, o) {
+    // black void closing in on one white page
+    ctx.fillStyle = '#101018';
+    ctx.fillRect(0, 0, w, h);
+    ctx.fillStyle = '#f7f4ec';
+    ctx.save();
+    ctx.translate(w * 0.5, h * 0.62);
+    ctx.rotate(-0.03);
+    ctx.fillRect(-w * 0.3, -h * 0.2, w * 0.6, h * 0.4);
+    // a new boy, asleep on the new page — the loop begins again
+    ctx.strokeStyle = INK;
+    ctx.lineWidth = 3;
+    ctx.globalAlpha = 0.75;
+    ctx.beginPath();
+    ctx.ellipse(-w * 0.05, h * 0.05, w * 0.12, h * 0.035, 0.1, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(-w * 0.16, h * 0.03, w * 0.035, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.restore();
+    ctx.globalAlpha = 1;
+    // KAI'S hand descending — red cuff. The cruelest panel is the quiet one.
+    ctx.save();
+    ctx.translate(w * 0.62, 0);
+    ctx.fillStyle = '#1c1c26';
+    ctx.fillRect(-w * 0.1, -h * 0.02, w * 0.2, h * 0.34);
+    ctx.fillStyle = C.red; // the jacket cuff
+    ctx.fillRect(-w * 0.115, h * 0.24, w * 0.23, h * 0.05);
+    ctx.fillStyle = '#e9c096';
+    for (let i = -2; i <= 2; i++) {
+      ctx.beginPath();
+      ctx.ellipse(i * w * 0.045, h * 0.36, w * 0.024, h * 0.05, i * 0.06, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    // the eraser in the grip
+    ctx.fillStyle = PAPER;
+    ctx.strokeStyle = INK;
+    ctx.lineWidth = 3;
+    ctx.fillRect(-w * 0.09, h * 0.4, w * 0.18, h * 0.045);
+    ctx.strokeRect(-w * 0.09, h * 0.4, w * 0.18, h * 0.045);
+    ctx.restore();
+    ctx.save();
+    ctx.fillStyle = PAPER;
+    ctx.textAlign = 'center';
+    ctx.font = `900 ${h * 0.042}px -apple-system, "Arial Black", "Hiragino Sans", sans-serif`;
+    ctx.fillText('新しい手 THE NEW HAND', w / 2, h * 0.13);
+    ctx.font = `700 ${Math.min(h * 0.02, w * 0.042)}px -apple-system, sans-serif`;
+    ctx.globalAlpha = 0.75;
+    const sub = 'Somewhere, on a fresh page, a new boy wakes up inside an unfinished manga.';
+    ctx.fillText(sub, w / 2, h * 0.175);
+    ctx.restore();
   },
 
   ending_artist(ctx, w, h, o) {

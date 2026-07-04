@@ -6,7 +6,7 @@ import {
   INK, PAPER, C, fillTone, speedLinesV, speedLinesH, impactStar, drawSFXText,
   drawPencilShadow, drawHandWithEraser, drawSmudge, speechBubble,
 } from './art.js';
-import { drawKai, drawSumi, drawRejected } from './chars.js';
+import { drawKai, drawSumi, drawRejected, drawKen, drawYuri, drawGoma, drawArtist } from './chars.js';
 
 function radialLines(ctx, w, h, cx, cy, n = 24, alpha = 0.22) {
   ctx.save();
@@ -185,6 +185,10 @@ function drawActor(ctx, w, h, a, t, flags) {
     case 'kai': drawKai(ctx, x, y, s, a.pose || 'stand', o); break;
     case 'sumi': drawSumi(ctx, x, y, s, a.pose || 'float', o); break;
     case 'rejected': drawRejected(ctx, x, y, s, a.pose || 'stand', o); break;
+    case 'ken': drawKen(ctx, x, y, s, a.pose || 'stand', o); break;
+    case 'yuri': drawYuri(ctx, x, y, s, a.pose || 'stand', o); break;
+    case 'goma': drawGoma(ctx, x, y, s, o); break;
+    case 'artist': drawArtist(ctx, x, y, s, a.pose || 'stand', o); break;
     case 'smudge': drawSmudge(ctx, x, y, s * 0.4, t, a.hp ?? 1); break;
     case 'hand': drawHandWithEraser(ctx, w, h, a.drop ?? 1); break;
     case 'pencil-shadow': drawPencilShadow(ctx, w, h, (a.x ?? 0.5) * w, a.alpha ?? 0.45); break;

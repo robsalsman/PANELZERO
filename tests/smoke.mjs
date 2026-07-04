@@ -11,25 +11,36 @@ const PORT = 8321 + (process.pid % 50);
 const URL = `http://127.0.0.1:${PORT}/`;
 
 const SCENARIOS = {
-  // full read from ch1, sea route, all-kindness -> THE NEW ARTIST
-  artist: {
-    startAt: null,
-    choices: { 'ch1:p04': 1, 'ch1:p11': 1, 'ch2:p04': 0, 'ch2:p11': 0, 'ch3a:p11': 0, 'ch4:p09': 0, 'ch5:p10': 0 },
-    failOnce: 'ch2:p02', // deliberately eat one hazard to test erase/redraw mid-story
-    shotAfter: 'ch2:p08', // catch a PERFECT stamp + combo HUD mid-fight
-    expect: 'THE NEW ARTIST',
-  },
-  // cut-panels route, no mercy, keep weapon, erase it all -> THE ESCAPE
-  escape: {
+  // sea route, recruit Goma, side chapter, empathy, finish together -> CO-AUTHORS
+  coauthors: {
     startAt: { chapter: 'ch2', flags: [] },
-    choices: { 'ch2:p04': 1, 'ch2:p11': 1, 'ch3b:p11': 1, 'ch4:p09': 1, 'ch5:p10': 1 },
-    expect: 'THE ESCAPE',
+    choices: {
+      'ch2:p04': 0, 'ch2:p11': 0, 'ch3a:p11': 0, 'ch4:p09': 0,
+      'g1:p11': 2, 'g2:p11': 0, 'g2:p13': 0, 's1:p04': 0, 's1:p08': 0,
+      'g3:p09': 1, 'ch5:p13': 0,
+    },
+    failOnce: 'ch2:p02', // deliberately eat one hazard to test erase/redraw mid-story
+    shotAfter: 'g2:p09',
+    expect: 'THE CO-AUTHORS',
   },
-  // sea route but slay the leviathan, save Sumi, finish -> THE BLANK PAGE
-  blank: {
+  // cut route, every kill, no rest, resent, erase -> THE NEW HAND (ruthless 3)
+  newhand: {
+    startAt: { chapter: 'ch2', flags: [] },
+    choices: {
+      'ch2:p04': 1, 'ch2:p11': 1, 'ch3b:p11': 1, 'ch4:p09': 1,
+      'g1:p11': 0, 'g2:p11': 1, 'g2:p13': 1, 'g3:p09': 0, 'ch5:p13': 2,
+    },
+    expect: 'THE NEW HAND',
+  },
+  // mercy + saved + recruit Yuri + side + empathy + give the pencil back -> THE PUBLISHED
+  published: {
     startAt: { chapter: 'ch3a', flags: ['route_sea'] },
-    choices: { 'ch3a:p11': 1, 'ch4:p09': 0, 'ch5:p10': 0 },
-    expect: 'THE BLANK PAGE',
+    choices: {
+      'ch3a:p11': 0, 'ch4:p09': 0,
+      'g1:p11': 1, 'g2:p11': 0, 'g2:p13': 0, 's1:p04': 0, 's1:p08': 0,
+      'g3:p09': 1, 'ch5:p13': 1,
+    },
+    expect: 'THE PUBLISHED',
   },
 };
 
@@ -127,7 +138,11 @@ async function main() {
       case 'choose': {
         await page.waitForTimeout(450); // bubbles land fast now
         const idx = scenario.choices[key] ?? 0;
-        const pos = idx === 0 ? [0.27, 0.2] : [0.73, 0.32];
+        // mirror CHOICE_POS in js/verbs.js
+        const layout = (p.options?.length ?? 2) >= 3
+          ? [[0.3, 0.14], [0.7, 0.3], [0.4, 0.46]]
+          : [[0.27, 0.2], [0.73, 0.32]];
+        const pos = layout[idx] ?? layout[0];
         const pt = toClient(rect, scroll, pos[0], pos[1]);
         await page.mouse.click(pt.x, pt.y);
         break;

@@ -21,18 +21,19 @@ const SAVE_KEY = 'save2';
 const PAINTERS = { ...scenes, ...setpieces };
 const ease = (t) => 1 - Math.pow(1 - t, 3);
 
-// manga-style action stamp: fat colored text, paper halo, ink edge
-function drawStamp(ctx, text) {
-  const color = text.startsWith('PERFECT') ? C.gold : text === 'CLOSE!' ? C.red : INK;
-  ctx.font = '900 30px -apple-system, "Arial Black", sans-serif';
+// manga-style action stamp: fat colored text, paper halo, ink edge.
+// big = technique kanji: huge and gold.
+function drawStamp(ctx, text, big = false) {
+  const color = big || text.startsWith('PERFECT') ? C.gold : text === 'CLOSE!' ? C.red : INK;
+  ctx.font = `900 ${big ? 64 : 30}px -apple-system, "Arial Black", "Hiragino Sans", sans-serif`;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   ctx.lineJoin = 'round';
   ctx.strokeStyle = PAPER;
-  ctx.lineWidth = 9;
+  ctx.lineWidth = big ? 14 : 9;
   ctx.strokeText(text, 0, 0);
   ctx.strokeStyle = INK;
-  ctx.lineWidth = 3.5;
+  ctx.lineWidth = big ? 5 : 3.5;
   ctx.strokeText(text, 0, 0);
   ctx.fillStyle = color;
   ctx.fillText(text, 0, 0);
@@ -63,6 +64,9 @@ export class Game {
     this.activeT = 0;
     this.inkedAt = new Map();
     this._toastTimer = null;
+
+    // story state: bonds gate finale assists and endings
+    this.bonds = { sumi: 0, rival: 0, world: 0 };
 
     // skill layer: score, combo, grades, and juice state
     this.score = 0;
@@ -134,6 +138,7 @@ export class Game {
     this.endingsFound = saved?.endingsFound || [];
     this.bestScore = saved?.bestScore || 0;
     this.flags = {};
+    this.bonds = { sumi: 0, rival: 0, world: 0 };
     this.score = 0;
     this.combo = 0;
     this.verbCounts = saved?.verbCounts || {}; // verb tutorials stay learned
@@ -149,6 +154,7 @@ export class Game {
     this.endingsFound = saved.endingsFound || [];
     this.bestScore = saved.bestScore || 0;
     this.score = saved.score || 0;
+    this.bonds = saved.bonds || { sumi: 0, rival: 0, world: 0 };
     this.combo = 0;
     await this.beginChapter(saved.chapterId, saved.current || 0, saved);
   }
@@ -242,9 +248,10 @@ export class Game {
         const r = this.rects[this.current];
         return { w: r.w, h: r.h };
       },
+      addBond: (k, n = 1) => { this.bonds[k] = (this.bonds[k] || 0) + n; },
       shake: (p) => { this.shakeP = Math.max(this.shakeP, p); },
       hitstop: (t) => { this.freezeT = Math.max(this.freezeT, t); },
-      stamp: (text, small = false) => this.addStamp(text, { small }),
+      stamp: (text, small = false, big = false) => this.addStamp(text, { small, big }),
     };
     this.challenge = createChallenge(def, api);
     if (def.toast && VERBS.includes(def.type)) {
@@ -254,15 +261,32 @@ export class Game {
     }
   }
 
+  ruthless() {
+    const f = this.flags;
+    return (f.slain ? 1 : 0) + (f.faded ? 1 : 0) + (f.executed ? 1 : 0) + (f.keptWeapon ? 1 : 0);
+  }
+
+  recruitedAny() {
+    return !!this.flags.recruit;
+  }
+
   setFlag(f) {
     if (!f) return;
     this.flags[f] = true;
-    // derive the ending the moment the final choice lands
-    if (this.flags.eraseAll) {
-      this.flags.ending_escape = true;
-    } else if (this.flags.finish) {
-      if (this.flags.savedSumi && this.flags.mercy) this.flags.ending_artist = true;
-      else this.flags.ending_blank = true;
+    // derive the ending the moment the final choice lands (see STORY.md)
+    const fl = this.flags;
+    const bondsTotal = (this.bonds.sumi || 0) + (this.bonds.rival || 0) + (this.bonds.world || 0);
+    for (const k of Object.keys(fl)) if (k.startsWith('ending_')) delete fl[k];
+    if (fl.eraseAll) {
+      if (this.ruthless() >= 3) fl.ending_newhand = true;
+      else fl.ending_escape = true;
+    } else if (fl.finish) {
+      if (fl.empathy && fl.savedSumi && this.recruitedAny() && fl.mercy) fl.ending_coauthors = true;
+      else if (fl.savedSumi && fl.mercy) fl.ending_artist = true;
+      else fl.ending_blank = true;
+    } else if (fl.giveBack) {
+      if (fl.empathy && bondsTotal >= 6) fl.ending_published = true;
+      else fl.ending_blank = true;
     }
   }
 
@@ -319,11 +343,12 @@ export class Game {
     if (!r) return;
     this.stamps.push({
       text,
-      x: r.x + r.w * (0.3 + Math.random() * 0.4),
-      y: r.y + r.h * (0.28 + Math.random() * 0.2),
+      x: r.x + r.w * (opts.big ? 0.5 : 0.3 + Math.random() * 0.4),
+      y: r.y + r.h * (opts.big ? 0.4 : 0.28 + Math.random() * 0.2),
       t: 0,
-      rot: (Math.random() - 0.5) * 0.3,
+      rot: opts.big ? -0.06 : (Math.random() - 0.5) * 0.3,
       small: opts.small || false,
+      big: opts.big || false,
     });
   }
 
@@ -350,6 +375,7 @@ export class Game {
       chapterId: this.chapterId,
       current: this.current,
       flags: this.flags,
+      bonds: this.bonds,
       failsChapter: this.failsChapter,
       elapsedChapter: this.elapsedChapter,
       score: this.score,
@@ -394,7 +420,8 @@ export class Game {
     const endingLine = document.getElementById('end-endings');
 
     if (isFinale) {
-      const endingId = ['ending_artist', 'ending_escape', 'ending_blank'].find((e) => this.flags[e]) || 'ending_blank';
+      const endingId = ['ending_coauthors', 'ending_newhand', 'ending_published', 'ending_artist', 'ending_escape', 'ending_blank']
+        .find((e) => this.flags[e]) || 'ending_blank';
       const ending = this.story.endings.find((e) => e.id === endingId);
       if (!this.endingsFound.includes(endingId)) this.endingsFound.push(endingId);
       titleEl.textContent = `ENDING: ${ending.name}`;
@@ -411,7 +438,13 @@ export class Game {
       const nextCh = this.story.chapters[nextId];
       titleEl.textContent = `${this.chapter.title} COMPLETE`;
       nextEl.textContent = `NEXT: ${nextId.toUpperCase()}`;
-      endingLine.classList.add('hidden');
+      const bt = this.bonds;
+      if (bt.sumi + bt.rival + bt.world > 0) {
+        endingLine.textContent = `BONDS — SUMI ${'♥'.repeat(Math.min(5, bt.sumi)) || '·'}  RIVAL ${'♥'.repeat(Math.min(5, bt.rival)) || '·'}  WORLD ${'♥'.repeat(Math.min(5, bt.world)) || '·'}`;
+        endingLine.classList.remove('hidden');
+      } else {
+        endingLine.classList.add('hidden');
+      }
       btnNext.classList.remove('hidden');
       btnAgain.classList.add('hidden');
       this._pendingNext = nextId;
@@ -571,13 +604,13 @@ export class Game {
     for (const st of this.stamps) {
       const p = st.t / 0.85;
       const pop = p < 0.18 ? p / 0.18 : 1;
-      const scale = (st.small ? 0.55 : 1) * (0.6 + pop * 0.4) * (1 + Math.max(0, p - 0.6) * 0.3);
+      const scale = (st.small ? 0.55 : 1) * (0.6 + pop * 0.4) * (1 + Math.max(0, p - 0.6) * 0.3) * (st.big ? 1.1 : 1);
       ctx.save();
       ctx.translate(st.x, st.y - p * 26);
       ctx.rotate(st.rot);
       ctx.scale(scale, scale);
       ctx.globalAlpha = p > 0.6 ? 1 - (p - 0.6) / 0.4 : 1;
-      drawStamp(ctx, st.text);
+      drawStamp(ctx, st.text, st.big);
       ctx.restore();
     }
 
@@ -660,10 +693,30 @@ export class Game {
     }
 
     const capText = this.captionFor(def);
-    if (capText) drawCaption(ctx, capText, r.w, 10, Math.min(19, Math.max(12, r.h * 0.042)));
+    if (capText) drawCaption(ctx, capText, r.w, def.boss ? 44 : 10, Math.min(19, Math.max(12, r.h * 0.042)));
 
     if (isCurrent && this.phase === 'active' && this.challenge) {
       this.challenge.draw(ctx, r.w, r.h);
+    }
+
+    // boss bar: name + hp, paper-backed for readability over paintings
+    if (def.boss) {
+      const frac = i < this.current || (isCurrent && (this.phase === 'complete' || this.phase === 'end'))
+        ? (def.boss.hpAfter ?? def.boss.hp) : def.boss.hp;
+      ctx.save();
+      ctx.fillStyle = 'rgba(247,244,236,0.92)';
+      ctx.fillRect(r.w * 0.08, 8, r.w * 0.84, 26);
+      ctx.strokeStyle = INK;
+      ctx.lineWidth = 2;
+      ctx.strokeRect(r.w * 0.08, 8, r.w * 0.84, 26);
+      ctx.fillStyle = '#7e1d24';
+      ctx.fillRect(r.w * 0.08 + 3, 23, (r.w * 0.84 - 6) * Math.max(0, Math.min(1, frac)), 8);
+      ctx.fillStyle = INK;
+      ctx.font = '900 10px -apple-system, sans-serif';
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'alphabetic';
+      ctx.fillText(def.boss.name, r.w * 0.08 + 5, 19);
+      ctx.restore();
     }
 
     if (isCurrent && VERBS.includes(def.type) && (this.verbCounts[def.type] || 0) < 3 &&

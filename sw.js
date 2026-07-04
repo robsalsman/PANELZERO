@@ -1,5 +1,5 @@
 // Service worker: cache-first so the whole manga is playable offline after first read.
-const CACHE = 'panelzero-v4';
+const CACHE = 'panelzero-v5';
 const ASSETS = [
   '.',
   'index.html',
@@ -23,6 +23,10 @@ const ASSETS = [
   'data/chapter3b.json',
   'data/chapter4.json',
   'data/chapter5.json',
+  'data/chapter5g.json',
+  'data/chapter6d.json',
+  'data/chapter6s.json',
+  'data/chapter7a.json',
   'manifest.webmanifest',
   'assets/bg/cut-panels-arena.webp',
   'assets/bg/cut-panels.webp',

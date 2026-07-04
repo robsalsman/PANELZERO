@@ -11,11 +11,18 @@ function makeFx() {
   return { ripples: [], splats: [] };
 }
 
-function addHitFx(fx, x, y) {
+function addHitFx(fx, x, y, blood = false) {
   fx.ripples.push({ x, y, t: 0 });
-  for (let i = 0; i < 6; i++) {
-    const a = (i / 6) * Math.PI * 2 + Math.random();
-    fx.splats.push({ x, y, dx: Math.cos(a) * (40 + Math.random() * 60), dy: Math.sin(a) * (40 + Math.random() * 60) - 30, t: 0, r: 2 + Math.random() * 3 });
+  const n = blood ? 9 : 6;
+  for (let i = 0; i < n; i++) {
+    const a = (i / n) * Math.PI * 2 + Math.random();
+    fx.splats.push({
+      x, y,
+      dx: Math.cos(a) * (40 + Math.random() * 60),
+      dy: Math.sin(a) * (40 + Math.random() * 60) - 30,
+      t: 0, r: (blood ? 3 : 2) + Math.random() * 3,
+      color: blood ? '#3a1020' : null,
+    });
   }
 }
 
@@ -33,9 +40,9 @@ function drawFx(ctx, fx, dt) {
     ctx.arc(r.x, r.y, 10 + p * 44, 0, Math.PI * 2);
     ctx.stroke();
   }
-  ctx.fillStyle = INK;
   for (const s of fx.splats) {
     const p = s.t / 0.45;
+    ctx.fillStyle = s.color || INK;
     ctx.globalAlpha = (1 - p) * 0.85;
     ctx.beginPath();
     ctx.arc(s.x + s.dx * p, s.y + s.dy * p + 40 * p * p, s.r * (1 - p * 0.6), 0, Math.PI * 2);
@@ -108,7 +115,7 @@ function tapChallenge(def, api) {
       if (Math.hypot(pt.x - a.x, pt.y - a.y) <= a.r) {
         this.count++;
         smudgeHop++;
-        addHitFx(fx, pt.x, pt.y);
+        addHitFx(fx, pt.x, pt.y, !!p.blood);
         api.sfx.ink();
         api.buzz(15);
         api.hitstop(0.045);
@@ -530,6 +537,12 @@ function traceChallenge(def, api) {
           const avgErr = errN ? errSum / errN : tol;
           const grade = resets === 0 && avgErr < tol * 0.38 ? 'perfect' : avgErr < tol * 0.65 ? 'good' : 'ok';
           if (grade === 'perfect') api.hitstop(0.07);
+          // named Ink Art: the technique lands with its kanji
+          if (def.params.technique) {
+            api.stamp(def.params.technique.kanji, false, true);
+            api.hitstop(0.1);
+            api.shake(4);
+          }
           api.succeed({ grade });
         }
       }
@@ -610,11 +623,18 @@ function traceChallenge(def, api) {
 }
 
 /* ---------- CHOOSE ---------- */
+// option layouts: 2-way keeps the classic stagger; 3-way stacks
+export const CHOICE_POS = {
+  2: [[0.27, 0.2], [0.73, 0.32]],
+  3: [[0.3, 0.14], [0.7, 0.3], [0.4, 0.46]],
+};
+
 function chooseChallenge(def, api) {
   const opts = def.params.options;
+  const n = Math.min(3, opts.length);
   let chosen = -1;
   let doneTimer = null;
-  const rects = [null, null];
+  const rects = [null, null, null];
 
   return {
     update(dt) {
@@ -625,11 +645,12 @@ function chooseChallenge(def, api) {
     },
     onTap(pt) {
       if (chosen >= 0) return;
-      for (let i = 0; i < 2; i++) {
+      for (let i = 0; i < n; i++) {
         const r = rects[i];
         if (r && pt.x >= r.x - 8 && pt.x <= r.x + r.w + 8 && pt.y >= r.y - 8 && pt.y <= r.y + r.h + 8) {
           chosen = i;
           if (opts[i].flag) api.setFlag(opts[i].flag);
+          for (const [k, amt] of Object.entries(opts[i].bonds || {})) api.addBond(k, amt);
           api.sfx.ink();
           api.buzz(15);
           doneTimer = 0.4;
@@ -639,16 +660,13 @@ function chooseChallenge(def, api) {
     },
     draw(ctx, w, h) {
       const fs = Math.max(14, Math.min(w, h) * 0.055);
-      const positions = [
-        { x: w * 0.27, y: h * 0.2 },
-        { x: w * 0.73, y: h * 0.32 },
-      ];
-      for (let i = 0; i < 2; i++) {
-        rects[i] = speechBubble(ctx, opts[i].text, positions[i].x, positions[i].y, w * 0.46, {
+      const positions = CHOICE_POS[n] || CHOICE_POS[2];
+      for (let i = 0; i < n; i++) {
+        rects[i] = speechBubble(ctx, opts[i].text, positions[i][0] * w, positions[i][1] * h, w * 0.46, {
           fs,
           selected: chosen === i,
           faded: chosen >= 0 && chosen !== i,
-          tail: { x: w * 0.5, y: h * 0.55 },
+          tail: i === 0 ? { x: w * 0.5, y: h * 0.58 } : null,
         });
       }
     },

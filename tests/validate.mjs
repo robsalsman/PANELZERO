@@ -6,7 +6,7 @@ import { setpieces } from '../js/setpieces.js';
 
 const PAINTERS = { ...scenes, ...setpieces };
 const TYPES = ['cutscene', 'spread', 'tap', 'swipe', 'hold', 'trace', 'choose'];
-const ACTORS = ['kai', 'sumi', 'rejected', 'smudge', 'hand', 'pencil-shadow'];
+const ACTORS = ['kai', 'sumi', 'rejected', 'ken', 'yuri', 'goma', 'artist', 'smudge', 'hand', 'pencil-shadow'];
 const BGS = ['speedv', 'speedh', 'radial', 'toneL', 'toneD', 'drips', 'deadpanels', 'sea', 'desk', 'blank'];
 const PROPS = ['sfx', 'star', 'raft', 'gate', 'inkbottle', 'brush', 'nib', 'pencil', 'tiles'];
 
@@ -40,7 +40,7 @@ for (const [chId, ch] of Object.entries(story.chapters)) {
     if (p.type === 'swipe' && !p.params.hazards?.length) errs.push(`${at}: swipe needs hazards`);
     if (p.type === 'trace' && !(Array.isArray(p.params.path) && p.params.path.length >= 2)) errs.push(`${at}: trace needs a path`);
     if (p.type === 'hold' && !(p.params.sweeps > 0)) errs.push(`${at}: hold needs sweeps`);
-    if (p.type === 'choose' && p.params.options?.length !== 2) errs.push(`${at}: choose needs 2 options`);
+    if (p.type === 'choose' && !(p.params.options?.length >= 2 && p.params.options?.length <= 3)) errs.push(`${at}: choose needs 2-3 options`);
     if ((p.type === 'cutscene' || p.type === 'spread') && !(p.params?.duration > 0)) errs.push(`${at}: cutscene needs duration`);
   }
 }

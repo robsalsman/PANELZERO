@@ -1,0 +1,302 @@
+{
+  "id": "g3",
+  "title": "CHAPTER 7",
+  "subtitle": "THE ARTIST'S ROOM",
+  "panels": [
+    {
+      "id": "p01",
+      "page": 1,
+      "type": "cutscene",
+      "h": 0.55,
+      "art": {
+        "bg": [],
+        "actors": [
+          {
+            "who": "kai",
+            "pose": "point",
+            "x": 0.3,
+            "y": 0.94,
+            "s": 0.36,
+            "dir": 1
+          }
+        ]
+      },
+      "caption": "Above the desk, past the lamp: a door hanging in the air, drawn in pencil and never inked. Every story has a room behind it.",
+      "params": {
+        "duration": 3.2
+      },
+      "img": "assets/bg/desk-edge.webp"
+    },
+    {
+      "id": "p02",
+      "page": 1,
+      "type": "trace",
+      "h": 0.6,
+      "art": {
+        "bg": []
+      },
+      "caption": "The lamp cord is the only way up. Draw your grip true.",
+      "params": {
+        "tol": 50,
+        "path": [
+          [
+            0.16,
+            0.86
+          ],
+          [
+            0.34,
+            0.62
+          ],
+          [
+            0.56,
+            0.44
+          ],
+          [
+            0.82,
+            0.2
+          ]
+        ]
+      },
+      "img": "assets/bg/desk.webp"
+    },
+    {
+      "id": "p03",
+      "page": 1,
+      "type": "cutscene",
+      "h": 0.6,
+      "art": {
+        "bg": [
+          "toneD"
+        ],
+        "actors": [
+          {
+            "who": "artist",
+            "pose": "sit",
+            "x": 0.62,
+            "y": 0.9,
+            "s": 0.5,
+            "dir": -1,
+            "emotion": "sleep"
+          }
+        ]
+      },
+      "caption": "A room smaller than a panel. A deadline calendar with every square crossed out. Cold coffee. A phone glowing face-down. And her \u2014 asleep at the desk, pencil still in hand.",
+      "params": {
+        "duration": 4.0
+      },
+      "img": "assets/bg/paper-room.webp"
+    },
+    {
+      "id": "p04",
+      "page": 1,
+      "type": "cutscene",
+      "h": 0.5,
+      "art": {
+        "bg": [
+          "toneD"
+        ]
+      },
+      "caption": "The glowing phone, mid-email: \"...following reader survey results, PANEL ZERO will end serialization at Chapter 3. We thank Aoki-sensei for her efforts.\" \u2014 dated the exact night the ink stopped.",
+      "params": {
+        "duration": 4.0
+      },
+      "img": "assets/bg/paper-room.webp"
+    },
+    {
+      "id": "p05",
+      "page": 1,
+      "type": "cutscene",
+      "h": 0.55,
+      "art": {
+        "bg": [
+          "toneD"
+        ],
+        "actors": [
+          {
+            "who": "artist",
+            "pose": "sit",
+            "x": 0.6,
+            "y": 0.9,
+            "s": 0.5,
+            "dir": -1,
+            "emotion": "sad"
+          }
+        ],
+        "bubbles": [
+          {
+            "text": "\"I drew a boy who wouldn't quit... because I was quitting.\"",
+            "x": 0.42,
+            "y": 0.36,
+            "maxW": 0.72,
+            "tailX": 0.56,
+            "tailY": 0.64
+          }
+        ]
+      },
+      "caption": "She talks in her sleep. She can't see you \u2014 drafts don't show up in a dream about giving up.",
+      "params": {
+        "duration": 3.8
+      },
+      "img": "assets/bg/paper-room.webp"
+    },
+    {
+      "id": "p06",
+      "page": 2,
+      "type": "hold",
+      "h": 0.55,
+      "art": {
+        "bg": [
+          "toneD"
+        ]
+      },
+      "caption": "The Hand passes THROUGH the room. It was never a monster. It's what's left of a person when she stops fighting. Hold on until it passes.",
+      "params": {
+        "sweeps": 2,
+        "sweepTime": 1.5,
+        "overlay": "pencil"
+      },
+      "img": "assets/bg/paper-room.webp"
+    },
+    {
+      "id": "p07",
+      "page": 2,
+      "type": "tap",
+      "h": 0.6,
+      "art": {
+        "bg": [
+          "speedv"
+        ]
+      },
+      "caption": "The room begins to erase itself \u2014 twelve years of pages lifting off the desk. CATCH THEM. ALL OF THEM.",
+      "params": {
+        "count": 5,
+        "time": 6,
+        "target": {
+          "x": 0.55,
+          "y": 0.55,
+          "r": 0.22
+        },
+        "wobble": true
+      },
+      "img": "assets/bg/paper-room.webp"
+    },
+    {
+      "id": "p08",
+      "page": 2,
+      "type": "cutscene",
+      "h": 0.5,
+      "art": {
+        "bg": [],
+        "byFlag": {
+          "savedSumi": {
+            "actors": [
+              {
+                "who": "sumi",
+                "pose": "float",
+                "x": 0.55,
+                "y": 0.92,
+                "s": 0.36,
+                "dir": -1,
+                "emotion": "shock"
+              }
+            ],
+            "bubbles": [
+              {
+                "text": "\"This is my page. The first one. She KEPT me. Twelve years, four apartments, one fire \u2014 she kept me.\"",
+                "x": 0.48,
+                "y": 0.15,
+                "maxW": 0.84,
+                "tailX": 0.52,
+                "tailY": 0.46
+              }
+            ]
+          }
+        }
+      },
+      "captionByFlag": {
+        "savedSumi": "At the bottom of the rescued stack: a nine-year-old's page. A girl, a scribble dog, a sun in sunglasses.",
+        "default": "At the bottom of the rescued stack: a child's drawing of a girl. Kai has never met her whole. He salutes her anyway."
+      },
+      "params": {
+        "duration": 3.8
+      },
+      "img": "assets/bg/paper-room.webp"
+    },
+    {
+      "id": "p09",
+      "page": 2,
+      "type": "choose",
+      "h": 0.55,
+      "art": {
+        "bg": [
+          "toneD"
+        ],
+        "actors": [
+          {
+            "who": "kai",
+            "pose": "stand",
+            "x": 0.5,
+            "y": 0.96,
+            "s": 0.36,
+            "dir": 0
+          }
+        ]
+      },
+      "caption": "The room asks the only question that matters before Page One.",
+      "params": {
+        "options": [
+          {
+            "text": "\"She gave up on us.\"",
+            "flag": "resent"
+          },
+          {
+            "text": "\"She's trapped in a panel too.\"",
+            "flag": "empathy",
+            "bonds": {
+              "world": 2
+            }
+          }
+        ]
+      },
+      "img": "assets/bg/paper-room.webp"
+    },
+    {
+      "id": "p10",
+      "page": 2,
+      "type": "cutscene",
+      "h": 0.5,
+      "art": {
+        "bg": [],
+        "actors": [
+          {
+            "who": "kai",
+            "pose": "stand",
+            "x": 0.4,
+            "y": 0.92,
+            "s": 0.38,
+            "dir": 1
+          }
+        ]
+      },
+      "captionByFlag": {
+        "resent": "Kai pockets the cancellation email. Fuel. Some fires you carry on purpose.",
+        "empathy": "Kai leaves something on her desk: his own drawing. Stick-figure Kai, thumbs up. 'SEE YOU ON PAGE ONE.'"
+      },
+      "params": {
+        "duration": 3.4
+      },
+      "img": "assets/bg/paper-room.webp"
+    },
+    {
+      "id": "p11",
+      "page": 2,
+      "type": "spread",
+      "h": 1.0,
+      "art": "panelzero_gate",
+      "params": {
+        "duration": 3.6
+      },
+      "img": "assets/bg/panel-zero.webp"
+    }
+  ]
+}
