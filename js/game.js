@@ -11,14 +11,31 @@ import { INK, PAPER, caption as drawCaption, drawVerbIcon } from './art.js';
 import { sfx, buzz, initAudio } from './sfx.js';
 import { saveGet, saveSet } from './save.js';
 
-const DRAW_TIME = 0.5;     // ink-in (GDD: ~0.5s)
-const COMPLETE_TIME = 0.5; // inked-complete flourish
-const ERASE_TIME = 0.65;   // fail: the Hand erases the panel
+const DRAW_TIME = 0.28;    // ink-in — snappy; dead time kills pacing
+const COMPLETE_TIME = 0.3; // inked-complete flourish
+const ERASE_TIME = 0.5;    // fail: the Hand erases the panel
+const POINTS = { perfect: 300, good: 150, ok: 50 };
 const VERBS = ['tap', 'swipe', 'hold', 'trace', 'choose'];
 const SAVE_KEY = 'save2';
 
 const PAINTERS = { ...scenes, ...setpieces };
 const ease = (t) => 1 - Math.pow(1 - t, 3);
+
+// manga-style action stamp: fat text, paper outline over ink
+function drawStamp(ctx, text) {
+  ctx.font = '900 30px -apple-system, "Arial Black", sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.lineJoin = 'round';
+  ctx.strokeStyle = PAPER;
+  ctx.lineWidth = 9;
+  ctx.strokeText(text, 0, 0);
+  ctx.strokeStyle = INK;
+  ctx.lineWidth = 2.5;
+  ctx.strokeText(text, 0, 0);
+  ctx.fillStyle = INK;
+  ctx.fillText(text, 0, 0);
+}
 
 export class Game {
   constructor(canvas, story, loadChapter) {
@@ -45,6 +62,14 @@ export class Game {
     this.activeT = 0;
     this.inkedAt = new Map();
     this._toastTimer = null;
+
+    // skill layer: score, combo, grades, and juice state
+    this.score = 0;
+    this.combo = 0;
+    this.grades = { perfect: 0, good: 0, ok: 0 };
+    this.stamps = [];   // floating manga stamps (PERFECT!! etc.)
+    this.shakeP = 0;    // screen shake power
+    this.freezeT = 0;   // hit-stop
 
     this.scroll = new ScrollController();
     window.addEventListener('resize', () => this.layout());
@@ -106,7 +131,10 @@ export class Game {
     initAudio();
     const saved = await saveGet(SAVE_KEY);
     this.endingsFound = saved?.endingsFound || [];
+    this.bestScore = saved?.bestScore || 0;
     this.flags = {};
+    this.score = 0;
+    this.combo = 0;
     this.verbCounts = saved?.verbCounts || {}; // verb tutorials stay learned
     await this.beginChapter(this.story.start);
   }
@@ -118,6 +146,9 @@ export class Game {
     this.flags = saved.flags || {};
     this.verbCounts = saved.verbCounts || {};
     this.endingsFound = saved.endingsFound || [];
+    this.bestScore = saved.bestScore || 0;
+    this.score = saved.score || 0;
+    this.combo = 0;
     await this.beginChapter(saved.chapterId, saved.current || 0, saved);
   }
 
@@ -128,6 +159,8 @@ export class Game {
     this.current = Math.min(atPanel, this.panels.length - 1);
     this.failsChapter = saved?.failsChapter || 0;
     this.elapsedChapter = saved?.elapsedChapter || 0;
+    this.grades = { perfect: 0, good: 0, ok: 0 };
+    this.stamps = [];
     this.inkedAt.clear();
     this.challenge = null;
     this.layout();
@@ -165,6 +198,10 @@ export class Game {
         if (this.phaseT >= DRAW_TIME) this.beginActive();
         break;
       case 'active':
+        if (this.freezeT > 0) {
+          this.freezeT -= dt; // hit-stop: the world holds its breath
+          break;
+        }
         this.activeT += dt;
         this.challenge?.update(dt);
         break;
@@ -194,7 +231,7 @@ export class Game {
     this.phaseT = 0;
     this.activeT = 0;
     const api = {
-      succeed: () => this.onSucceed(),
+      succeed: (res) => this.onSucceed(res),
       fail: () => this.onFail(),
       setFlag: (f) => this.setFlag(f),
       flags: this.flags,
@@ -204,6 +241,9 @@ export class Game {
         const r = this.rects[this.current];
         return { w: r.w, h: r.h };
       },
+      shake: (p) => { this.shakeP = Math.max(this.shakeP, p); },
+      hitstop: (t) => { this.freezeT = Math.max(this.freezeT, t); },
+      stamp: (text, small = false) => this.addStamp(text, { small }),
     };
     this.challenge = createChallenge(def, api);
     if (def.toast && VERBS.includes(def.type)) {
@@ -225,27 +265,65 @@ export class Game {
     }
   }
 
-  onSucceed() {
+  onSucceed(res = {}) {
     if (this.phase !== 'active') return;
     const def = this.panels[this.current];
     if (VERBS.includes(def.type)) {
       this.verbCounts[def.type] = (this.verbCounts[def.type] || 0) + 1;
     }
     for (const f of def.setFlags || []) this.setFlag(f);
+
+    const grade = res.grade;
+    if (grade) {
+      this.grades[grade]++;
+      const mult = 1 + Math.min(this.combo, 10) * 0.1;
+      this.score += Math.round(POINTS[grade] * mult);
+      if (grade === 'perfect') {
+        this.combo++;
+        sfx.perfect(this.combo);
+        this.addStamp(this.combo >= 2 ? `PERFECT x${this.combo}` : 'PERFECT!!');
+        buzz([20, 30, 20]);
+      } else if (grade === 'good') {
+        sfx.good();
+        this.addStamp('GOOD', { small: true });
+        buzz(25);
+      } else {
+        this.combo = 0;
+        sfx.complete();
+        buzz(20);
+      }
+    } else {
+      sfx.complete();
+      buzz(30);
+    }
+
     this.phase = 'complete';
     this.phaseT = 0;
     this.inkedAt.set(this.current, this.elapsedChapter);
-    sfx.complete();
-    buzz(30);
   }
 
   onFail() {
     if (this.phase !== 'active') return;
     this.failsChapter++;
+    this.combo = 0;
+    this.shakeP = Math.max(this.shakeP, 7);
     this.phase = 'erase';
     this.phaseT = 0;
     sfx.erase();
     buzz([40, 60, 40]);
+  }
+
+  addStamp(text, opts = {}) {
+    const r = this.rects[this.current];
+    if (!r) return;
+    this.stamps.push({
+      text,
+      x: r.x + r.w * (0.3 + Math.random() * 0.4),
+      y: r.y + r.h * (0.28 + Math.random() * 0.2),
+      t: 0,
+      rot: (Math.random() - 0.5) * 0.3,
+      small: opts.small || false,
+    });
   }
 
   advance() {
@@ -266,16 +344,29 @@ export class Game {
   }
 
   async persist(done = false) {
+    if (done) this.bestScore = Math.max(this.bestScore || 0, this.score);
     await saveSet(SAVE_KEY, {
       chapterId: this.chapterId,
       current: this.current,
       flags: this.flags,
       failsChapter: this.failsChapter,
       elapsedChapter: this.elapsedChapter,
+      score: this.score,
+      bestScore: this.bestScore || 0,
       verbCounts: this.verbCounts,
       endingsFound: this.endingsFound,
       done,
     });
+  }
+
+  chapterRank() {
+    const g = this.grades;
+    const graded = g.perfect + g.good + g.ok;
+    const pFrac = graded ? g.perfect / graded : 0;
+    if (this.failsChapter === 0 && pFrac >= 0.65) return 'S';
+    if (this.failsChapter <= 1 && pFrac >= 0.35) return 'A';
+    if (this.failsChapter <= 3) return 'B';
+    return 'C';
   }
 
   finishChapter() {
@@ -288,6 +379,11 @@ export class Game {
     const secs = Math.floor(this.elapsedChapter % 60);
     document.getElementById('stat-time').textContent = `${mins}:${String(secs).padStart(2, '0')}`;
     document.getElementById('stat-fails').textContent = String(this.failsChapter);
+    document.getElementById('stat-score').textContent = this.score.toLocaleString();
+    const rank = this.chapterRank();
+    const rankEl = document.getElementById('rank-badge');
+    rankEl.textContent = rank;
+    rankEl.dataset.rank = rank;
     document.getElementById('clean-badge').classList.toggle('hidden', this.failsChapter !== 0);
 
     const titleEl = document.getElementById('end-title');
@@ -302,8 +398,10 @@ export class Game {
       if (!this.endingsFound.includes(endingId)) this.endingsFound.push(endingId);
       titleEl.textContent = `ENDING: ${ending.name}`;
       nextEl.textContent = 'T H E   E N D';
+      const newBest = this.score > (this.bestScore || 0);
       endingLine.textContent = `ENDINGS FOUND: ${this.endingsFound.length}/${this.story.endings.length}` +
-        (this.endingsFound.length < this.story.endings.length ? ' — choose differently next read.' : ' — you found them all!');
+        (this.endingsFound.length < this.story.endings.length ? ' — choose differently next read.' : ' — you found them all!') +
+        (newBest ? '  ★ NEW BEST SCORE' : '');
       endingLine.classList.remove('hidden');
       btnNext.classList.add('hidden');
       btnAgain.classList.remove('hidden');
@@ -323,6 +421,8 @@ export class Game {
         flags: this.flags,
         failsChapter: 0,
         elapsedChapter: 0,
+        score: this.score,
+        bestScore: this.bestScore || 0,
         verbCounts: this.verbCounts,
         endingsFound: this.endingsFound,
         done: false,
@@ -400,6 +500,7 @@ export class Game {
     const now = performance.now();
     const dt = Math.min(0.05, (now - this._last) / 1000);
     this._last = now;
+    this._dtFrame = dt;
     this.update(dt);
     this.render();
     requestAnimationFrame(() => this.tick());
@@ -422,11 +523,20 @@ export class Game {
     ctx.fillRect(0, 0, W, H);
     if (!this.panels.length || !this.chapter) return;
 
+    // screen shake
+    let shx = 0;
+    let shy = 0;
+    if (this.shakeP > 0.15) {
+      shx = (Math.random() - 0.5) * this.shakeP * 2;
+      shy = (Math.random() - 0.5) * this.shakeP * 2;
+      this.shakeP *= Math.pow(0.0004, this._dtFrame || 0.016);
+    } else this.shakeP = 0;
+
     ctx.save();
-    ctx.translate(0, -Math.round(this.scroll.y));
+    ctx.translate(Math.round(shx), Math.round(shy) - Math.round(this.scroll.y));
 
     ctx.fillStyle = PAPER;
-    ctx.fillRect(0, 0, W, this.totalH);
+    ctx.fillRect(-20, -20, W + 40, this.totalH + 40);
 
     ctx.fillStyle = INK;
     ctx.textAlign = 'center';
@@ -451,7 +561,40 @@ export class Game {
       }
     }
 
+    // floating manga stamps (PERFECT!! / CLOSE!)
+    const dtF = this._dtFrame || 0.016;
+    for (const st of this.stamps) st.t += dtF;
+    this.stamps = this.stamps.filter((st) => st.t < 0.85);
+    for (const st of this.stamps) {
+      const p = st.t / 0.85;
+      const pop = p < 0.18 ? p / 0.18 : 1;
+      const scale = (st.small ? 0.55 : 1) * (0.6 + pop * 0.4) * (1 + Math.max(0, p - 0.6) * 0.3);
+      ctx.save();
+      ctx.translate(st.x, st.y - p * 26);
+      ctx.rotate(st.rot);
+      ctx.scale(scale, scale);
+      ctx.globalAlpha = p > 0.6 ? 1 - (p - 0.6) / 0.4 : 1;
+      drawStamp(ctx, st.text);
+      ctx.restore();
+    }
+
     ctx.restore();
+
+    // live HUD: combo brush counter (screen space, only mid-streak)
+    if (this.combo >= 2 && (this.phase === 'active' || this.phase === 'complete' || this.phase === 'draw')) {
+      ctx.save();
+      ctx.translate(W - 14, H * 0.16);
+      ctx.rotate(0.06);
+      ctx.textAlign = 'right';
+      ctx.font = `900 ${Math.round(H * 0.026)}px -apple-system, "Arial Black", sans-serif`;
+      ctx.lineJoin = 'round';
+      ctx.strokeStyle = PAPER;
+      ctx.lineWidth = 6;
+      ctx.strokeText(`${this.combo} COMBO`, 0, 0);
+      ctx.fillStyle = INK;
+      ctx.fillText(`${this.combo} COMBO`, 0, 0);
+      ctx.restore();
+    }
   }
 
   renderPanel(i) {

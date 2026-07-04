@@ -16,6 +16,7 @@ const SCENARIOS = {
     startAt: null,
     choices: { 'ch1:p04': 1, 'ch1:p11': 1, 'ch2:p04': 0, 'ch2:p11': 0, 'ch3a:p11': 0, 'ch4:p09': 0, 'ch5:p10': 0 },
     failOnce: 'ch2:p02', // deliberately eat one hazard to test erase/redraw mid-story
+    shotAfter: 'ch2:p08', // catch a PERFECT stamp + combo HUD mid-fight
     expect: 'THE NEW ARTIST',
   },
   // cut-panels route, no mercy, keep weapon, erase it all -> THE ESCAPE
@@ -118,13 +119,13 @@ async function main() {
     switch (def.type) {
       case 'cutscene':
       case 'spread': {
-        await page.waitForTimeout(Math.max(900, p.duration * 500 + 250));
+        await page.waitForTimeout(600); // tappable at 0.15s now — readers set the pace
         const pt = toClient(rect, scroll, 0.5, 0.5);
         await page.mouse.click(pt.x, pt.y);
         break;
       }
       case 'choose': {
-        await page.waitForTimeout(700); // bubbles fade in
+        await page.waitForTimeout(450); // bubbles land fast now
         const idx = scenario.choices[key] ?? 0;
         const pos = idx === 0 ? [0.27, 0.2] : [0.73, 0.32];
         const pt = toClient(rect, scroll, pos[0], pos[1]);
@@ -229,7 +230,11 @@ async function main() {
       const btnNextHidden = await page.evaluate(() => document.getElementById('btn-next').classList.contains('hidden'));
       if (!btnNextHidden) {
         const title = await page.textContent('#end-title');
-        log(`${title} — time ${await page.textContent('#stat-time')}, fails ${await page.textContent('#stat-fails')}`);
+        const rank = await page.textContent('#rank-badge');
+        const score = await page.textContent('#stat-score');
+        if (!/^[SABC]$/.test(rank)) throw new Error(`bad rank "${rank}"`);
+        if (!(parseInt(score.replace(/,/g, ''), 10) > 0)) throw new Error(`score not accumulating: "${score}"`);
+        log(`${title} — rank ${rank}, score ${score}, fails ${await page.textContent('#stat-fails')}`);
         await page.click('#btn-next');
         await page.waitForTimeout(400);
         continue;
@@ -251,13 +256,19 @@ async function main() {
       await page.screenshot({ path: `tests/shots/${name}-${s.chapterId}-spread.png` });
     }
     await attempt(info, key);
+    if (scenario.shotAfter === key) {
+      await page.waitForTimeout(120);
+      await page.screenshot({ path: `tests/shots/${name}-juice.png` });
+    }
     // wait until the panel resolves (advance/erase) or stays active for retry
-    await page.waitForTimeout(700);
+    await page.waitForTimeout(450);
   }
 
   // ---- finale assertions ----
   const endTitle = await page.textContent('#end-title');
   const endingsLine = await page.textContent('#end-endings');
+  const finalScore = await page.textContent('#stat-score');
+  log(`final score: ${finalScore}, rank ${await page.textContent('#rank-badge')}`);
   await page.screenshot({ path: `tests/shots/${name}-finale.png` });
   log(`finale: ${endTitle} | ${endingsLine}`);
   if (!endTitle.includes(scenario.expect)) {

@@ -131,6 +131,23 @@ html, body {
 .stat-label { font-size: 11px; font-weight: 800; letter-spacing: 0.25em; opacity: 0.55; }
 .stat span:last-child { font-size: 26px; font-weight: 900; }
 
+.rank {
+  display: inline-block;
+  font-size: 76px;
+  font-weight: 900;
+  line-height: 1;
+  margin: 8px 0 4px;
+  transform: rotate(-6deg);
+  -webkit-text-stroke: 3px #111;
+  text-shadow: 5px 5px 0 rgba(17,17,17,0.18);
+  animation: rank-in 0.45s cubic-bezier(0.2, 2.2, 0.4, 1);
+}
+.rank[data-rank="S"] { font-size: 92px; }
+@keyframes rank-in {
+  from { transform: rotate(-6deg) scale(2.4); opacity: 0; }
+  to   { transform: rotate(-6deg) scale(1); opacity: 1; }
+}
+
 .endings-line {
   margin: 14px 0 6px;
   font-size: 13px;

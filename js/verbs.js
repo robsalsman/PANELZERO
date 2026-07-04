@@ -1,26 +1,45 @@
-// Verb engine (M1). One challenge object per active panel. Exactly one verb each.
+// Verb engine. One challenge object per active panel — now with skill grading:
+// every action is scored PERFECT / GOOD / OK (speed, precision, close calls),
+// feeding the combo meter. Juice hooks: api.shake, api.hitstop, api.stamp.
 // Contract: { update(dt), draw(ctx, w, h), onDown/onMove/onUp/onTap/onSwipe }.
-// api = { succeed(), fail(), setFlag(name), flags, sfx, buzz, size: () => ({w, h}) }
-import { INK, impactStar, drawSFXText, drawSmudge, speechBubble, drawPencilShadow } from './art.js';
+import { INK, PAPER, impactStar, drawSFXText, drawSmudge, speechBubble, drawPencilShadow } from './art.js';
 import { drawKai } from './chars.js';
 import { anchors } from './scenes.js';
 
-/* ---------- helpers ---------- */
-function ripple(list, x, y) {
-  list.push({ x, y, t: 0 });
+/* ---------- shared juice bits ---------- */
+function makeFx() {
+  return { ripples: [], splats: [] };
 }
 
-function drawRipples(ctx, list, dt) {
-  for (const r of list) r.t += dt;
-  for (let i = list.length - 1; i >= 0; i--) if (list[i].t > 0.5) list.splice(i, 1);
-  for (const r of list) {
-    const p = r.t / 0.5;
+function addHitFx(fx, x, y) {
+  fx.ripples.push({ x, y, t: 0 });
+  for (let i = 0; i < 6; i++) {
+    const a = (i / 6) * Math.PI * 2 + Math.random();
+    fx.splats.push({ x, y, dx: Math.cos(a) * (40 + Math.random() * 60), dy: Math.sin(a) * (40 + Math.random() * 60) - 30, t: 0, r: 2 + Math.random() * 3 });
+  }
+}
+
+function drawFx(ctx, fx, dt) {
+  for (const r of fx.ripples) r.t += dt;
+  for (const s of fx.splats) s.t += dt;
+  fx.ripples = fx.ripples.filter((r) => r.t < 0.4);
+  fx.splats = fx.splats.filter((s) => s.t < 0.45);
+  for (const r of fx.ripples) {
+    const p = r.t / 0.4;
     ctx.strokeStyle = INK;
     ctx.globalAlpha = (1 - p) * 0.8;
-    ctx.lineWidth = 3;
+    ctx.lineWidth = 3.5 * (1 - p) + 1;
     ctx.beginPath();
-    ctx.arc(r.x, r.y, 8 + p * 34, 0, Math.PI * 2);
+    ctx.arc(r.x, r.y, 10 + p * 44, 0, Math.PI * 2);
     ctx.stroke();
+  }
+  ctx.fillStyle = INK;
+  for (const s of fx.splats) {
+    const p = s.t / 0.45;
+    ctx.globalAlpha = (1 - p) * 0.85;
+    ctx.beginPath();
+    ctx.arc(s.x + s.dx * p, s.y + s.dy * p + 40 * p * p, s.r * (1 - p * 0.6), 0, Math.PI * 2);
+    ctx.fill();
   }
   ctx.globalAlpha = 1;
 }
@@ -28,45 +47,56 @@ function drawRipples(ctx, list, dt) {
 /* ---------- TAP ---------- */
 function tapChallenge(def, api) {
   const p = def.params;
-  const ripples = [];
+  const fx = makeFx();
   let timeLeft = p.time ?? null;
   let smudgeHop = 0;
+  let elapsed = 0;
+  let misses = 0;
+  // par time for a PERFECT: quick, but honest for the tap count
+  const par = p.time ? p.time * 0.45 : p.count * 0.5 + 0.4;
 
   const hitArea = (w, h) => {
+    let base;
     if (p.target) {
-      // data-driven target (chapters 2+): normalized pos, fat-thumb minimum
       let x = p.target.x * w;
       if (p.wobble) x += Math.sin(smudgeHop * 2.4) * w * 0.14;
-      return { x, y: p.target.y * h, r: Math.max(p.target.r * Math.min(w, h), 44) };
+      base = { x, y: p.target.y * h, r: Math.max(p.target.r * Math.min(w, h), 44) };
+    } else {
+      switch (p.hit) {
+        case 'kai': {
+          const k = anchors.kaiWake(w, h);
+          base = { x: k.x, y: k.y - k.s * 0.3, r: k.s * 0.55 };
+          break;
+        }
+        case 'letterC': {
+          const c = anchors.letterC(w, h);
+          base = { x: c.x, y: c.y, r: Math.max(c.r, 44) };
+          break;
+        }
+        case 'smudge': {
+          const s = anchors.smudge(w, h);
+          base = { x: s.x + Math.sin(smudgeHop * 2.4) * w * 0.14, y: s.y, r: Math.max(s.r * 1.2, 48) };
+          break;
+        }
+        default:
+          base = { x: w / 2, y: h / 2, r: Math.min(w, h) * 0.4 };
+      }
     }
-    switch (p.hit) {
-      case 'kai': {
-        const k = anchors.kaiWake(w, h);
-        return { x: k.x, y: k.y - k.s * 0.3, r: k.s * 0.55 };
-      }
-      case 'letterC': {
-        const c = anchors.letterC(w, h);
-        return { x: c.x, y: c.y, r: Math.max(c.r, 44) };
-      }
-      case 'smudge': {
-        const s = anchors.smudge(w, h);
-        // hops toward/away from Kai as it takes hits
-        const dx = Math.sin(smudgeHop * 2.4) * w * 0.14;
-        return { x: s.x + dx, y: s.y, r: Math.max(s.r * 1.2, 48) };
-      }
-      default:
-        return { x: w / 2, y: h / 2, r: Math.min(w, h) * 0.4 };
-    }
+    // the mark shrinks slightly with each hit — landing the last one feels earned
+    if (p.count > 1) base.r = Math.max(40, base.r * (1 - this0.count * 0.07));
+    return base;
   };
-
-  return {
+  // (this0 set below — challenge object needs to exist for hitArea closure)
+  const this0 = {
     count: 0,
     holding: false,
     update(dt) {
+      elapsed += dt;
       if (timeLeft !== null) {
         timeLeft -= dt;
         if (timeLeft <= 0) {
           timeLeft = null;
+          api.shake(6);
           api.fail();
         }
       }
@@ -78,20 +108,29 @@ function tapChallenge(def, api) {
       if (Math.hypot(pt.x - a.x, pt.y - a.y) <= a.r) {
         this.count++;
         smudgeHop++;
-        ripple(ripples, pt.x, pt.y);
+        addHitFx(fx, pt.x, pt.y);
         api.sfx.ink();
         api.buzz(15);
+        api.hitstop(0.045);
+        api.shake(2.2);
         if (this.count >= p.count) {
-          if (p.hit === 'smudge') api.sfx.hit();
-          api.succeed();
+          if (p.hit === 'smudge' || p.creature === 'smudge') {
+            api.sfx.hit();
+            api.shake(5);
+            api.hitstop(0.09);
+          }
+          let grade = elapsed <= par ? 'perfect' : elapsed <= par * 1.8 ? 'good' : 'ok';
+          if (misses > 1) grade = grade === 'perfect' ? 'good' : 'ok';
+          api.succeed({ grade });
         }
+      } else {
+        misses++;
       }
     },
     draw(ctx, w, h) {
       const a = hitArea(w, h);
-      // pulsing target ring
       const t = performance.now() / 1000;
-      const pulse = 1 + Math.sin(t * 4) * 0.07;
+      const pulse = 1 + Math.sin(t * 5) * 0.08;
       ctx.strokeStyle = INK;
       ctx.setLineDash([8, 7]);
       ctx.lineWidth = 2.5;
@@ -103,13 +142,11 @@ function tapChallenge(def, api) {
       ctx.globalAlpha = 1;
 
       if (p.hit === 'smudge' || p.creature === 'smudge') {
-        // the creature itself (moves with hits)
         const hpFrac = 1 - this.count / p.count;
         drawSmudge(ctx, a.x, a.y, Math.min(w, h) * 0.2, t, Math.max(0.2, hpFrac));
       }
       if (timeLeft !== null && p.time) {
         if (p.hit === 'smudge') {
-          // ch1: ink-drain timer on Kai's floor tile
           const k = anchors.kaiFight(w, h);
           const frac = Math.max(0, timeLeft / p.time);
           const tw = w * 0.17;
@@ -118,16 +155,16 @@ function tapChallenge(def, api) {
           ctx.fillRect(k.x - tw / 2, h * 0.84 + (1 - frac) * h * 0.1, tw, Math.max(0, frac) * h * 0.1);
           ctx.globalAlpha = 1;
         } else {
-          // generic: ink draining out of a bar along the panel bottom
           const frac = Math.max(0, timeLeft / p.time);
           ctx.fillStyle = INK;
           ctx.globalAlpha = 0.75;
           ctx.fillRect(12, h - 10, (w - 24) * frac, 5);
+          // pulse red-alert style when low (thicker + blinking)
+          if (frac < 0.3 && Math.sin(t * 12) > 0) ctx.fillRect(12, h - 13, (w - 24) * frac, 8);
           ctx.globalAlpha = 1;
         }
       }
 
-      // tap tick marks
       ctx.fillStyle = INK;
       for (let i = 0; i < p.count; i++) {
         ctx.globalAlpha = i < this.count ? 1 : 0.2;
@@ -136,17 +173,19 @@ function tapChallenge(def, api) {
         ctx.fill();
       }
       ctx.globalAlpha = 1;
-      drawRipples(ctx, ripples, this._dt || 0.016);
+      drawFx(ctx, fx, this._dt || 0.016);
     },
   };
+  return this0;
 }
 
 /* ---------- SWIPE ---------- */
 function swipeChallenge(def, api) {
   const hazards = def.params.hazards.map((hz) => ({ ...hz, t: -(hz.delay || 0), state: 'incoming' }));
   let idx = 0;
-  let kaiDir = 0; // -1 dodged left, +1 right, 0 centered
+  let kaiDir = 0;
   let doneTimer = null;
+  let worstGrade = 'perfect';
 
   const active = () => hazards[idx];
 
@@ -154,27 +193,27 @@ function swipeChallenge(def, api) {
     update(dt) {
       if (doneTimer !== null) {
         doneTimer -= dt;
-        if (doneTimer <= 0) api.succeed();
+        if (doneTimer <= 0) api.succeed({ grade: worstGrade });
         return;
       }
       const hz = active();
       if (!hz) return;
       hz.t += dt;
       if (hz.state === 'incoming' && hz.t >= hz.time) {
-        // impact — too slow
         hz.state = 'crashed';
         api.sfx.hit();
         api.buzz(60);
+        api.shake(7);
         api.fail();
       } else if (hz.state === 'dodged' && hz.t >= hz.time) {
         hz.state = 'crashed';
         api.sfx.hit();
-        // next hazard, or brief beat then success
+        api.shake(4);
         if (idx + 1 < hazards.length) {
           idx++;
           kaiDir = 0;
         } else {
-          doneTimer = 0.45;
+          doneTimer = 0.35;
         }
       }
     },
@@ -182,26 +221,32 @@ function swipeChallenge(def, api) {
       const hz = active();
       if (!hz || hz.state !== 'incoming' || hz.t < 0) return;
       const need = hz.dir;
-      const ok =
-        need === 'any'
-          ? dir === 'left' || dir === 'right'
-          : dir === need;
+      const ok = need === 'any' ? dir === 'left' || dir === 'right' : dir === need;
       if (ok) {
         hz.state = 'dodged';
         kaiDir = dir === 'up' ? 'up' : dir === 'left' ? -1 : 1;
-        api.sfx.page();
         api.buzz(20);
-      } else if (dir === 'left' || dir === 'right' || (need === 'any' ? false : dir === 'up')) {
-        // dodged INTO it
+        // the later you dodge, the better it feels — reward the nerve
+        const f = hz.t / hz.time;
+        if (f >= 0.55) {
+          api.hitstop(0.09);
+          api.shake(3);
+          api.sfx.close();
+          api.stamp('CLOSE!', true);
+        } else {
+          api.sfx.page();
+          if (worstGrade === 'perfect') worstGrade = 'good';
+        }
+      } else if (dir === 'left' || dir === 'right' || (need !== 'any' && dir === 'up')) {
         hz.state = 'crashed';
         api.sfx.hit();
         api.buzz(60);
+        api.shake(7);
         api.fail();
       }
     },
     draw(ctx, w, h) {
       const groundY = h * 0.88;
-      // Kai
       if (kaiDir === 0) drawKai(ctx, w * 0.5, groundY, h * 0.42, 'stand', { dir: 0 });
       else if (kaiDir === 'up') drawKai(ctx, w * 0.5, groundY - h * 0.22, h * 0.42, 'dodge', { dir: 1 });
       else drawKai(ctx, w * 0.5 + kaiDir * w * 0.26, groundY, h * 0.42, 'dodge', { dir: kaiDir });
@@ -209,7 +254,7 @@ function swipeChallenge(def, api) {
       const size = Math.min(w, h) * 0.15;
       for (let i = 0; i <= idx && i < hazards.length; i++) {
         const hz = hazards[i];
-        if (hz.t < 0) continue; // still delayed
+        if (hz.t < 0) continue;
         const p = Math.min(1, hz.t / hz.time);
         let x;
         let y;
@@ -228,8 +273,9 @@ function swipeChallenge(def, api) {
           drawSFXText(ctx, hz.text, w * 0.5, cy, size, 0.08);
           impactStar(ctx, w * 0.5, cy + size * 0.6, size * 0.8, 9);
         } else {
-          drawSFXText(ctx, hz.text, x, y, size, hz.from === 'top' ? 0.05 : hz.from === 'right' ? -0.12 : 0.12);
-          // motion trail
+          // hazards grow as they close in — dread you can see
+          const looming = size * (0.8 + p * 0.5);
+          drawSFXText(ctx, hz.text, x, y, looming, hz.from === 'top' ? 0.05 : hz.from === 'right' ? -0.12 : 0.12);
           ctx.strokeStyle = INK;
           ctx.globalAlpha = 0.4;
           ctx.lineWidth = 2;
@@ -246,7 +292,6 @@ function swipeChallenge(def, api) {
             ctx.stroke();
           }
           ctx.globalAlpha = 1;
-          // required-direction arrow hint
           if (hz.state === 'incoming') {
             const t = performance.now() / 1000;
             const bob = Math.sin(t * 6) * 6;
@@ -265,7 +310,6 @@ function swipeChallenge(def, api) {
             else if (hz.dir === 'left') draw(-1);
             else if (hz.dir === 'right') draw(1);
             else if (hz.dir === 'up') {
-              // upward arrow — jump!
               ctx.beginPath();
               ctx.moveTo(w * 0.5, h * 0.6 - bob);
               ctx.lineTo(w * 0.5 - 12, h * 0.6 - bob + 20);
@@ -284,18 +328,22 @@ function swipeChallenge(def, api) {
 /* ---------- HOLD ---------- */
 function holdChallenge(def, api) {
   const p = def.params;
+  let waited = 0;       // time before the player first hid
+  let heartT = 0;
   return {
     holding: false,
+    everHeld: false,
     sweepX: null,
     sweepsDone: 0,
-    _sweepT: -1, // <0: waiting to start
+    _sweepT: -1,
     _pause: 0,
     update(dt) {
       const { w } = api.size();
       if (this.sweepsDone >= p.sweeps) return;
+      if (!this.everHeld) waited += dt;
       if (!this.holding && this._sweepT < 0) {
         this.sweepX = null;
-        return; // shadow waits until the player hides
+        return;
       }
       if (this._pause > 0) {
         this._pause -= dt;
@@ -304,15 +352,23 @@ function holdChallenge(def, api) {
       }
       if (this._sweepT < 0) this._sweepT = 0;
       this._sweepT += dt;
+      // heartbeat while the threat passes over
+      heartT += dt;
+      if (heartT >= 0.45) {
+        heartT = 0;
+        api.sfx.heart();
+        api.buzz(8);
+      }
       const prog = this._sweepT / p.sweepTime;
       if (prog >= 1) {
         this.sweepsDone++;
         this._sweepT = -1;
-        this._pause = 0.45;
+        this._pause = 0.35;
         this.sweepX = null;
         if (this.sweepsDone >= p.sweeps) {
           api.sfx.page();
-          api.succeed();
+          // hid fast and never flinched = perfect
+          api.succeed({ grade: waited <= 1.2 ? 'perfect' : 'good' });
         }
       } else {
         this.sweepX = -w * 0.25 + prog * w * 1.5;
@@ -320,24 +376,23 @@ function holdChallenge(def, api) {
     },
     onDown() {
       this.holding = true;
+      this.everHeld = true;
       api.buzz(10);
     },
     onUp() {
       this.holding = false;
-      // releasing while the shadow is mid-sweep = spotted
       if (this._sweepT >= 0 && this.sweepsDone < p.sweeps) {
         api.sfx.hit();
         api.buzz(60);
+        api.shake(7);
         api.fail();
       }
     },
     draw(ctx, w, h) {
-      // the sweeping threat, when the scene doesn't paint its own
       if (this.sweepX !== null && this.sweepX !== undefined && p.overlay) {
         if (p.overlay === 'pencil') {
           drawPencilShadow(ctx, w, h, this.sweepX, 0.5);
         } else if (p.overlay === 'wave') {
-          // a wall of ink crossing the panel
           ctx.save();
           ctx.fillStyle = INK;
           ctx.globalAlpha = 0.65;
@@ -350,7 +405,16 @@ function holdChallenge(def, api) {
           ctx.restore();
         }
       }
-      // hold progress ring, bottom center
+      // danger vignette while a sweep is live
+      if (this._sweepT >= 0) {
+        ctx.save();
+        const pulse = 0.12 + Math.abs(Math.sin(this._sweepT * 7)) * 0.1;
+        ctx.strokeStyle = INK;
+        ctx.globalAlpha = pulse;
+        ctx.lineWidth = 14;
+        ctx.strokeRect(7, 7, w - 14, h - 14);
+        ctx.restore();
+      }
       const cx = w / 2;
       const cy = h - 34;
       const frac = Math.min(1, (this.sweepsDone + (this._sweepT > 0 ? this._sweepT / p.sweepTime : 0)) / p.sweeps);
@@ -381,17 +445,20 @@ function holdChallenge(def, api) {
 function traceChallenge(def, api) {
   const norm = def.params.path;
   const tol = def.params.tol || 48;
-  let pts = null; // px-space polyline (computed lazily from panel size)
-  let progress = 0; // 0..1 along polyline
+  let pts = null;
+  let progress = 0;
   let tracing = false;
   let tip = null;
+  let errSum = 0;
+  let errN = 0;
+  let resets = 0;
+  const trail = []; // the player's actual ink, fading
 
   const buildPts = () => {
     const { w, h } = api.size();
     pts = norm.map(([nx, ny]) => [nx * w, ny * h]);
   };
 
-  // distance from point to polyline + param t (0..1) of nearest point
   const nearest = (x, y) => {
     let best = { d: Infinity, t: 0 };
     let acc = 0;
@@ -414,23 +481,31 @@ function traceChallenge(def, api) {
   };
 
   return {
-    update() {},
+    update(dt) {
+      this._dt = dt;
+      for (const s of trail) s.t += dt;
+      while (trail.length && trail[0].t > 0.9) trail.shift();
+    },
     onDown(pt) {
       if (!pts) buildPts();
       const n = nearest(pt.x, pt.y);
       if (n.d <= tol * 1.4 && n.t <= Math.max(0.12, progress + 0.1)) {
         tracing = true;
         tip = pt;
+        api.sfx.ink();
       }
     },
     onMove(pt) {
       if (!tracing) return;
       tip = pt;
+      trail.push({ x: pt.x, y: pt.y, t: 0 });
       const n = nearest(pt.x, pt.y);
+      errSum += n.d;
+      errN++;
       if (n.d > tol) {
-        // strayed off the line — the ink blots and the Hand redraws
         tracing = false;
         api.sfx.hit();
+        api.shake(5);
         api.fail();
         return;
       }
@@ -441,20 +516,36 @@ function traceChallenge(def, api) {
           tracing = false;
           api.sfx.draw();
           api.buzz(25);
-          api.succeed();
+          const avgErr = errN ? errSum / errN : tol;
+          const grade = resets === 0 && avgErr < tol * 0.38 ? 'perfect' : avgErr < tol * 0.65 ? 'good' : 'ok';
+          if (grade === 'perfect') api.hitstop(0.07);
+          api.succeed({ grade });
         }
       }
     },
     onUp() {
       if (tracing && progress < 0.96) {
-        // lifted early — soft reset, not a fail (fat-thumb friendly)
         tracing = false;
         progress = 0;
+        resets++;
         api.sfx.ink();
       }
     },
     draw(ctx, w, h) {
       if (!pts) buildPts();
+      // the player's real ink trail, fading like wet ink
+      ctx.strokeStyle = INK;
+      ctx.lineCap = 'round';
+      for (let i = 1; i < trail.length; i++) {
+        const a = Math.max(0, 1 - trail[i].t / 0.9);
+        ctx.globalAlpha = a * 0.35;
+        ctx.lineWidth = 5 * a + 1;
+        ctx.beginPath();
+        ctx.moveTo(trail[i - 1].x, trail[i - 1].y);
+        ctx.lineTo(trail[i].x, trail[i].y);
+        ctx.stroke();
+      }
+      ctx.globalAlpha = 1;
       // dotted guide
       ctx.strokeStyle = INK;
       ctx.globalAlpha = 0.45;
@@ -466,13 +557,11 @@ function traceChallenge(def, api) {
       ctx.stroke();
       ctx.setLineDash([]);
       ctx.globalAlpha = 1;
-      // traced ink so far
       if (progress > 0) {
         let total = 0;
         for (let i = 0; i < pts.length - 1; i++) total += Math.hypot(pts[i + 1][0] - pts[i][0], pts[i + 1][1] - pts[i][1]);
         let remain = progress * total;
         ctx.lineWidth = 7;
-        ctx.lineCap = 'round';
         ctx.beginPath();
         ctx.moveTo(pts[0][0], pts[0][1]);
         for (let i = 0; i < pts.length - 1 && remain > 0; i++) {
@@ -483,7 +572,6 @@ function traceChallenge(def, api) {
         }
         ctx.stroke();
       }
-      // start marker pulse
       if (progress === 0) {
         const t = performance.now() / 1000;
         ctx.fillStyle = INK;
@@ -493,7 +581,6 @@ function traceChallenge(def, api) {
         ctx.fill();
         ctx.globalAlpha = 1;
       }
-      // pen tip
       if (tracing && tip) {
         ctx.fillStyle = INK;
         ctx.beginPath();
@@ -515,7 +602,7 @@ function chooseChallenge(def, api) {
     update(dt) {
       if (doneTimer !== null) {
         doneTimer -= dt;
-        if (doneTimer <= 0) api.succeed();
+        if (doneTimer <= 0) api.succeed({ grade: null });
       }
     },
     onTap(pt) {
@@ -527,7 +614,7 @@ function chooseChallenge(def, api) {
           if (opts[i].flag) api.setFlag(opts[i].flag);
           api.sfx.ink();
           api.buzz(15);
-          doneTimer = 0.55;
+          doneTimer = 0.4;
           return;
         }
       }
@@ -558,15 +645,14 @@ function cutsceneChallenge(def, api) {
     t: 0,
     update(dt) {
       this.t += dt;
-      // auto-play: advance on its own a beat after the scene lands
-      if (this.t >= dur + (isSpread ? 2.4 : 1.6)) api.succeed();
+      if (this.t >= dur + (isSpread ? 2.0 : 1.0)) api.succeed({ grade: null });
     },
     onTap() {
-      if (this.t >= dur * 0.45) api.succeed();
+      // readers control the pace — tappable almost immediately
+      if (this.t >= 0.15) api.succeed({ grade: null });
     },
     draw(ctx, w, h) {
-      // "tap to continue" nib, bottom-right, once the scene has played
-      if (this.t >= dur * 0.45) {
+      if (this.t >= 0.35) {
         const a = 0.4 + Math.sin(this.t * 4) * 0.3;
         ctx.fillStyle = INK;
         ctx.globalAlpha = Math.max(0.15, a);

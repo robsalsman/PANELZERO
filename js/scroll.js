@@ -57,13 +57,13 @@ export class ScrollController {
     if (this.dragging || this.frozen) return;
 
     if (this.glideTarget !== null) {
-      // critically-damped-ish approach to target
+      // brisk glide — dead time between panels kills pacing
       const d = this.glideTarget - this.y;
       if (Math.abs(d) < 0.5) {
         this.y = this.glideTarget;
         this.glideTarget = null;
       } else {
-        this.y += d * Math.min(1, dt * 6);
+        this.y += d * Math.min(1, dt * 11);
       }
       return;
     }

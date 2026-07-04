@@ -333,8 +333,8 @@ export function composeScene(ctx, w, h, artDef, o) {
   for (const a of def.actors || []) drawActor(ctx, w, h, a, t, o.flags);
 
   for (const b of def.bubbles || []) {
-    // bubbles fade in slightly after the panel lands
-    if (o.phase !== 'done' && t < (b.delay ?? 0.5)) continue;
+    // bubbles land almost immediately — readers set the pace
+    if (o.phase !== 'done' && t < (b.delay ?? 0.15)) continue;
     speechBubble(ctx, b.text, b.x * w, b.y * h, (b.maxW || 0.6) * w, {
       fs: Math.min(22, Math.max(13, h * (b.fs || 0.045))),
       jagged: b.jagged || false,

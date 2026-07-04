@@ -52,11 +52,21 @@ function playTone({ freq = 440, dur = 0.12, type = 'square', gain = 0.12, slideT
 
 export const sfx = {
   ink()      { playNoise({ dur: 0.09, freq: 4200, q: 2, gain: 0.12 }); },           // pen scratch (tap feedback)
-  draw()     { playNoise({ dur: 0.45, freq: 3200, q: 1.2, gain: 0.08, sweepTo: 5000 }); }, // panel inking in
-  erase()    { playNoise({ dur: 0.55, freq: 900, q: 0.7, gain: 0.2, sweepTo: 400 }); },    // the Hand erasing (fail)
-  hit()      { playTone({ freq: 130, dur: 0.14, type: 'square', gain: 0.18, slideTo: 60 }); }, // impact
+  draw()     { playNoise({ dur: 0.3, freq: 3200, q: 1.2, gain: 0.08, sweepTo: 5000 }); },  // panel inking in
+  erase()    { playNoise({ dur: 0.45, freq: 900, q: 0.7, gain: 0.2, sweepTo: 400 }); },    // the Hand erasing (fail)
+  hit()      { playTone({ freq: 110, dur: 0.16, type: 'square', gain: 0.22, slideTo: 45 }); playNoise({ dur: 0.12, freq: 500, q: 0.8, gain: 0.14 }); }, // heavy impact
   complete() { playTone({ freq: 660, dur: 0.09, gain: 0.1 }); setTimeout(() => playTone({ freq: 990, dur: 0.14, gain: 0.1 }), 70); },
   page()     { playNoise({ dur: 0.4, freq: 1400, q: 0.6, gain: 0.1, sweepTo: 500 }); },    // page turn / whoosh
+  perfect(combo = 0) {
+    // rising pair, pitched up as the combo grows — the streak SOUNDS like a streak
+    const base = 700 * (1 + Math.min(combo, 8) * 0.07);
+    playTone({ freq: base, dur: 0.07, gain: 0.12 });
+    setTimeout(() => playTone({ freq: base * 1.5, dur: 0.12, gain: 0.13 }), 55);
+    setTimeout(() => playNoise({ dur: 0.08, freq: 6000, q: 2, gain: 0.06 }), 55);
+  },
+  good()     { playTone({ freq: 520, dur: 0.09, gain: 0.1 }); setTimeout(() => playTone({ freq: 700, dur: 0.1, gain: 0.09 }), 60); },
+  heart()    { playTone({ freq: 68, dur: 0.09, type: 'sine', gain: 0.22, slideTo: 50 }); }, // hiding tension
+  close()    { playNoise({ dur: 0.16, freq: 2400, q: 1.5, gain: 0.16, sweepTo: 6000 }); },  // near-miss whoosh
 };
 
 export function buzz(ms = 20) {
