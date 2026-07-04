@@ -30,40 +30,29 @@ export function animeHead(ctx, cx, cy, r, o = {}) {
   // hair
   ctx.fillStyle = INK;
   if (style === 'kai') {
-    // spiky mass sweeping up and back
+    // solid dome cap down to the brow — no gaps, no self-intersections
     ctx.beginPath();
-    ctx.moveTo(cx - r * 0.95, cy - r * 0.05);
-    const spikes = [
-      [-1.15, -0.75, -0.75, -1.45], [-0.55, -0.9, -0.2, -1.6],
-      [0.05, -0.95, 0.35, -1.55], [0.6, -0.85, 0.95, -1.3],
-      [1.0, -0.6, 1.25, -0.85],
+    ctx.arc(cx + d * 0.3, cy - r * 0.05, r * 1.03, Math.PI * 1.0, Math.PI * 2.0);
+    const fringe = [
+      [0.66, -0.2], [0.48, -0.5], [0.24, -0.16], [0.02, -0.52],
+      [-0.2, -0.16], [-0.44, -0.5], [-0.68, -0.2],
     ];
-    let px = cx - r * 0.95;
-    let py = cy - r * 0.05;
-    for (const [bx, by, tx, ty] of spikes) {
-      // out to spike tip, back to base curve
-      ctx.quadraticCurveTo(px, py, cx + r * tx + d, cy + r * ty);
-      ctx.quadraticCurveTo(cx + r * (tx + bx) / 2 + d, cy + r * (ty + by) / 2, cx + r * bx + d, cy + r * by);
-      px = cx + r * bx + d;
-      py = cy + r * by;
-    }
-    ctx.quadraticCurveTo(cx + r * 1.0 + d, cy - r * 0.2, cx + r * 0.92, cy - r * 0.1);
-    // fringe over forehead
-    ctx.lineTo(cx + r * 0.55 + d, cy - r * 0.15);
-    ctx.lineTo(cx + r * 0.3 + d, cy - r * 0.5);
-    ctx.lineTo(cx + r * 0.05 + d, cy - r * 0.12);
-    ctx.lineTo(cx - r * 0.25 + d, cy - r * 0.55);
-    ctx.lineTo(cx - r * 0.5 + d, cy - r * 0.1);
-    ctx.lineTo(cx - r * 0.78, cy - r * 0.3);
+    for (const [fx2, fy2] of fringe) ctx.lineTo(cx + fx2 * r + d * 0.5, cy + fy2 * r);
     ctx.closePath();
     ctx.fill();
-    // highlight streak
-    ctx.strokeStyle = PAPER;
-    ctx.lineWidth = r * 0.09;
-    ctx.beginPath();
-    ctx.moveTo(cx - r * 0.45 + d, cy - r * 0.82);
-    ctx.quadraticCurveTo(cx + d, cy - r * 1.0, cx + r * 0.42 + d, cy - r * 0.88);
-    ctx.stroke();
+    // spikes rooted well inside the dome — wide bases, no floating tips
+    const spikes = [
+      [-0.7, -0.35, -1.25, -0.85], [-0.42, -0.6, -0.7, -1.45], [-0.05, -0.7, -0.08, -1.6],
+      [0.32, -0.62, 0.5, -1.45], [0.62, -0.4, 1.1, -0.95],
+    ];
+    for (const [bx, by, tx, ty] of spikes) {
+      ctx.beginPath();
+      ctx.moveTo(cx + (bx - 0.26) * r + d, cy + (by + 0.22) * r);
+      ctx.lineTo(cx + tx * r + d, cy + ty * r);
+      ctx.lineTo(cx + (bx + 0.28) * r + d, cy + (by + 0.02) * r);
+      ctx.closePath();
+      ctx.fill();
+    }
   } else if (style === 'sumi') {
     // long flowing ink hair with drip ends
     ctx.beginPath();
@@ -251,7 +240,7 @@ const POSES = {
   touch: { // reaching forward (dir side)
     hip: [0, -0.46], chest: [0.02, -0.62], neck: [0.03, -0.7], head: [0.05, -0.84],
     kneeL: [-0.06, -0.24], footL: [-0.1, 0], kneeR: [0.07, -0.24], footR: [0.1, 0],
-    elbowL: [-0.1, -0.5], handL: [-0.13, -0.38], elbowR: [0.16, -0.64], handR: [0.32, -0.62],
+    elbowL: [-0.1, -0.5], handL: [-0.13, -0.38], elbowR: [0.2, -0.63], handR: [0.42, -0.6],
   },
   dodge: { // lunging toward dir
     hip: [0.1, -0.4], chest: [0.22, -0.52], neck: [0.27, -0.58], head: [0.31, -0.7],
@@ -336,42 +325,119 @@ function drawWeapon(ctx, x, y, s, weapon, dir) {
   ctx.restore();
 }
 
-// Generic anime body. style tweaks the outfit; sumi gets an ink dress.
+// Generic anime body: tapered ink trousers + shoes, paper jacket with real
+// sleeves and hands, arms anchored at the shoulders. No more stick limbs.
 function drawBody(ctx, x, y, s, pose, o) {
   const { dir = 1, style = 'kai', weapon = null, emotion = 'neutral', restored = false } = o;
   const P = POSES[pose] || POSES.stand;
   const m = dir === 0 ? 1 : Math.sign(dir); // mirror
   const pt = (k) => [x + P[k][0] * s * m, y + P[k][1] * s];
-  const lw = Math.max(2.2, s * 0.045);
+  const lw = Math.max(2, s * 0.035);
 
   ctx.save();
   ctx.strokeStyle = INK;
   ctx.lineCap = 'round';
   ctx.lineJoin = 'round';
 
-  const limb = (a, b, c, w) => {
-    ctx.lineWidth = w;
+  // tapered limb quad (caps filled separately — mixed winding punches holes)
+  const quadPath = (ax, ay, bx, by, w1, w2) => {
+    const dx = bx - ax;
+    const dy = by - ay;
+    const len = Math.hypot(dx, dy) || 1;
+    const px = -dy / len;
+    const py = dx / len;
     ctx.beginPath();
-    ctx.moveTo(...pt(a));
-    ctx.lineTo(...pt(b));
-    ctx.lineTo(...pt(c));
+    ctx.moveTo(ax + px * w1, ay + py * w1);
+    ctx.lineTo(bx + px * w2, by + py * w2);
+    ctx.lineTo(bx - px * w2, by - py * w2);
+    ctx.lineTo(ax - px * w1, ay - py * w1);
+    ctx.closePath();
+  };
+
+  const dot = (px2, py2, r2, fill) => {
+    ctx.beginPath();
+    ctx.arc(px2, py2, r2, 0, Math.PI * 2);
+    ctx.fillStyle = fill;
+    ctx.fill();
+  };
+
+  const inkLimb = (a, b, w1, w2) => {
+    const [ax, ay] = pt(a);
+    const [bx, by] = pt(b);
+    quadPath(ax, ay, bx, by, w1 * s, w2 * s);
+    ctx.fillStyle = INK;
+    ctx.fill();
+    dot(ax, ay, w1 * s, INK);
+    dot(bx, by, w2 * s, INK);
+  };
+
+  const sleeve = (ax, ay, bx, by, w1, w2) => {
+    quadPath(ax, ay, bx, by, w1 * s, w2 * s);
+    ctx.fillStyle = PAPER;
+    ctx.fill();
+    ctx.strokeStyle = INK;
+    ctx.lineWidth = lw * 0.8;
     ctx.stroke();
   };
 
-  // far limbs
-  limb('hip', 'kneeL', 'footL', lw * 1.25);
-  limb('chest', 'elbowL', 'handL', lw);
+  const shoe = (kneeK, footK) => {
+    const [kx, ky] = pt(kneeK);
+    const [fx, fy] = pt(footK);
+    const dx = fx - kx;
+    const dy = fy - ky;
+    const len = Math.hypot(dx, dy) || 1;
+    ctx.save();
+    ctx.translate(fx + (dx / len) * s * 0.015, fy + (dy / len) * s * 0.015);
+    // shoe points the way the character faces
+    ctx.rotate(Math.atan2(dy, dx) * 0.15);
+    ctx.fillStyle = INK;
+    ctx.beginPath();
+    ctx.ellipse(m * s * 0.02, 0, s * 0.055, s * 0.032, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  };
 
-  // torso: jacket (kai/rejected) or flowing dress (sumi)
   const [hx, hy] = pt('hip');
   const [cx2, cy2] = pt('chest');
   const [nx, ny] = pt('neck');
-  const sw = s * 0.13; // shoulder half-width
-  ctx.fillStyle = PAPER;
+  const sw = s * 0.15; // shoulder half-width
+
+  // shoulder anchor on whichever side the elbow reaches
+  const shoulderFor = (elbowK) => {
+    const [ex] = pt(elbowK);
+    const side = ex >= cx2 ? 1 : -1;
+    return [cx2 + side * sw * 0.75, cy2 + s * 0.015];
+  };
+
+  const arm = (elbowK, handK) => {
+    const [sx, sy] = shoulderFor(elbowK);
+    const [ex, ey] = pt(elbowK);
+    const [hx2, hy2] = pt(handK);
+    sleeve(sx, sy, ex, ey, 0.048, 0.038);
+    sleeve(ex, ey, hx2, hy2, 0.038, 0.028);
+    // hand
+    ctx.fillStyle = PAPER;
+    ctx.lineWidth = lw * 0.8;
+    ctx.beginPath();
+    ctx.arc(hx2, hy2, s * 0.032, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+  };
+
+  // ---- draw order: far arm, legs (ink trousers), torso, near arm, head ----
+  arm('elbowL', 'handL');
+
+  inkLimb('hip', 'kneeL', 0.062, 0.045);
+  inkLimb('kneeL', 'footL', 0.045, 0.034);
+  shoe('kneeL', 'footL');
+  inkLimb('hip', 'kneeR', 0.065, 0.048);
+  inkLimb('kneeR', 'footR', 0.048, 0.036);
+  shoe('kneeR', 'footR');
+
+  // torso: jacket (kai/rejected) or flowing ink dress (sumi)
   ctx.lineWidth = lw;
-  ctx.beginPath();
   if (style === 'sumi') {
-    // dress flares and melts into drips
+    ctx.beginPath();
     ctx.moveTo(nx - sw * 0.8, ny);
     ctx.lineTo(nx + sw * 0.8, ny);
     ctx.quadraticCurveTo(cx2 + sw * 1.3, (cy2 + hy) / 2, hx + sw * 1.7, hy + s * 0.3);
@@ -392,62 +458,67 @@ function drawBody(ctx, x, y, s, pose, o) {
     ctx.stroke();
     ctx.strokeStyle = INK;
   } else {
+    // jacket with a proper hem below the hip — hides the leg roots
+    const hem = hy + s * 0.07;
+    ctx.beginPath();
     ctx.moveTo(nx - sw, ny + s * 0.01);
-    ctx.lineTo(cx2 - sw * 1.15, cy2);
-    ctx.lineTo(hx - sw * 0.85, hy);
-    ctx.lineTo(hx + sw * 0.85, hy);
-    ctx.lineTo(cx2 + sw * 1.15, cy2);
+    ctx.lineTo(cx2 - sw * 1.2, cy2);
+    ctx.lineTo(hx - sw * 0.92, hem);
+    ctx.lineTo(hx + sw * 0.92, hem);
+    ctx.lineTo(cx2 + sw * 1.2, cy2);
     ctx.lineTo(nx + sw, ny + s * 0.01);
     ctx.closePath();
+    ctx.fillStyle = PAPER;
     ctx.fill();
     ctx.stroke();
-    // jacket collar + zip
+    // collar + zip + hem line
     ctx.lineWidth = lw * 0.7;
     ctx.beginPath();
     ctx.moveTo(nx - sw * 0.7, ny + s * 0.015);
-    ctx.lineTo(nx, ny + s * 0.06);
+    ctx.lineTo(nx, ny + s * 0.055);
     ctx.lineTo(nx + sw * 0.7, ny + s * 0.015);
-    ctx.moveTo(nx, ny + s * 0.06);
-    ctx.lineTo(hx, hy);
+    ctx.moveTo(nx, ny + s * 0.055);
+    ctx.lineTo(hx, hem);
+    ctx.moveTo(hx - sw * 0.85, hem - s * 0.028);
+    ctx.lineTo(hx + sw * 0.85, hem - s * 0.028);
     ctx.stroke();
     // cel-shade tone on the off side
     ctx.save();
     ctx.beginPath();
     ctx.moveTo(nx - sw, ny + s * 0.01);
-    ctx.lineTo(cx2 - sw * 1.15, cy2);
-    ctx.lineTo(hx - sw * 0.85, hy);
-    ctx.lineTo(hx - sw * 0.2, hy);
+    ctx.lineTo(cx2 - sw * 1.2, cy2);
+    ctx.lineTo(hx - sw * 0.92, hem);
+    ctx.lineTo(hx - sw * 0.25, hem);
     ctx.lineTo(nx - sw * 0.3, ny + s * 0.02);
     ctx.closePath();
     ctx.clip();
-    fillTone(ctx, hx - sw * 2, ny - s * 0.02, sw * 2, hy - ny + s * 0.1, 'light', 0.5);
+    fillTone(ctx, hx - sw * 2, ny - s * 0.02, sw * 2, hem - ny + s * 0.1, 'light', 0.5);
     ctx.restore();
-    if (style === 'rejected' && !o.restored) {
-      // unfinished: dashes over half the torso
+    if (style === 'rejected' && !restored) {
+      // unfinished: half the torso fades back into pencil
       ctx.save();
       ctx.globalAlpha = 0.6;
       ctx.fillStyle = PAPER;
-      ctx.fillRect(hx - sw * 2, ny, sw, hy - ny);
+      ctx.fillRect(hx - sw * 2, ny, sw, hem - ny);
       ctx.setLineDash([s * 0.05, s * 0.04]);
       ctx.lineWidth = lw * 0.6;
       ctx.beginPath();
       ctx.moveTo(nx - sw, ny + s * 0.01);
-      ctx.lineTo(cx2 - sw * 1.15, cy2);
-      ctx.lineTo(hx - sw * 0.85, hy);
+      ctx.lineTo(cx2 - sw * 1.2, cy2);
+      ctx.lineTo(hx - sw * 0.92, hem);
       ctx.stroke();
       ctx.restore();
     }
   }
 
-  // near limbs
+  // near arm in front of the jacket
   ctx.strokeStyle = INK;
-  limb('hip', 'kneeR', 'footR', lw * 1.25);
-  limb('chest', 'elbowR', 'handR', lw);
+  arm('elbowR', 'handR');
 
-  // head
+  // head (a touch higher — gives the neck room, arm no longer kisses the chin)
   const [hdx, hdy] = pt('head');
-  const hr = s * 0.145;
-  animeHead(ctx, hdx, hdy, hr, { dir: pose === 'lying' ? 0 : m, emotion, style, restored });
+  const hr = s * 0.15;
+  animeHead(ctx, hdx, hdy - s * 0.025, hr, { dir: pose === 'lying' ? 0 : m, emotion, style, restored });
 
   // weapon in the near hand
   if (weapon) {
