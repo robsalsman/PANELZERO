@@ -1,0 +1,363 @@
+{
+  "id": "ch4",
+  "title": "CHAPTER 4",
+  "subtitle": "THE ARTIST'S DESK",
+  "panels": [
+    {
+      "id": "p01",
+      "page": 1,
+      "type": "cutscene",
+      "h": 0.6,
+      "art": "desk_climb",
+      "caption": "Above the last page, the world ends in a white cliff. They climb OUT of the manga.",
+      "params": {
+        "duration": 3.2
+      },
+      "img": "assets/bg/desk-edge.webp"
+    },
+    {
+      "id": "p02",
+      "page": 1,
+      "type": "swipe",
+      "h": 0.6,
+      "art": {
+        "bg": [
+          "speedv"
+        ]
+      },
+      "caption": "The pencil falls like a tree.",
+      "params": {
+        "hazards": [
+          {
+            "text": "SLAM",
+            "from": "top",
+            "dir": "any",
+            "time": 1.4,
+            "obj": "pencil"
+          }
+        ]
+      },
+      "img": "assets/bg/desk.webp"
+    },
+    {
+      "id": "p03",
+      "page": 1,
+      "type": "trace",
+      "h": 0.55,
+      "art": {
+        "bg": []
+      },
+      "caption": "A ruler leans across the inkwell gap. Draw your footing.",
+      "params": {
+        "tol": 50,
+        "path": [
+          [
+            0.12,
+            0.8
+          ],
+          [
+            0.36,
+            0.68
+          ],
+          [
+            0.62,
+            0.56
+          ],
+          [
+            0.88,
+            0.44
+          ]
+        ]
+      },
+      "img": "assets/bg/desk.webp"
+    },
+    {
+      "id": "p04",
+      "page": 1,
+      "type": "hold",
+      "h": 0.55,
+      "art": {
+        "bg": [],
+        "props": [],
+        "actors": [
+          {
+            "who": "sumi",
+            "pose": "float",
+            "x": 0.32,
+            "y": 0.92,
+            "s": 0.3,
+            "dir": -1
+          }
+        ]
+      },
+      "caption": "The Hand hunts the desktop. Hide behind the ink bottle.",
+      "params": {
+        "sweeps": 2,
+        "sweepTime": 1.5,
+        "overlay": "pencil"
+      },
+      "img": "assets/bg/desk.webp"
+    },
+    {
+      "id": "p05",
+      "page": 1,
+      "type": "tap",
+      "h": 0.6,
+      "art": {
+        "bg": [
+          "speedh"
+        ],
+        "ground": 0.86,
+        "actors": [
+          {
+            "who": "kai",
+            "pose": "fight",
+            "x": 0.22,
+            "y": 0.92,
+            "s": 0.42,
+            "dir": 1
+          }
+        ]
+      },
+      "caption": "Eraser crumbs \u2014 and they're ALIVE.",
+      "params": {
+        "count": 6,
+        "time": 7,
+        "target": {
+          "x": 0.6,
+          "y": 0.68,
+          "r": 0.2
+        },
+        "wobble": true,
+        "creature": "smudge"
+      },
+      "img": "assets/bg/desk.webp"
+    },
+    {
+      "id": "p06",
+      "page": 1,
+      "type": "cutscene",
+      "h": 0.55,
+      "art": {
+        "bg": [],
+        "ground": 0.92,
+        "actors": [
+          {
+            "who": "kai",
+            "pose": "point",
+            "x": 0.28,
+            "y": 0.92,
+            "s": 0.4,
+            "dir": 1
+          },
+          {
+            "who": "sumi",
+            "pose": "float",
+            "x": 0.46,
+            "y": 0.92,
+            "s": 0.3,
+            "dir": 1
+          }
+        ]
+      },
+      "caption": "There \u2014 across the desk. PAGE ONE. Still blank. Panel Zero, where it all should have started.",
+      "params": {
+        "duration": 3.4
+      },
+      "img": "assets/bg/desk-edge.webp"
+    },
+    {
+      "id": "p07",
+      "page": 2,
+      "type": "swipe",
+      "h": 0.6,
+      "art": {
+        "bg": [
+          "speedh"
+        ]
+      },
+      "caption": "The Hand sweeps the desk clean.",
+      "params": {
+        "hazards": [
+          {
+            "text": "SWEEP",
+            "from": "left",
+            "dir": "right",
+            "time": 1.4,
+            "obj": "hand"
+          },
+          {
+            "text": "SWEEP",
+            "from": "right",
+            "dir": "left",
+            "time": 1.3,
+            "delay": 0.5,
+            "obj": "hand"
+          }
+        ]
+      },
+      "img": "assets/bg/desk.webp"
+    },
+    {
+      "id": "p08",
+      "page": 2,
+      "type": "cutscene",
+      "h": 0.6,
+      "art": "sumi_caught",
+      "caption": "The Hand doesn't miss twice.",
+      "params": {
+        "duration": 3.2
+      },
+      "img": "assets/bg/desk.webp"
+    },
+    {
+      "id": "p09",
+      "page": 2,
+      "type": "choose",
+      "h": 0.5,
+      "art": {
+        "bg": [],
+        "actors": [
+          {
+            "who": "kai",
+            "pose": "stand",
+            "x": 0.5,
+            "y": 0.96,
+            "s": 0.36,
+            "dir": 1,
+            "emotion": "shock"
+          }
+        ]
+      },
+      "caption": "She's smearing away between its fingers.",
+      "params": {
+        "options": [
+          {
+            "text": "Drop everything. Pull her out.",
+            "flag": "savedSumi"
+          },
+          {
+            "text": "She's gone. RUN.",
+            "flag": "keptWeapon"
+          }
+        ]
+      },
+      "img": "assets/bg/desk-edge.webp"
+    },
+    {
+      "id": "p10",
+      "page": 2,
+      "type": "cutscene",
+      "h": 0.55,
+      "art": {
+        "bg": [
+          "speedh"
+        ],
+        "ground": 0.88,
+        "actors": [
+          {
+            "who": "kai",
+            "pose": "run",
+            "x": 0.5,
+            "y": 0.88,
+            "s": 0.44,
+            "dir": 1,
+            "emotion": "determined",
+            "weapon": "$weapon"
+          }
+        ],
+        "byFlag": {
+          "savedSumi": {
+            "bg": [
+              "toneL"
+            ],
+            "actors": [
+              {
+                "who": "kai",
+                "pose": "kneel",
+                "x": 0.4,
+                "y": 0.88,
+                "s": 0.44,
+                "dir": 1,
+                "emotion": "sad",
+                "weapon": null
+              },
+              {
+                "who": "sumi",
+                "pose": "float",
+                "x": 0.58,
+                "y": 0.88,
+                "s": 0.3,
+                "dir": -1,
+                "emotion": "smile"
+              }
+            ],
+            "bubbles": [
+              {
+                "text": "\"You dropped your weapon... for a scrapped sketch?\"",
+                "x": 0.5,
+                "y": 0.18,
+                "maxW": 0.8,
+                "tailX": 0.58,
+                "tailY": 0.5
+              }
+            ]
+          }
+        }
+      },
+      "captionByFlag": {
+        "savedSumi": "The weapon skitters off the desk and is gone. Her hand is solid in his.",
+        "keptWeapon": "Her voice fades behind him. He doesn't look back. He can't."
+      },
+      "params": {
+        "duration": 3.4
+      },
+      "img": "assets/bg/desk.webp"
+    },
+    {
+      "id": "p11",
+      "page": 2,
+      "type": "tap",
+      "h": 0.55,
+      "art": {
+        "bg": [
+          "speedv"
+        ],
+        "ground": 0.88,
+        "actors": [
+          {
+            "who": "kai",
+            "pose": "run",
+            "x": 0.4,
+            "y": 0.88,
+            "s": 0.44,
+            "dir": 1,
+            "emotion": "determined"
+          }
+        ]
+      },
+      "caption": "SPRINT for the blank page \u2014 tap, tap, TAP!",
+      "params": {
+        "count": 6,
+        "time": 6,
+        "target": {
+          "x": 0.5,
+          "y": 0.5,
+          "r": 0.48
+        }
+      },
+      "img": "assets/bg/desk-edge.webp"
+    },
+    {
+      "id": "p12",
+      "page": 2,
+      "type": "spread",
+      "h": 1.0,
+      "art": "panelzero_gate",
+      "params": {
+        "duration": 3.6
+      },
+      "img": "assets/bg/panel-zero.webp"
+    }
+  ]
+}

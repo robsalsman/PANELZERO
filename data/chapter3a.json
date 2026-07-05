@@ -1,0 +1,351 @@
+{
+  "id": "ch3a",
+  "title": "CHAPTER 3",
+  "subtitle": "THE INK SEA",
+  "panels": [
+    {
+      "id": "p01",
+      "page": 1,
+      "type": "cutscene",
+      "h": 0.55,
+      "art": {
+        "bg": [],
+        "props": [
+          {
+            "type": "raft",
+            "x": 0.36,
+            "y": 0.55,
+            "w": 0.46
+          }
+        ],
+        "actors": [
+          {
+            "who": "kai",
+            "pose": "stand",
+            "x": 0.28,
+            "y": 0.55,
+            "s": 0.36,
+            "dir": 1
+          },
+          {
+            "who": "sumi",
+            "pose": "float",
+            "x": 0.46,
+            "y": 0.55,
+            "s": 0.3,
+            "dir": 1
+          }
+        ]
+      },
+      "caption": "The Ink Sea: every stroke the Artist never used. Deep. Restless. Unfinished.",
+      "params": {
+        "duration": 3.0
+      },
+      "img": "assets/bg/ink-sea.webp"
+    },
+    {
+      "id": "p02",
+      "page": 1,
+      "type": "trace",
+      "h": 0.55,
+      "art": {
+        "bg": [],
+        "props": [
+          {
+            "type": "raft",
+            "x": 0.38,
+            "y": 0.5,
+            "w": 0.5
+          }
+        ],
+        "actors": [
+          {
+            "who": "kai",
+            "pose": "crouch",
+            "x": 0.3,
+            "y": 0.5,
+            "s": 0.34,
+            "dir": 1
+          },
+          {
+            "who": "sumi",
+            "pose": "float",
+            "x": 0.5,
+            "y": 0.5,
+            "s": 0.28,
+            "dir": 1
+          }
+        ]
+      },
+      "caption": "Paddle. The current reads your stroke.",
+      "params": {
+        "tol": 50,
+        "path": [
+          [
+            0.16,
+            0.72
+          ],
+          [
+            0.42,
+            0.84
+          ],
+          [
+            0.68,
+            0.74
+          ],
+          [
+            0.88,
+            0.84
+          ]
+        ]
+      },
+      "img": "assets/bg/ink-sea.webp"
+    },
+    {
+      "id": "p03",
+      "page": 1,
+      "type": "swipe",
+      "h": 0.6,
+      "art": {
+        "bg": [
+          "speedh"
+        ]
+      },
+      "caption": "The sea spits at trespassers.",
+      "params": {
+        "hazards": [
+          {
+            "text": "SPLOOSH",
+            "from": "right",
+            "dir": "left",
+            "time": 1.4,
+            "obj": "inkblob"
+          }
+        ]
+      },
+      "img": "assets/bg/ink-sea.webp"
+    },
+    {
+      "id": "p04",
+      "page": 1,
+      "type": "tap",
+      "h": 0.5,
+      "art": {
+        "bg": [],
+        "props": [
+          {
+            "type": "raft",
+            "x": 0.3,
+            "y": 0.55,
+            "w": 0.4
+          },
+          {
+            "type": "brush",
+            "x": 0.68,
+            "y": 0.6,
+            "s": 0.3
+          }
+        ],
+        "actors": [
+          {
+            "who": "sumi",
+            "pose": "float",
+            "x": 0.38,
+            "y": 0.55,
+            "s": 0.28,
+            "dir": 1
+          }
+        ]
+      },
+      "caption": "A master's brush, adrift. TAKE IT.",
+      "params": {
+        "count": 1,
+        "target": {
+          "x": 0.68,
+          "y": 0.6,
+          "r": 0.17
+        }
+      },
+      "setFlags": [
+        "brush"
+      ],
+      "img": "assets/bg/ink-sea.webp"
+    },
+    {
+      "id": "p05",
+      "page": 1,
+      "type": "cutscene",
+      "h": 0.55,
+      "art": "leviathan_lurk",
+      "caption": "The sea breathes. Something vast uncoils beneath the raft.",
+      "params": {
+        "duration": 3.2
+      },
+      "img": "assets/bg/ink-sea-storm.webp"
+    },
+    {
+      "id": "p06",
+      "page": 1,
+      "type": "swipe",
+      "h": 0.6,
+      "art": "leviathan_rise",
+      "caption": "Its tail scythes the surface \u2014 JUMP!",
+      "params": {
+        "hazards": [
+          {
+            "text": "SWOOSH",
+            "from": "left",
+            "dir": "up",
+            "time": 1.5,
+            "obj": "tail"
+          }
+        ]
+      },
+      "img": "assets/bg/ink-sea-storm.webp"
+    },
+    {
+      "id": "p07",
+      "page": 2,
+      "type": "trace",
+      "h": 0.55,
+      "art": "leviathan_rise",
+      "caption": "Cut its stroke before it reforms!",
+      "params": {
+        "tol": 52,
+        "path": [
+          [
+            0.14,
+            0.36
+          ],
+          [
+            0.44,
+            0.44
+          ],
+          [
+            0.74,
+            0.3
+          ]
+        ]
+      },
+      "img": "assets/bg/ink-sea-storm.webp"
+    },
+    {
+      "id": "p08",
+      "page": 2,
+      "type": "hold",
+      "h": 0.55,
+      "art": {
+        "bg": [],
+        "props": [
+          {
+            "type": "raft",
+            "x": 0.38,
+            "y": 0.6,
+            "w": 0.5
+          }
+        ],
+        "actors": [
+          {
+            "who": "kai",
+            "pose": "crouch",
+            "x": 0.3,
+            "y": 0.6,
+            "s": 0.34,
+            "dir": 1
+          },
+          {
+            "who": "sumi",
+            "pose": "float",
+            "x": 0.5,
+            "y": 0.6,
+            "s": 0.26,
+            "dir": 1
+          }
+        ]
+      },
+      "caption": "It dives. The whole sea comes down on the raft. HOLD ON.",
+      "params": {
+        "sweeps": 2,
+        "sweepTime": 1.4,
+        "overlay": "wave"
+      },
+      "img": "assets/bg/ink-sea-storm.webp"
+    },
+    {
+      "id": "p09",
+      "page": 2,
+      "type": "tap",
+      "h": 0.6,
+      "art": "leviathan_rise",
+      "caption": "Its eye! Five clean hits!",
+      "params": {
+        "count": 5,
+        "time": 6,
+        "target": {
+          "x": 0.74,
+          "y": 0.3,
+          "r": 0.15
+        },
+        "wobble": true
+      },
+      "img": "assets/bg/ink-sea-storm.webp"
+    },
+    {
+      "id": "p10",
+      "page": 2,
+      "type": "cutscene",
+      "h": 0.55,
+      "art": "leviathan_rise",
+      "caption": "The great stroke shudders, fraying at both ends. A voice like wet paper: \"...finish... me...\"",
+      "params": {
+        "duration": 3.4
+      },
+      "img": "assets/bg/ink-sea-storm.webp"
+    },
+    {
+      "id": "p11",
+      "page": 2,
+      "type": "choose",
+      "h": 0.5,
+      "art": {
+        "bg": [],
+        "actors": [
+          {
+            "who": "kai",
+            "pose": "stand",
+            "x": 0.32,
+            "y": 0.97,
+            "s": 0.34,
+            "dir": 1,
+            "weapon": "brush"
+          }
+        ]
+      },
+      "caption": "The brush is heavy in Kai's hand.",
+      "params": {
+        "options": [
+          {
+            "text": "Calm it. Complete its shape.",
+            "flag": "mercy"
+          },
+          {
+            "text": "Cut it apart.",
+            "flag": "slain"
+          }
+        ]
+      },
+      "img": "assets/bg/ink-sea.webp"
+    },
+    {
+      "id": "p12",
+      "page": 2,
+      "type": "spread",
+      "h": 1.0,
+      "art": "leviathan_end",
+      "params": {
+        "duration": 3.4
+      },
+      "img": "assets/bg/ink-sea.webp"
+    }
+  ]
+}

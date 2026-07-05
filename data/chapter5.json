@@ -1,0 +1,556 @@
+{
+  "id": "ch5",
+  "title": "FINAL CHAPTER",
+  "subtitle": "PANEL ZERO",
+  "panels": [
+    {
+      "id": "p01",
+      "page": 1,
+      "type": "cutscene",
+      "h": 0.6,
+      "art": {
+        "bg": [],
+        "actors": [
+          {
+            "who": "kai",
+            "pose": "stand",
+            "x": 0.5,
+            "y": 0.9,
+            "s": 0.32,
+            "dir": 0,
+            "weapon": null
+          }
+        ],
+        "byFlag": {
+          "recruit": {
+            "actors": [
+              {
+                "who": "kai",
+                "pose": "stand",
+                "x": 0.42,
+                "y": 0.9,
+                "s": 0.32,
+                "dir": 1,
+                "weapon": null
+              },
+              {
+                "who": "ken",
+                "pose": "stand",
+                "x": 0.18,
+                "y": 0.92,
+                "s": 0.34,
+                "dir": 1
+              },
+              {
+                "who": "sumi",
+                "pose": "float",
+                "x": 0.66,
+                "y": 0.9,
+                "s": 0.28,
+                "dir": -1
+              }
+            ]
+          }
+        }
+      },
+      "captionByFlag": {
+        "recruit": "Panel Zero. No borders. No tone. Everyone this story could spare is standing on it.",
+        "savedSumi": "Panel Zero. No borders. No tone. Two small figures on an infinite page.",
+        "default": "Panel Zero. No borders. No tone. One boy, alone, exactly the way the Hand wants it."
+      },
+      "params": {
+        "duration": 3.6
+      },
+      "img": "assets/bg/panel-zero.webp"
+    },
+    {
+      "id": "p02",
+      "page": 1,
+      "type": "swipe",
+      "h": 0.6,
+      "art": {
+        "bg": [
+          "radial"
+        ]
+      },
+      "boss": {
+        "name": "THE HAND \u2014 PHASE 1: ERASER STORM",
+        "hp": 1.0
+      },
+      "caption": "The pencil strikes first. It always strikes first.",
+      "params": {
+        "hazards": [
+          {
+            "text": "STAB",
+            "from": "top",
+            "dir": "any",
+            "time": 1.25,
+            "obj": "pencil"
+          }
+        ]
+      },
+      "img": "assets/bg/panel-zero.webp"
+    },
+    {
+      "id": "p03",
+      "page": 1,
+      "type": "hold",
+      "h": 0.55,
+      "art": {
+        "bg": []
+      },
+      "boss": {
+        "name": "THE HAND \u2014 PHASE 1: ERASER STORM",
+        "hp": 0.9
+      },
+      "captionByFlag": {
+        "recruit": "The eraser storm rolls in. The Draft plants themselves in front of you: \"I'll hold the weather. GO.\"",
+        "default": "The eraser storm rolls in. Nothing to hide behind on a blank page. Stand PERFECTLY still \u2014 blank pages can't see blank things."
+      },
+      "params": {
+        "sweeps": 2,
+        "sweepTime": 1.5,
+        "overlay": "pencil"
+      },
+      "img": "assets/bg/panel-zero.webp"
+    },
+    {
+      "id": "p04",
+      "page": 1,
+      "type": "trace",
+      "h": 0.6,
+      "art": {
+        "bg": [],
+        "actors": [
+          {
+            "who": "kai",
+            "pose": "stand",
+            "x": 0.5,
+            "y": 0.93,
+            "s": 0.3,
+            "dir": 0
+          }
+        ]
+      },
+      "boss": {
+        "name": "THE HAND",
+        "hp": 0.8
+      },
+      "caption": "If the Artist won't draw you a panel \u2014 DRAW YOUR OWN.",
+      "params": {
+        "tol": 56,
+        "path": [
+          [
+            0.16,
+            0.3
+          ],
+          [
+            0.84,
+            0.3
+          ],
+          [
+            0.84,
+            0.72
+          ],
+          [
+            0.16,
+            0.72
+          ]
+        ]
+      },
+      "img": "assets/bg/panel-zero.webp"
+    },
+    {
+      "id": "p05",
+      "page": 1,
+      "type": "tap",
+      "h": 0.6,
+      "art": {
+        "bg": [
+          "radial"
+        ],
+        "actors": [
+          {
+            "who": "hand",
+            "drop": 0.55
+          }
+        ]
+      },
+      "boss": {
+        "name": "THE HAND",
+        "hp": 0.7,
+        "hpAfter": 0.55
+      },
+      "caption": "It hammers your border like a debt collector. REINFORCE THE LINE!",
+      "params": {
+        "count": 5,
+        "time": 6,
+        "target": {
+          "x": 0.5,
+          "y": 0.42,
+          "r": 0.2
+        },
+        "blood": true
+      },
+      "img": "assets/bg/panel-zero.webp"
+    },
+    {
+      "id": "p06",
+      "page": 1,
+      "type": "swipe",
+      "h": 0.6,
+      "art": {
+        "bg": [
+          "speedh"
+        ]
+      },
+      "boss": {
+        "name": "THE HAND \u2014 PHASE 2: THE PENCIL",
+        "hp": 0.55
+      },
+      "caption": "Eraser in one sleeve, pencil in the other.",
+      "params": {
+        "hazards": [
+          {
+            "text": "SCRATCH",
+            "from": "right",
+            "dir": "left",
+            "time": 1.2,
+            "obj": "pencil"
+          },
+          {
+            "text": "SCRUB",
+            "from": "left",
+            "dir": "right",
+            "time": 1.1,
+            "delay": 0.5,
+            "obj": "eraser"
+          }
+        ]
+      },
+      "img": "assets/bg/panel-zero.webp"
+    },
+    {
+      "id": "p07",
+      "page": 2,
+      "type": "cutscene",
+      "h": 0.55,
+      "art": {
+        "bg": [],
+        "actors": [
+          {
+            "who": "kai",
+            "pose": "stand",
+            "x": 0.4,
+            "y": 0.88,
+            "s": 0.44,
+            "dir": 1,
+            "emotion": "determined",
+            "weapon": "$weapon"
+          }
+        ],
+        "byFlag": {
+          "savedSumi": {
+            "actors": [
+              {
+                "who": "kai",
+                "pose": "stand",
+                "x": 0.36,
+                "y": 0.88,
+                "s": 0.44,
+                "dir": 1,
+                "emotion": "determined",
+                "weapon": null
+              },
+              {
+                "who": "sumi",
+                "pose": "float",
+                "x": 0.58,
+                "y": 0.88,
+                "s": 0.34,
+                "dir": -1,
+                "emotion": "smile"
+              }
+            ]
+          }
+        }
+      },
+      "captionByFlag": {
+        "savedSumi": "The Hand pauses. It recognizes her \u2014 character number one, the sketch it was told to erase first. Still here. Still shining.",
+        "default": "The Hand pauses. Kai stands alone, weapon heavy as a grudge."
+      },
+      "params": {
+        "duration": 3.4
+      },
+      "img": "assets/bg/panel-zero.webp"
+    },
+    {
+      "id": "p08",
+      "page": 2,
+      "type": "trace",
+      "h": 0.6,
+      "art": {
+        "bg": [
+          "radial"
+        ],
+        "actors": [
+          {
+            "who": "pencil-shadow",
+            "x": 0.55,
+            "alpha": 0.4
+          }
+        ]
+      },
+      "boss": {
+        "name": "THE HAND \u2014 PHASE 2: THE PENCIL",
+        "hp": 0.4,
+        "hpAfter": 0.25
+      },
+      "captionByFlag": {
+        "tech_mizukagami": "It draws its killing stroke \u2014 MIRROR IT BACK. \u6c34\u93e1!",
+        "default": "NOW \u2014 one clean stroke, straight through its grip! \u4e00\u6587\u5b57!"
+      },
+      "params": {
+        "tol": 54,
+        "path": [
+          [
+            0.12,
+            0.72
+          ],
+          [
+            0.4,
+            0.52
+          ],
+          [
+            0.68,
+            0.38
+          ],
+          [
+            0.9,
+            0.26
+          ]
+        ],
+        "technique": {
+          "kanji": "\u4e00\u6587\u5b57",
+          "name": "ICHIMONJI"
+        }
+      },
+      "img": "assets/bg/panel-zero.webp"
+    },
+    {
+      "id": "p09",
+      "page": 2,
+      "type": "tap",
+      "h": 0.5,
+      "art": {
+        "bg": [],
+        "props": [
+          {
+            "type": "pencil",
+            "x": 0.5,
+            "y": 0.4,
+            "s": 0.4,
+            "spin": true
+          }
+        ],
+        "actors": [
+          {
+            "who": "kai",
+            "pose": "run",
+            "x": 0.24,
+            "y": 0.92,
+            "s": 0.4,
+            "dir": 1
+          }
+        ]
+      },
+      "caption": "The pencil spins loose across the white. CATCH IT.",
+      "params": {
+        "count": 1,
+        "target": {
+          "x": 0.5,
+          "y": 0.42,
+          "r": 0.2
+        }
+      },
+      "img": "assets/bg/panel-zero.webp"
+    },
+    {
+      "id": "p10",
+      "page": 2,
+      "type": "cutscene",
+      "h": 0.55,
+      "art": {
+        "bg": [
+          "toneD"
+        ],
+        "actors": [
+          {
+            "who": "hand",
+            "drop": 0.9
+          }
+        ]
+      },
+      "boss": {
+        "name": "THE HAND \u2014 PHASE 3: THE GRIP",
+        "hp": 0.25
+      },
+      "caption": "It stops fencing. Five fingers, each one taller than your whole life, close around you. Paper-white dark.",
+      "params": {
+        "duration": 3.2
+      },
+      "img": "assets/bg/panel-zero.webp"
+    },
+    {
+      "id": "p11",
+      "page": 2,
+      "type": "tap",
+      "h": 0.6,
+      "art": {
+        "bg": [
+          "radial"
+        ]
+      },
+      "boss": {
+        "name": "THE HAND \u2014 PHASE 3: THE GRIP",
+        "hp": 0.15,
+        "hpAfter": 0.0
+      },
+      "captionByFlag": {
+        "recruit": "Fingers pry at the grip from outside \u2014 the Draft. Sumi. All of them, prying, screaming your name. BREAK. OUT.",
+        "savedSumi": "A blue-violet glow cuts through the dark \u2014 Sumi, both hands buried in the grip. BREAK. OUT.",
+        "default": "No one is coming. That was your choice too. BREAK. OUT. ALONE."
+      },
+      "params": {
+        "count": 8,
+        "time": 7,
+        "target": {
+          "x": 0.5,
+          "y": 0.5,
+          "r": 0.42
+        },
+        "blood": true
+      },
+      "img": "assets/bg/panel-zero.webp"
+    },
+    {
+      "id": "p12",
+      "page": 2,
+      "type": "cutscene",
+      "h": 0.6,
+      "art": {
+        "bg": [],
+        "actors": [
+          {
+            "who": "artist",
+            "pose": "kneel",
+            "x": 0.62,
+            "y": 0.9,
+            "s": 0.46,
+            "dir": -1,
+            "emotion": "sad"
+          },
+          {
+            "who": "kai",
+            "pose": "stand",
+            "x": 0.28,
+            "y": 0.92,
+            "s": 0.36,
+            "dir": 1,
+            "weapon": null
+          }
+        ]
+      },
+      "captionByFlag": {
+        "empathy": "The grip unravels \u2014 and behind it, kneeling on her own blank page: the Artist. Awake. Seeing him. Seeing ALL of them, for the first time.",
+        "resent": "The grip unravels \u2014 and behind it, the Artist. Awake. Hollow-eyed. She looks at Kai the way you look at a bill you can't pay.",
+        "default": "The grip unravels \u2014 and behind it, the Artist herself, kneeling on the blank page."
+      },
+      "params": {
+        "duration": 3.8
+      },
+      "img": "assets/bg/panel-zero.webp"
+    },
+    {
+      "id": "p13",
+      "page": 2,
+      "type": "choose",
+      "h": 0.6,
+      "art": {
+        "bg": [],
+        "actors": [
+          {
+            "who": "kai",
+            "pose": "stand",
+            "x": 0.5,
+            "y": 0.96,
+            "s": 0.34,
+            "dir": 0,
+            "weapon": null
+          }
+        ]
+      },
+      "caption": "The Artist's pencil, in a character's hand. Every reader you'll ever have is holding their breath.",
+      "params": {
+        "options": [
+          {
+            "text": "\"We finish the manga. Together.\"",
+            "flag": "finish"
+          },
+          {
+            "text": "Hand the pencil back to her.",
+            "flag": "giveBack"
+          },
+          {
+            "text": "Erase it all. Be free.",
+            "flag": "eraseAll"
+          }
+        ]
+      },
+      "img": "assets/bg/panel-zero.webp"
+    },
+    {
+      "id": "p14",
+      "page": 2,
+      "type": "cutscene",
+      "h": 0.55,
+      "art": {
+        "bg": [],
+        "actors": [
+          {
+            "who": "kai",
+            "pose": "fight",
+            "x": 0.5,
+            "y": 0.9,
+            "s": 0.42,
+            "dir": 1,
+            "weapon": null,
+            "emotion": "determined"
+          }
+        ]
+      },
+      "captionByFlag": {
+        "ending_coauthors": "Kai draws a panel. The Artist, hand shaking, draws the next one. Sumi inks. The Draft ruins the perspective and nobody cares. Panels bloom like windows.",
+        "ending_artist": "Kai draws. Panels bloom across the blank like windows opening. Somewhere, Sumi laughs \u2014 the sound gets its own SFX.",
+        "ending_published": "He puts the pencil in her hand and closes her fingers around it. \"Chapter One,\" he says. \"We'll wait.\"",
+        "ending_escape": "Kai drags the pencil like a blade along the world's edge. The border SCREAMS.",
+        "ending_newhand": "Kai looks at the eraser for a long, long time. Then he picks that up instead.",
+        "default": "Kai turns the pencil around... and offers it back. The Hand goes very still."
+      },
+      "params": {
+        "duration": 3.8
+      },
+      "img": "assets/bg/panel-zero.webp"
+    },
+    {
+      "id": "p15",
+      "page": 2,
+      "type": "spread",
+      "h": 1.0,
+      "art": "ending_spread",
+      "params": {
+        "duration": 4.0
+      }
+    }
+  ]
+}

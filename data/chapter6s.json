@@ -1,0 +1,379 @@
+{
+  "id": "s1",
+  "title": "INTERLUDE",
+  "subtitle": "INK MEMORY",
+  "panels": [
+    {
+      "id": "p01",
+      "page": 1,
+      "type": "cutscene",
+      "h": 0.5,
+      "art": {
+        "bg": [
+          "toneD"
+        ],
+        "actors": [
+          {
+            "who": "kai",
+            "pose": "sit",
+            "x": 0.36,
+            "y": 0.9,
+            "s": 0.4,
+            "dir": 1
+          }
+        ],
+        "byFlag": {
+          "savedSumi": {
+            "actors": [
+              {
+                "who": "kai",
+                "pose": "sit",
+                "x": 0.32,
+                "y": 0.9,
+                "s": 0.4,
+                "dir": 1
+              },
+              {
+                "who": "sumi",
+                "pose": "float",
+                "x": 0.66,
+                "y": 0.9,
+                "s": 0.34,
+                "dir": -1
+              }
+            ]
+          }
+        }
+      },
+      "captionByFlag": {
+        "savedSumi": "The arena sleeps. A thousand paper balls breathe like surf. Sumi's glow is the only campfire.",
+        "default": "The arena sleeps. Kai camps alone with a ribbon of ink \u2014 the piece of her the Hand didn't get."
+      },
+      "params": {
+        "duration": 3.2
+      },
+      "img": "assets/bg/cut-panels.webp"
+    },
+    {
+      "id": "p02",
+      "page": 1,
+      "type": "cutscene",
+      "h": 0.5,
+      "art": {
+        "bg": [],
+        "byFlag": {
+          "savedSumi": {
+            "actors": [
+              {
+                "who": "sumi",
+                "pose": "float",
+                "x": 0.6,
+                "y": 0.92,
+                "s": 0.38,
+                "dir": -1,
+                "emotion": "smile"
+              }
+            ],
+            "bubbles": [
+              {
+                "text": "\"I want to show you something. Don't laugh. ...Okay, laugh a little.\"",
+                "x": 0.45,
+                "y": 0.38,
+                "maxW": 0.74,
+                "tailX": 0.56,
+                "tailY": 0.66
+              }
+            ]
+          }
+        }
+      },
+      "captionByFlag": {
+        "savedSumi": "She reaches into her own ink and pulls out a page. It is old. It is guarded like a heart.",
+        "default": "The ribbon unwinds in his palm, and the dark projects a memory that isn't his."
+      },
+      "params": {
+        "duration": 3.4
+      },
+      "img": "assets/bg/cut-panels.webp"
+    },
+    {
+      "id": "p03",
+      "page": 1,
+      "type": "cutscene",
+      "h": 0.55,
+      "art": {
+        "bg": [
+          "toneL"
+        ],
+        "props": [
+          {
+            "type": "sfx",
+            "text": "SUN",
+            "x": 0.8,
+            "y": 0.2,
+            "size": 0.1,
+            "rot": 0.2
+          },
+          {
+            "type": "star",
+            "x": 0.24,
+            "y": 0.6,
+            "r": 0.14,
+            "spikes": 7
+          }
+        ]
+      },
+      "caption": "A nine-year-old's page. The Artist's first ever: a girl, a dog made of scribbles, a sun wearing sunglasses. Sumi points at the girl. \"That's me. Character number one.\"",
+      "params": {
+        "duration": 3.8
+      },
+      "img": "assets/bg/void.webp"
+    },
+    {
+      "id": "p04",
+      "page": 1,
+      "type": "choose",
+      "h": 0.45,
+      "art": {
+        "bg": [
+          "toneL"
+        ]
+      },
+      "caption": "The wobbly pencil girl has Sumi's exact smile.",
+      "params": {
+        "options": [
+          {
+            "text": "\"It's beautiful.\"",
+            "flag": "gentle",
+            "bonds": {
+              "sumi": 2
+            }
+          },
+          {
+            "text": "\"That dog is structurally ambitious.\"",
+            "flag": "gentle",
+            "bonds": {
+              "sumi": 1,
+              "world": 1
+            }
+          }
+        ]
+      },
+      "img": "assets/bg/void.webp"
+    },
+    {
+      "id": "p05",
+      "page": 1,
+      "type": "trace",
+      "h": 0.6,
+      "art": {
+        "bg": [],
+        "actors": [
+          {
+            "who": "sumi",
+            "pose": "float",
+            "x": 0.2,
+            "y": 0.5,
+            "s": 0.3,
+            "dir": 1
+          }
+        ]
+      },
+      "caption": "\"She drew this for me so nothing could ever hit me again. It didn't work. Maybe it will work for you.\" \u2014 WATER MIRROR. Trace the circle that turns harm around.",
+      "params": {
+        "tol": 54,
+        "path": [
+          [
+            0.3,
+            0.35
+          ],
+          [
+            0.7,
+            0.35
+          ],
+          [
+            0.78,
+            0.62
+          ],
+          [
+            0.5,
+            0.78
+          ],
+          [
+            0.22,
+            0.62
+          ],
+          [
+            0.3,
+            0.38
+          ]
+        ],
+        "technique": {
+          "kanji": "\u6c34\u93e1",
+          "name": "MIZUKAGAMI"
+        }
+      },
+      "setFlags": [
+        "tech_mizukagami"
+      ],
+      "img": "assets/bg/cut-panels.webp"
+    },
+    {
+      "id": "p06",
+      "page": 2,
+      "type": "hold",
+      "h": 0.5,
+      "art": {
+        "bg": [
+          "toneD"
+        ],
+        "actors": [
+          {
+            "who": "kai",
+            "pose": "stand",
+            "x": 0.3,
+            "y": 0.92,
+            "s": 0.36,
+            "dir": 1
+          },
+          {
+            "who": "sumi",
+            "pose": "float",
+            "x": 0.62,
+            "y": 0.88,
+            "s": 0.3,
+            "dir": 1
+          }
+        ]
+      },
+      "caption": "Far off, something drags across the sky. Neither of them mentions it. Hold the quiet.",
+      "params": {
+        "sweeps": 1,
+        "sweepTime": 2.2,
+        "overlay": "pencil"
+      },
+      "img": "assets/bg/cut-panels.webp"
+    },
+    {
+      "id": "p07",
+      "page": 2,
+      "type": "cutscene",
+      "h": 0.5,
+      "art": {
+        "bg": [
+          "toneD"
+        ],
+        "byFlag": {
+          "savedSumi": {
+            "actors": [
+              {
+                "who": "sumi",
+                "pose": "float",
+                "x": 0.5,
+                "y": 0.92,
+                "s": 0.36,
+                "dir": -1,
+                "emotion": "sad"
+              }
+            ],
+            "bubbles": [
+              {
+                "text": "\"If she erases me tomorrow... I got one more reader first. That's more than most drafts ever get.\"",
+                "x": 0.5,
+                "y": 0.38,
+                "maxW": 0.82,
+                "tailX": 0.5,
+                "tailY": 0.66
+              }
+            ]
+          }
+        }
+      },
+      "captionByFlag": {
+        "savedSumi": "She says it like a joke. It isn't one.",
+        "default": "The ribbon's glow gutters, and steadies, and holds \u2014 like something far away deciding to keep going."
+      },
+      "params": {
+        "duration": 3.4
+      },
+      "img": "assets/bg/cut-panels.webp"
+    },
+    {
+      "id": "p08",
+      "page": 2,
+      "type": "choose",
+      "h": 0.45,
+      "art": {
+        "bg": [
+          "toneD"
+        ]
+      },
+      "params": {
+        "options": [
+          {
+            "text": "\"No one is erasing you.\"",
+            "flag": "vow",
+            "bonds": {
+              "sumi": 1
+            }
+          },
+          {
+            "text": "\"Then we make her regret every page.\"",
+            "flag": "vow",
+            "bonds": {
+              "sumi": 1,
+              "world": 1
+            }
+          }
+        ]
+      },
+      "img": "assets/bg/cut-panels.webp"
+    },
+    {
+      "id": "p09",
+      "page": 2,
+      "type": "spread",
+      "h": 1.0,
+      "art": {
+        "bg": [],
+        "actors": [
+          {
+            "who": "kai",
+            "pose": "stand",
+            "x": 0.38,
+            "y": 0.92,
+            "s": 0.26,
+            "dir": 1
+          }
+        ],
+        "byFlag": {
+          "savedSumi": {
+            "actors": [
+              {
+                "who": "kai",
+                "pose": "stand",
+                "x": 0.38,
+                "y": 0.92,
+                "s": 0.26,
+                "dir": 1
+              },
+              {
+                "who": "sumi",
+                "pose": "float",
+                "x": 0.56,
+                "y": 0.92,
+                "s": 0.22,
+                "dir": 1
+              }
+            ]
+          }
+        }
+      },
+      "caption": "Dawn over the arena. NEXT: THE ARTIST'S ROOM",
+      "params": {
+        "duration": 3.0
+      },
+      "img": "assets/bg/margin-dark.webp"
+    }
+  ]
+}

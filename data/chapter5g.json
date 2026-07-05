@@ -1,0 +1,626 @@
+{
+  "id": "g1",
+  "title": "CHAPTER 5",
+  "subtitle": "THE GAUNTLET OF DRAFTS",
+  "panels": [
+    {
+      "id": "p01",
+      "page": 1,
+      "type": "cutscene",
+      "h": 0.55,
+      "art": {
+        "bg": [],
+        "actors": [
+          {
+            "who": "kai",
+            "pose": "stand",
+            "x": 0.3,
+            "y": 0.94,
+            "s": 0.34,
+            "dir": 1,
+            "weapon": "$weapon"
+          }
+        ]
+      },
+      "caption": "Page One should be HERE. Instead: an arena, built from every draft she ever crumpled. A colosseum of almosts.",
+      "params": {
+        "duration": 3.2
+      },
+      "img": "assets/bg/cut-panels-arena.webp"
+    },
+    {
+      "id": "p02",
+      "page": 1,
+      "type": "cutscene",
+      "h": 0.6,
+      "art": {
+        "bg": [],
+        "actors": [
+          {
+            "who": "ken",
+            "pose": "stand",
+            "x": 0.22,
+            "y": 0.92,
+            "s": 0.46,
+            "dir": 1
+          },
+          {
+            "who": "yuri",
+            "pose": "stand",
+            "x": 0.52,
+            "y": 0.9,
+            "s": 0.42,
+            "dir": -1
+          },
+          {
+            "who": "goma",
+            "x": 0.8,
+            "y": 0.9,
+            "s": 0.34
+          }
+        ],
+        "bubbles": [
+          {
+            "text": "\"Turn back, Draft Five. This gate opens for one currency only.\"",
+            "x": 0.42,
+            "y": 0.38,
+            "maxW": 0.8,
+            "tailX": 0.26,
+            "tailY": 0.66
+          }
+        ]
+      },
+      "caption": "The Drafts. Every protagonist she tried before you. They held the line long after she stopped drawing it.",
+      "params": {
+        "duration": 3.8
+      },
+      "img": "assets/bg/cut-panels-arena.webp"
+    },
+    {
+      "id": "p03",
+      "page": 1,
+      "type": "swipe",
+      "h": 0.6,
+      "art": {
+        "bg": [
+          "speedh"
+        ],
+        "actors": [
+          {
+            "who": "ken",
+            "pose": "fight",
+            "x": 0.78,
+            "y": 0.9,
+            "s": 0.46,
+            "dir": -1
+          }
+        ]
+      },
+      "caption": "Ken's greeting crosses the arena before his voice does.",
+      "params": {
+        "hazards": [
+          {
+            "text": "DON",
+            "from": "right",
+            "dir": "left",
+            "time": 1.3,
+            "obj": "fist"
+          }
+        ]
+      },
+      "img": "assets/bg/cut-panels-arena.webp"
+    },
+    {
+      "id": "p04",
+      "page": 1,
+      "type": "cutscene",
+      "h": 0.55,
+      "art": {
+        "bg": [],
+        "actors": [
+          {
+            "who": "yuri",
+            "pose": "stand",
+            "x": 0.3,
+            "y": 0.92,
+            "s": 0.42,
+            "dir": 1
+          },
+          {
+            "who": "goma",
+            "x": 0.72,
+            "y": 0.92,
+            "s": 0.34
+          }
+        ],
+        "bubbles": [
+          {
+            "text": "\"He likes you. That was his soft one.\"",
+            "x": 0.32,
+            "y": 0.14,
+            "maxW": 0.6,
+            "tailX": 0.3,
+            "tailY": 0.42
+          },
+          {
+            "text": "\"I sell churros at these! Nobody ever buys!! I AM the churro!!\"",
+            "x": 0.68,
+            "y": 0.38,
+            "maxW": 0.62,
+            "tailX": 0.72,
+            "tailY": 0.62,
+            "delay": 1.2
+          }
+        ]
+      },
+      "params": {
+        "duration": 4.0
+      },
+      "img": "assets/bg/cut-panels-arena.webp"
+    },
+    {
+      "id": "p05",
+      "page": 1,
+      "type": "cutscene",
+      "h": 0.5,
+      "art": {
+        "bg": [],
+        "actors": [
+          {
+            "who": "kai",
+            "pose": "stand",
+            "x": 0.7,
+            "y": 0.94,
+            "s": 0.36,
+            "dir": -1
+          }
+        ],
+        "byFlag": {
+          "savedSumi": {
+            "actors": [
+              {
+                "who": "kai",
+                "pose": "stand",
+                "x": 0.7,
+                "y": 0.94,
+                "s": 0.36,
+                "dir": -1
+              },
+              {
+                "who": "sumi",
+                "pose": "float",
+                "x": 0.32,
+                "y": 0.94,
+                "s": 0.32,
+                "dir": 1
+              }
+            ],
+            "bubbles": [
+              {
+                "text": "\"They're drafts, like me. But they've been fighting in here since before you had a face. Don't blink.\"",
+                "x": 0.48,
+                "y": 0.16,
+                "maxW": 0.85,
+                "tailX": 0.34,
+                "tailY": 0.5
+              }
+            ]
+          }
+        }
+      },
+      "captionByFlag": {
+        "savedSumi": "Sumi's glow dims near the arena. Old ground.",
+        "default": "Kai's hand finds the ribbon of ink in his pocket. The one she left. He walks in alone."
+      },
+      "params": {
+        "duration": 3.4
+      },
+      "img": "assets/bg/cut-panels-arena.webp"
+    },
+    {
+      "id": "p06",
+      "page": 1,
+      "type": "tap",
+      "h": 0.6,
+      "art": {
+        "bg": [
+          "speedv"
+        ],
+        "actors": [
+          {
+            "who": "kai",
+            "pose": "dodge",
+            "x": 0.24,
+            "y": 0.92,
+            "s": 0.4,
+            "dir": 1
+          }
+        ]
+      },
+      "caption": "The arena tests entrants first. The floor throws itself at you.",
+      "params": {
+        "count": 4,
+        "time": 6,
+        "target": {
+          "x": 0.6,
+          "y": 0.6,
+          "r": 0.2
+        },
+        "wobble": true
+      },
+      "img": "assets/bg/cut-panels-arena.webp"
+    },
+    {
+      "id": "p07",
+      "page": 2,
+      "type": "hold",
+      "h": 0.55,
+      "art": {
+        "bg": [],
+        "actors": [
+          {
+            "who": "kai",
+            "pose": "brace",
+            "x": 0.26,
+            "y": 0.92,
+            "s": 0.38,
+            "dir": 1
+          },
+          {
+            "who": "yuri",
+            "pose": "stand",
+            "x": 0.72,
+            "y": 0.9,
+            "s": 0.46,
+            "dir": -1
+          }
+        ]
+      },
+      "caption": "Yuri skips a beat of time, just to watch you flinch. Hold still through the missing panel.",
+      "params": {
+        "sweeps": 2,
+        "sweepTime": 1.4,
+        "overlay": "pencil"
+      },
+      "img": "assets/bg/cut-panels-arena.webp"
+    },
+    {
+      "id": "p08",
+      "page": 2,
+      "type": "trace",
+      "h": 0.6,
+      "art": {
+        "bg": [],
+        "actors": [
+          {
+            "who": "kai",
+            "pose": "fight",
+            "x": 0.2,
+            "y": 0.92,
+            "s": 0.4,
+            "dir": 1,
+            "weapon": "$weapon"
+          }
+        ]
+      },
+      "caption": "Your weapon remembers being DRAWN. Answer it. One. Straight. Line.",
+      "params": {
+        "tol": 50,
+        "path": [
+          [
+            0.12,
+            0.66
+          ],
+          [
+            0.5,
+            0.5
+          ],
+          [
+            0.9,
+            0.34
+          ]
+        ],
+        "technique": {
+          "kanji": "\u4e00\u6587\u5b57",
+          "name": "ICHIMONJI"
+        }
+      },
+      "setFlags": [
+        "tech_ichimonji"
+      ],
+      "img": "assets/bg/cut-panels-arena.webp"
+    },
+    {
+      "id": "p09",
+      "page": 2,
+      "type": "cutscene",
+      "h": 0.5,
+      "art": {
+        "bg": [
+          "toneD"
+        ],
+        "actors": [
+          {
+            "who": "kai",
+            "pose": "stand",
+            "x": 0.2,
+            "y": 0.92,
+            "s": 0.36,
+            "dir": 1
+          },
+          {
+            "who": "ken",
+            "pose": "stand",
+            "x": 0.62,
+            "y": 0.9,
+            "s": 0.44,
+            "dir": -1
+          },
+          {
+            "who": "yuri",
+            "pose": "stand",
+            "x": 0.8,
+            "y": 0.88,
+            "s": 0.4,
+            "dir": -1
+          },
+          {
+            "who": "goma",
+            "x": 0.46,
+            "y": 0.9,
+            "s": 0.3,
+            "emotion": "smile"
+          }
+        ]
+      },
+      "caption": "A thousand balled-up pages lean in from the stands. This is the largest audience any of them ever got.",
+      "params": {
+        "duration": 3.0
+      },
+      "img": "assets/bg/cut-panels-arena.webp"
+    },
+    {
+      "id": "p10",
+      "page": 2,
+      "type": "cutscene",
+      "h": 0.55,
+      "art": {
+        "bg": [],
+        "actors": [
+          {
+            "who": "ken",
+            "pose": "stand",
+            "x": 0.5,
+            "y": 0.92,
+            "s": 0.48,
+            "dir": 0
+          }
+        ],
+        "bubbles": [
+          {
+            "text": "\"One duel. One gate. Pick your teacher, kid.\"",
+            "x": 0.5,
+            "y": 0.16,
+            "maxW": 0.7,
+            "tailX": 0.5,
+            "tailY": 0.42
+          }
+        ]
+      },
+      "params": {
+        "duration": 3.2
+      },
+      "img": "assets/bg/cut-panels-arena.webp"
+    },
+    {
+      "id": "p11",
+      "page": 2,
+      "type": "choose",
+      "h": 0.6,
+      "art": {
+        "bg": [
+          "radial"
+        ]
+      },
+      "caption": "THIS choice picks your rival \u2014 and who watches you make it.",
+      "params": {
+        "options": [
+          {
+            "text": "KEN. The first flame.",
+            "flag": "duel_ken",
+            "bonds": {
+              "rival": 1
+            }
+          },
+          {
+            "text": "YURI. The missing beat.",
+            "flag": "duel_yuri",
+            "bonds": {
+              "rival": 1
+            }
+          },
+          {
+            "text": "GOMA. The... punchline?",
+            "flag": "duel_goma",
+            "bonds": {
+              "rival": 1
+            }
+          }
+        ]
+      },
+      "img": "assets/bg/cut-panels-arena.webp"
+    },
+    {
+      "id": "p12",
+      "page": 2,
+      "type": "cutscene",
+      "h": 0.55,
+      "art": {
+        "bg": [],
+        "actors": [
+          {
+            "who": "ken",
+            "pose": "pose",
+            "x": 0.62,
+            "y": 0.92,
+            "s": 0.5,
+            "dir": -1
+          }
+        ],
+        "byFlag": {
+          "duel_yuri": {
+            "actors": [
+              {
+                "who": "yuri",
+                "pose": "stand",
+                "x": 0.62,
+                "y": 0.92,
+                "s": 0.44,
+                "dir": -1
+              }
+            ],
+            "bubbles": [
+              {
+                "text": "\"I already watched this fight. You were... adequate.\"",
+                "x": 0.45,
+                "y": 0.16,
+                "maxW": 0.7,
+                "tailX": 0.58,
+                "tailY": 0.44
+              }
+            ]
+          },
+          "duel_goma": {
+            "actors": [
+              {
+                "who": "goma",
+                "x": 0.62,
+                "y": 0.92,
+                "s": 0.4,
+                "emotion": "serious"
+              }
+            ],
+            "bubbles": [
+              {
+                "text": "\"OH NO. okay. okay okay okay. ...Okay.\"",
+                "x": 0.42,
+                "y": 0.16,
+                "maxW": 0.66,
+                "tailX": 0.58,
+                "tailY": 0.5
+              }
+            ]
+          },
+          "duel_ken": {
+            "bubbles": [
+              {
+                "text": "\"Good. Hit me like you mean to EXIST.\"",
+                "x": 0.4,
+                "y": 0.16,
+                "maxW": 0.66,
+                "tailX": 0.58,
+                "tailY": 0.42
+              }
+            ]
+          }
+        }
+      },
+      "captionByFlag": {
+        "duel_goma": "The jokes stop. Somehow that's the scariest thing that's happened all day.",
+        "default": "The other two step back into the stands. They will remember everything you do next."
+      },
+      "params": {
+        "duration": 3.6
+      },
+      "img": "assets/bg/cut-panels-arena.webp"
+    },
+    {
+      "id": "p13",
+      "page": 2,
+      "type": "spread",
+      "h": 1.0,
+      "art": {
+        "bg": [
+          "radial"
+        ],
+        "actors": [
+          {
+            "who": "kai",
+            "pose": "fight",
+            "x": 0.3,
+            "y": 0.9,
+            "s": 0.3,
+            "dir": 1,
+            "weapon": "$weapon"
+          },
+          {
+            "who": "ken",
+            "pose": "pose",
+            "x": 0.72,
+            "y": 0.9,
+            "s": 0.34,
+            "dir": -1
+          }
+        ],
+        "byFlag": {
+          "duel_yuri": {
+            "actors": [
+              {
+                "who": "kai",
+                "pose": "fight",
+                "x": 0.3,
+                "y": 0.9,
+                "s": 0.3,
+                "dir": 1,
+                "weapon": "$weapon"
+              },
+              {
+                "who": "yuri",
+                "pose": "stand",
+                "x": 0.72,
+                "y": 0.9,
+                "s": 0.32,
+                "dir": -1
+              }
+            ]
+          },
+          "duel_goma": {
+            "actors": [
+              {
+                "who": "kai",
+                "pose": "fight",
+                "x": 0.3,
+                "y": 0.9,
+                "s": 0.3,
+                "dir": 1,
+                "weapon": "$weapon"
+              },
+              {
+                "who": "goma",
+                "x": 0.72,
+                "y": 0.9,
+                "s": 0.3,
+                "emotion": "serious"
+              }
+            ]
+          }
+        },
+        "props": [
+          {
+            "type": "sfx",
+            "text": "VS",
+            "x": 0.5,
+            "y": 0.42,
+            "size": 0.2,
+            "rot": -0.08
+          }
+        ]
+      },
+      "caption": "NEXT: THE DUEL",
+      "params": {
+        "duration": 3.2
+      },
+      "img": "assets/bg/cut-panels-arena.webp"
+    }
+  ]
+}

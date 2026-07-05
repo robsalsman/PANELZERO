@@ -1,0 +1,248 @@
+{
+  "id": "ch1",
+  "title": "CHAPTER 1",
+  "subtitle": "WAKE UP ON THE PAGE",
+  "panels": [
+    {
+      "id": "p01",
+      "page": 1,
+      "type": "cutscene",
+      "h": 0.5,
+      "art": "void_drips",
+      "caption": "Somewhere between the pages...",
+      "params": {
+        "duration": 2.6
+      },
+      "img": "assets/bg/void.webp"
+    },
+    {
+      "id": "p02",
+      "page": 1,
+      "type": "tap",
+      "h": 0.55,
+      "art": "kai_wake",
+      "toast": "Tap the panel.",
+      "params": {
+        "count": 3,
+        "hit": "kai"
+      },
+      "img": "assets/bg/paper-room.webp"
+    },
+    {
+      "id": "p03",
+      "page": 1,
+      "type": "cutscene",
+      "h": 0.5,
+      "art": "border_touch",
+      "caption": "The wall isn't a wall. It's a LINE. Someone drew this.",
+      "params": {
+        "duration": 3.0
+      },
+      "img": "assets/bg/paper-room.webp"
+    },
+    {
+      "id": "p04",
+      "page": 1,
+      "type": "choose",
+      "h": 0.45,
+      "art": "kai_face",
+      "toast": "Tap a bubble.",
+      "params": {
+        "options": [
+          {
+            "text": "Where am I?",
+            "flag": null,
+            "x": 0.26,
+            "y": 0.13
+          },
+          {
+            "text": "...I'm in a manga.",
+            "flag": "aware",
+            "x": 0.24,
+            "y": 0.5
+          }
+        ]
+      }
+    },
+    {
+      "id": "p05",
+      "page": 1,
+      "type": "swipe",
+      "h": 0.6,
+      "art": "sfx_fall",
+      "toast": "Swipe to dodge!",
+      "params": {
+        "hazards": [
+          {
+            "text": "CRASH",
+            "from": "top",
+            "dir": "any",
+            "time": 1.7
+          }
+        ]
+      },
+      "img": "assets/bg/paper-room.webp"
+    },
+    {
+      "id": "p06",
+      "page": 1,
+      "type": "tap",
+      "h": 0.5,
+      "art": "grab_debris",
+      "toast": "Grab it!",
+      "params": {
+        "count": 1,
+        "hit": "letterC"
+      },
+      "img": "assets/bg/paper-room.webp"
+    },
+    {
+      "id": "p07",
+      "page": 1,
+      "type": "cutscene",
+      "h": 0.5,
+      "art": "hand_shadow",
+      "caption": "The page goes dark. Something enormous is looking down.",
+      "tone": "dark",
+      "params": {
+        "duration": 3.2
+      },
+      "img": "assets/bg/paper-room.webp"
+    },
+    {
+      "id": "p08",
+      "page": 2,
+      "type": "hold",
+      "h": 0.55,
+      "art": "hide",
+      "tone": "dark",
+      "toast": "Hold to hide.",
+      "params": {
+        "sweeps": 2,
+        "sweepTime": 1.5
+      },
+      "img": "assets/bg/paper-room.webp"
+    },
+    {
+      "id": "p09",
+      "page": 2,
+      "type": "trace",
+      "h": 0.55,
+      "art": "gap",
+      "toast": "Trace the line.",
+      "params": {
+        "tol": 48,
+        "path": [
+          [
+            0.12,
+            0.62
+          ],
+          [
+            0.35,
+            0.52
+          ],
+          [
+            0.65,
+            0.5
+          ],
+          [
+            0.88,
+            0.58
+          ]
+        ]
+      },
+      "img": "assets/bg/paper-room.webp"
+    },
+    {
+      "id": "p10",
+      "page": 2,
+      "type": "swipe",
+      "h": 0.6,
+      "art": "sfx_double",
+      "params": {
+        "hazards": [
+          {
+            "text": "SLASH",
+            "from": "right",
+            "dir": "left",
+            "time": 1.6,
+            "obj": "inkblob"
+          },
+          {
+            "text": "THUD",
+            "from": "left",
+            "dir": "right",
+            "time": 1.45,
+            "delay": 0.55,
+            "obj": "inkblob"
+          }
+        ]
+      },
+      "img": "assets/bg/paper-room.webp"
+    },
+    {
+      "id": "p11",
+      "page": 2,
+      "type": "choose",
+      "h": 0.45,
+      "art": "kai_stand_face",
+      "params": {
+        "options": [
+          {
+            "text": "Run.",
+            "flag": "run"
+          },
+          {
+            "text": "Fight.",
+            "flag": "fight"
+          }
+        ]
+      },
+      "img": "assets/bg/paper-room.webp"
+    },
+    {
+      "id": "p12",
+      "page": 2,
+      "type": "tap",
+      "h": 0.6,
+      "art": "smudge_fight",
+      "toast": "Tap it \u2014 fast!",
+      "captionByFlag": {
+        "run": "Kai bolts \u2014 the smudge is faster.",
+        "fight": "Kai plants his feet."
+      },
+      "params": {
+        "count": 5,
+        "hit": "smudge",
+        "time": 6
+      },
+      "img": "assets/bg/paper-room.webp"
+    },
+    {
+      "id": "p13",
+      "page": 2,
+      "type": "cutscene",
+      "h": 0.5,
+      "art": "smudge_defeat",
+      "linesByFlag": {
+        "default": "\"The Artist... isn't done with you.\"",
+        "aware": "\"You knew. The Artist isn't done with you.\""
+      },
+      "params": {
+        "duration": 3.2
+      },
+      "img": "assets/bg/paper-room.webp"
+    },
+    {
+      "id": "p14",
+      "page": 2,
+      "type": "spread",
+      "h": 1.0,
+      "art": "hand_descends",
+      "params": {
+        "duration": 3.6
+      },
+      "img": "assets/bg/void.webp"
+    }
+  ]
+}
