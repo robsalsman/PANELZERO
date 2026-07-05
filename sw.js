@@ -1,5 +1,5 @@
 // Service worker: cache-first so the whole manga is playable offline after first read.
-const CACHE = 'panelzero-v8';
+const CACHE = 'panelzero-v9';
 const ASSETS = [
   '.',
   'index.html',
@@ -53,6 +53,8 @@ const ASSETS = [
   'assets/sprites/goma-sad.webp',
   'assets/sprites/goma-serious.webp',
   'assets/sprites/goma-stand.webp',
+  'assets/sprites/leviathan-lurk.webp',
+  'assets/sprites/leviathan-rise.webp',
   'assets/sprites/ken-fight.webp',
   'assets/sprites/ken-guard.webp',
   'assets/sprites/ken-kneel.webp',

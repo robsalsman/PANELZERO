@@ -379,26 +379,34 @@ export const setpieces = {
   /* ch3a — something enormous under the water */
   leviathan_lurk(ctx, w, h, o) {
     if (!o.hasImg) seaBase(ctx, w, h, o.t, 0.55);
-    // coil silhouettes below the surface
+    // painted: the skull and golden eye just above the waterline, aft of the raft
     ctx.save();
-    ctx.fillStyle = PAPER;
-    ctx.globalAlpha = 0.25;
-    for (const [ax, ay, ar] of [[0.3, 0.75, 0.16], [0.62, 0.82, 0.2], [0.85, 0.72, 0.12]]) {
-      ctx.beginPath();
-      ctx.arc(ax * w, ay * h, ar * w, 0, Math.PI * 2);
-      ctx.fill();
-    }
-    // a pale eye opening below
-    ctx.globalAlpha = 0.7;
-    ctx.beginPath();
-    ctx.ellipse(w * 0.55, h * 0.72, w * 0.05, w * 0.06, 0, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.fillStyle = INK;
-    ctx.globalAlpha = 1;
-    ctx.beginPath();
-    ctx.arc(w * 0.55, h * 0.72, w * 0.02, 0, Math.PI * 2);
-    ctx.fill();
+    ctx.globalAlpha = 0.92;
+    const painted = drawSprite(ctx, 'leviathan-lurk', w * 0.62,
+      h * (0.86 + Math.sin(o.t * 1.6) * 0.012), h * 0.3, 1);
     ctx.restore();
+    if (!painted) {
+      // coil silhouettes below the surface
+      ctx.save();
+      ctx.fillStyle = PAPER;
+      ctx.globalAlpha = 0.25;
+      for (const [ax, ay, ar] of [[0.3, 0.75, 0.16], [0.62, 0.82, 0.2], [0.85, 0.72, 0.12]]) {
+        ctx.beginPath();
+        ctx.arc(ax * w, ay * h, ar * w, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      // a pale eye opening below
+      ctx.globalAlpha = 0.7;
+      ctx.beginPath();
+      ctx.ellipse(w * 0.55, h * 0.72, w * 0.05, w * 0.06, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = INK;
+      ctx.globalAlpha = 1;
+      ctx.beginPath();
+      ctx.arc(w * 0.55, h * 0.72, w * 0.02, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
     // raft + crew
     const ry = h * 0.53 + Math.sin(o.t * 1.5) * h * 0.012;
     drawRaft(ctx, w * 0.35, ry, w * 0.44, o.t);
