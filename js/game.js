@@ -7,7 +7,7 @@ import { createChallenge } from './verbs.js';
 import { scenes } from './scenes.js';
 import { setpieces } from './setpieces.js';
 import { composeScene, drawBackdrop } from './compose.js';
-import { INK, PAPER, C, caption as drawCaption, drawVerbIcon, setBubbleMinTop } from './art.js';
+import { INK, PAPER, C, caption as drawCaption, drawVerbIcon, setBubbleMinTop, setSpriteClock } from './art.js';
 import { sfx, buzz, initAudio } from './sfx.js';
 import { saveGet, saveSet } from './save.js';
 
@@ -535,6 +535,7 @@ export class Game {
     const dt = Math.min(0.05, (now - this._last) / 1000);
     this._last = now;
     this._dtFrame = dt;
+    setSpriteClock(now / 1000); // shared clock for stop-motion sprite frames
     this.update(dt);
     this.render();
     requestAnimationFrame(() => this.tick());

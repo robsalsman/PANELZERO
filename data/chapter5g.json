@@ -103,7 +103,8 @@
             "text": "DON",
             "from": "right",
             "dir": "left",
-            "time": 1.3
+            "time": 1.3,
+            "obj": "fist"
           }
         ]
       },

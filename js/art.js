@@ -51,10 +51,28 @@ function spriteImg(name) {
   return img;
 }
 
+// Stop-motion animation: when meta.json has `${name}-f1..fN`, drawSprite
+// cycles those frames on the shared clock (~7 fps, classic manga-anime
+// "shot on threes" feel). Single-image sprites keep working untouched.
+let spriteClock = 0;
+export function setSpriteClock(t) { spriteClock = t; }
+const frameCounts = new Map();
+function animFrames(name) {
+  let n = frameCounts.get(name);
+  if (n === undefined) {
+    n = 0;
+    while (SPRITE_META?.[`${name}-f${n + 1}`]) n++;
+    frameCounts.set(name, n);
+  }
+  return n;
+}
+
 // draw sprite `name` with the figure's feet (alpha-bbox bottom-center) at
 // (x, y) and the figure scaled to height s. dir < 0 mirrors (sprites face
 // right). mode 'width' scales the bbox WIDTH to s instead (lying poses).
 export function drawSprite(ctx, name, x, y, s, dir = 1, mode = 'height') {
+  const nFrames = animFrames(name);
+  if (nFrames > 0) name = `${name}-f${(Math.floor(spriteClock * 7) % nFrames) + 1}`;
   const m = SPRITE_META?.[name];
   if (!m) return false;
   const img = spriteImg(name);
@@ -377,6 +395,8 @@ export function drawHandWithEraser(ctx, w, h, drop) {
 // A torn manga page riding the ink sea. (cx, cy) is the deck's top-center,
 // rw the deck width; bob/tilt animation is applied by the caller via t.
 export function drawRaft(ctx, cx, cy, rw, t = 0) {
+  // painted prop first: prop-raft.webp scaled to the deck width
+  if (drawSprite(ctx, 'prop-raft', cx, cy + rw * 0.14, rw * 1.08, 1, 'width')) return;
   const dh = rw * 0.09; // deck depth (perspective)
   const th = rw * 0.05; // paper thickness
   // jagged torn outline offsets (fixed pattern so it doesn't shimmer)

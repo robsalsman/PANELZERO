@@ -198,7 +198,8 @@
             "text": "REJECT",
             "from": "right",
             "dir": "left",
-            "time": 1.35
+            "time": 1.35,
+            "obj": "frame"
           }
         ]
       },
@@ -221,7 +222,8 @@
             "text": "DELETE",
             "from": "left",
             "dir": "right",
-            "time": 1.25
+            "time": 1.25,
+            "obj": "frame"
           }
         ]
       },

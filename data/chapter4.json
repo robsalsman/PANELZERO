@@ -32,7 +32,8 @@
             "text": "SLAM",
             "from": "top",
             "dir": "any",
-            "time": 1.4
+            "time": 1.4,
+            "obj": "pencil"
           }
         ]
       },
@@ -182,14 +183,16 @@
             "text": "SWEEP",
             "from": "left",
             "dir": "right",
-            "time": 1.4
+            "time": 1.4,
+            "obj": "hand"
           },
           {
             "text": "SWEEP",
             "from": "right",
             "dir": "left",
             "time": 1.3,
-            "delay": 0.5
+            "delay": 0.5,
+            "obj": "hand"
           }
         ]
       },

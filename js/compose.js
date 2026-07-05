@@ -4,7 +4,7 @@
 // story flag is set) variants. Positions are normalized to the panel.
 import {
   INK, PAPER, C, fillTone, speedLinesV, speedLinesH, impactStar, drawSFXText,
-  drawPencilShadow, drawHandWithEraser, drawSmudge, speechBubble, drawRaft,
+  drawPencilShadow, drawHandWithEraser, drawSmudge, speechBubble, drawRaft, drawSprite,
 } from './art.js';
 import { drawKai, drawSumi, drawRejected, drawKen, drawYuri, drawGoma, drawArtist } from './chars.js';
 
@@ -195,6 +195,57 @@ function drawActor(ctx, w, h, a, t, flags) {
   }
 }
 
+// a proper yellow pencil, drawn vertically (tip down), centered on origin.
+// ps = half-length. Exported for hazard rendering in verbs.js.
+export function drawPencilBody(ctx, ps) {
+  const pw2 = ps * 0.11;
+  ctx.strokeStyle = INK;
+  ctx.lineWidth = Math.max(2, ps * 0.03);
+  // body — warm yellow with facet lines
+  const grad = ctx.createLinearGradient(-pw2, 0, pw2, 0);
+  grad.addColorStop(0, '#c98f2c');
+  grad.addColorStop(0.5, '#eab547');
+  grad.addColorStop(1, '#b57d24');
+  ctx.fillStyle = grad;
+  ctx.beginPath();
+  ctx.rect(-pw2, -ps * 0.5, pw2 * 2, ps);
+  ctx.fill();
+  ctx.stroke();
+  ctx.globalAlpha = 0.35;
+  ctx.beginPath();
+  ctx.moveTo(-pw2 * 0.33, -ps * 0.5); ctx.lineTo(-pw2 * 0.33, ps * 0.5);
+  ctx.moveTo(pw2 * 0.33, -ps * 0.5); ctx.lineTo(pw2 * 0.33, ps * 0.5);
+  ctx.stroke();
+  ctx.globalAlpha = 1;
+  // wood cone + graphite tip
+  ctx.fillStyle = '#e8d5ae';
+  ctx.beginPath();
+  ctx.moveTo(-pw2, ps * 0.5);
+  ctx.lineTo(0, ps * 0.72);
+  ctx.lineTo(pw2, ps * 0.5);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = INK;
+  ctx.beginPath();
+  ctx.moveTo(-pw2 * 0.35, ps * 0.64);
+  ctx.lineTo(0, ps * 0.72);
+  ctx.lineTo(pw2 * 0.35, ps * 0.64);
+  ctx.closePath();
+  ctx.fill();
+  // ferrule + eraser
+  ctx.fillStyle = '#b9bec9';
+  ctx.beginPath();
+  ctx.rect(-pw2, -ps * 0.58, pw2 * 2, ps * 0.08);
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = '#e2a1a8';
+  ctx.beginPath();
+  ctx.roundRect(-pw2 * 0.9, -ps * 0.68, pw2 * 1.8, ps * 0.1, pw2 * 0.35);
+  ctx.fill();
+  ctx.stroke();
+}
+
 function drawProp(ctx, w, h, pr, t) {
   switch (pr.type) {
     case 'sfx':
@@ -217,6 +268,7 @@ function drawProp(ctx, w, h, pr, t) {
       const px = pr.x * w;
       const py = pr.y * h;
       const pw = (pr.w || 0.3) * w;
+      if (drawSprite(ctx, 'prop-pagepile', px, py, pw * 0.85, 1)) break;
       ctx.save();
       ctx.strokeStyle = INK;
       ctx.lineWidth = Math.max(2.5, pw * 0.02);
@@ -279,6 +331,7 @@ function drawProp(ctx, w, h, pr, t) {
       const bx = pr.x * w;
       const by = pr.y * h;
       const bs = (pr.s || 0.25) * h;
+      if (drawSprite(ctx, 'prop-inkbottle', bx, by, bs, 1)) { ctx.restore(); break; }
       ctx.fillStyle = INK;
       ctx.strokeStyle = INK;
       ctx.lineWidth = 3;
@@ -310,6 +363,7 @@ function drawProp(ctx, w, h, pr, t) {
       ctx.fill();
       ctx.translate(bx, by);
       ctx.rotate(0.9 + Math.sin(t * 1.4) * 0.05);
+      if (drawSprite(ctx, 'prop-brush', 0, bs * 0.55, bs * 1.15, 1)) { ctx.restore(); break; }
       // bamboo handle
       const hw = bs * 0.075;
       const hGrad = ctx.createLinearGradient(-hw, 0, hw, 0);
@@ -370,6 +424,7 @@ function drawProp(ctx, w, h, pr, t) {
       const nx = pr.x * w;
       const ny = pr.y * h;
       const ns = (pr.s || 0.2) * h;
+      if (drawSprite(ctx, 'prop-nib', nx, ny + ns * 0.5, ns, 1)) { ctx.restore(); break; }
       ctx.translate(nx, ny);
       ctx.rotate(-0.15);
       ctx.fillStyle = PAPER;
@@ -401,14 +456,8 @@ function drawProp(ctx, w, h, pr, t) {
       const ps = (pr.s || 0.35) * h;
       ctx.translate(px, py);
       ctx.rotate(pr.spin ? t * 2.4 : (pr.rot || 0.4));
-      ctx.fillStyle = INK;
-      ctx.fillRect(-ps * 0.06, -ps * 0.5, ps * 0.12, ps);
-      ctx.beginPath();
-      ctx.moveTo(-ps * 0.06, ps * 0.5);
-      ctx.lineTo(0, ps * 0.62);
-      ctx.lineTo(ps * 0.06, ps * 0.5);
-      ctx.closePath();
-      ctx.fill();
+      if (drawSprite(ctx, 'prop-pencil', 0, ps * 0.55, ps * 1.1, 1)) { ctx.restore(); break; }
+      drawPencilBody(ctx, ps);
       ctx.restore();
       break;
     }

@@ -2,9 +2,173 @@
 // every action is scored PERFECT / GOOD / OK (speed, precision, close calls),
 // feeding the combo meter. Juice hooks: api.shake, api.hitstop, api.stamp.
 // Contract: { update(dt), draw(ctx, w, h), onDown/onMove/onUp/onTap/onSwipe }.
-import { INK, PAPER, impactStar, drawSFXText, drawSmudge, speechBubble, drawPencilShadow } from './art.js';
+import { INK, PAPER, impactStar, drawSFXText, drawSmudge, speechBubble, drawPencilShadow, drawSprite } from './art.js';
 import { drawKai } from './chars.js';
+import { drawPencilBody } from './compose.js';
 import { anchors } from './scenes.js';
+
+// bobbing dodge-direction arrows shown while a hazard is incoming
+function drawIncomingCue(ctx, hz, w, h) {
+  const t = performance.now() / 1000;
+  const bob = Math.sin(t * 6) * 6;
+  ctx.fillStyle = INK;
+  ctx.globalAlpha = 0.75;
+  const ay = h * 0.78;
+  const draw = (dx) => {
+    ctx.beginPath();
+    ctx.moveTo(w * 0.5 + dx * (w * 0.18 + bob), ay);
+    ctx.lineTo(w * 0.5 + dx * (w * 0.1 + bob), ay - 12);
+    ctx.lineTo(w * 0.5 + dx * (w * 0.1 + bob), ay + 12);
+    ctx.closePath();
+    ctx.fill();
+  };
+  if (hz.dir === 'any') { draw(-1); draw(1); }
+  else if (hz.dir === 'left') draw(-1);
+  else if (hz.dir === 'right') draw(1);
+  else if (hz.dir === 'up') {
+    ctx.beginPath();
+    ctx.moveTo(w * 0.5, h * 0.6 - bob);
+    ctx.lineTo(w * 0.5 - 12, h * 0.6 - bob + 20);
+    ctx.lineTo(w * 0.5 + 12, h * 0.6 - bob + 20);
+    ctx.closePath();
+    ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+}
+
+/* ---------- hazard objects ----------
+ * Swipe hazards are THINGS, not just flying words: the object closes in,
+ * the SFX word rides small beside it, and the word only goes BIG on impact.
+ * Painted `fx-<obj>` sprites take over automatically when they exist. */
+function drawHazardObj(ctx, obj, x, y, s, from, t) {
+  const rot = from === 'top' ? 0 : from === 'right' ? Math.PI / 2 : -Math.PI / 2;
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.rotate(rot);
+  if (drawSprite(ctx, `fx-${obj}`, 0, s * 0.5, s, 1)) { ctx.restore(); return; }
+  ctx.strokeStyle = INK;
+  ctx.lineWidth = Math.max(2.5, s * 0.035);
+  switch (obj) {
+    case 'pencil':
+      drawPencilBody(ctx, s * 0.62);
+      break;
+    case 'frame': {
+      // a torn panel border, spinning like a shuriken
+      ctx.rotate(t * 3.2);
+      const fw = s * 0.55;
+      const fh = s * 0.4;
+      ctx.fillStyle = PAPER;
+      ctx.fillRect(-fw / 2, -fh / 2, fw, fh);
+      ctx.strokeRect(-fw / 2, -fh / 2, fw, fh);
+      ctx.lineWidth = Math.max(4, s * 0.07);
+      ctx.strokeRect(-fw / 2 + s * 0.045, -fh / 2 + s * 0.045, fw - s * 0.09, fh - s * 0.09);
+      // torn corner
+      ctx.fillStyle = INK;
+      ctx.beginPath();
+      ctx.moveTo(fw / 2, -fh / 2);
+      ctx.lineTo(fw / 2 - s * 0.14, -fh / 2);
+      ctx.lineTo(fw / 2, -fh / 2 + s * 0.1);
+      ctx.closePath();
+      ctx.fill();
+      break;
+    }
+    case 'inkblob': {
+      ctx.fillStyle = INK;
+      ctx.beginPath();
+      ctx.ellipse(0, 0, s * 0.3, s * 0.38, 0, 0, Math.PI * 2);
+      ctx.fill();
+      for (let i = 0; i < 5; i++) {
+        const a = (i / 5) * Math.PI * 2 + t * 2;
+        ctx.beginPath();
+        ctx.arc(Math.cos(a) * s * 0.34, -s * 0.15 + Math.sin(a) * s * 0.4, s * (0.05 + (i % 3) * 0.02), 0, Math.PI * 2);
+        ctx.fill();
+      }
+      // glossy highlight
+      ctx.fillStyle = 'rgba(150, 200, 255, 0.4)';
+      ctx.beginPath();
+      ctx.ellipse(-s * 0.1, -s * 0.14, s * 0.08, s * 0.05, -0.5, 0, Math.PI * 2);
+      ctx.fill();
+      break;
+    }
+    case 'tail': {
+      // scythe crescent of leviathan tail, fin spines on the outer edge
+      ctx.fillStyle = '#101a38';
+      ctx.strokeStyle = 'rgba(150, 200, 255, 0.6)';
+      ctx.beginPath();
+      ctx.arc(0, 0, s * 0.5, Math.PI * 0.2, Math.PI * 1.15);
+      ctx.arc(-s * 0.08, -s * 0.06, s * 0.32, Math.PI * 1.1, Math.PI * 0.25, true);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+      break;
+    }
+    case 'eraser': {
+      ctx.rotate(0.2 + Math.sin(t * 4) * 0.06);
+      ctx.fillStyle = '#f2efe6';
+      ctx.beginPath();
+      ctx.roundRect(-s * 0.32, -s * 0.2, s * 0.64, s * 0.4, s * 0.05);
+      ctx.fill();
+      ctx.stroke();
+      ctx.fillStyle = '#3a5da8';
+      ctx.beginPath();
+      ctx.roundRect(-s * 0.32, -s * 0.2, s * 0.24, s * 0.4, s * 0.05);
+      ctx.fill();
+      ctx.stroke();
+      // crumbs trailing
+      ctx.fillStyle = '#d9d2c0';
+      for (let i = 0; i < 4; i++) {
+        ctx.beginPath();
+        ctx.arc(-s * (0.4 + i * 0.1), s * (0.1 - (i % 2) * 0.2), s * 0.035, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      break;
+    }
+    case 'fist': {
+      // a massive fist, knuckles first, wraps trailing
+      ctx.fillStyle = '#b4713d';
+      ctx.beginPath();
+      ctx.roundRect(-s * 0.3, -s * 0.28, s * 0.6, s * 0.5, s * 0.12);
+      ctx.fill();
+      ctx.stroke();
+      // knuckles
+      ctx.fillStyle = '#c98a52';
+      for (let i = 0; i < 4; i++) {
+        ctx.beginPath();
+        ctx.arc(-s * 0.21 + i * s * 0.14, -s * 0.26, s * 0.075, Math.PI, 0);
+        ctx.fill();
+        ctx.stroke();
+      }
+      // hand-wrap bands
+      ctx.fillStyle = PAPER;
+      ctx.beginPath();
+      ctx.roundRect(-s * 0.3, s * 0.06, s * 0.6, s * 0.13, s * 0.03);
+      ctx.fill();
+      ctx.stroke();
+      break;
+    }
+    case 'hand': {
+      // the Artist's Hand, flat sweep, fingers extended
+      ctx.fillStyle = 'rgba(28, 28, 38, 0.88)';
+      ctx.beginPath();
+      ctx.roundRect(-s * 0.34, -s * 0.16, s * 0.5, s * 0.42, s * 0.08);
+      ctx.fill();
+      for (let i = 0; i < 4; i++) {
+        ctx.beginPath();
+        ctx.roundRect(-s * 0.3 + i * s * 0.115, -s * 0.52, s * 0.09, s * 0.4, s * 0.045);
+        ctx.fill();
+      }
+      // thumb
+      ctx.beginPath();
+      ctx.roundRect(s * 0.14, -s * 0.22, s * 0.09, s * 0.3, s * 0.045);
+      ctx.fill();
+      break;
+    }
+    default:
+      ctx.restore();
+      return drawSFXText(ctx, obj.toUpperCase(), x, y, s * 0.8, 0.06);
+  }
+  ctx.restore();
+}
 
 /* ---------- shared juice bits ---------- */
 function makeFx() {
@@ -284,10 +448,36 @@ function swipeChallenge(def, api) {
         }
         if (hz.state === 'crashed') {
           const cy = hz.from === 'top' ? groundY - size * 0.4 : y;
-          drawSFXText(ctx, hz.text, w * 0.5, cy, size, 0.08);
+          if (hz.obj) drawHazardObj(ctx, hz.obj, w * 0.5, cy, size * 1.4, hz.from, hz.t);
+          drawSFXText(ctx, hz.text, w * 0.5, cy - (hz.obj ? size * 0.7 : 0), size, 0.08);
           impactStar(ctx, w * 0.5, cy + size * 0.6, size * 0.8, 9);
+        } else if (hz.obj) {
+          // the OBJECT closes in; the word rides small beside it
+          const looming = size * (1.1 + p * 0.8);
+          drawHazardObj(ctx, hz.obj, x, y, looming, hz.from, hz.t);
+          drawSFXText(ctx, hz.text, x + (hz.from === 'right' ? size * 0.9 : hz.from === 'left' ? -size * 0.9 : size * 0.8),
+            y - size * 0.7, looming * 0.32, hz.from === 'right' ? -0.12 : 0.1);
+          ctx.strokeStyle = INK;
+          ctx.globalAlpha = 0.4;
+          ctx.lineWidth = 2;
+          for (let m = 0; m < 3; m++) {
+            ctx.beginPath();
+            if (hz.from === 'top') {
+              ctx.moveTo(x - size + m * size, y - size * 1.2);
+              ctx.lineTo(x - size + m * size, y - size * 0.5);
+            } else {
+              const back = hz.from === 'right' ? size : -size;
+              ctx.moveTo(x + back * 1.6, y - size * 0.5 + m * size * 0.5);
+              ctx.lineTo(x + back * 0.9, y - size * 0.5 + m * size * 0.5);
+            }
+            ctx.stroke();
+          }
+          ctx.globalAlpha = 1;
+          if (hz.state === 'incoming') {
+            drawIncomingCue(ctx, hz, w, h);
+          }
         } else {
-          // hazards grow as they close in — dread you can see
+          // no object: the flying word IS the thing (Chapter 1's gag)
           const looming = size * (0.8 + p * 0.5);
           drawSFXText(ctx, hz.text, x, y, looming, hz.from === 'top' ? 0.05 : hz.from === 'right' ? -0.12 : 0.12);
           ctx.strokeStyle = INK;
@@ -307,31 +497,7 @@ function swipeChallenge(def, api) {
           }
           ctx.globalAlpha = 1;
           if (hz.state === 'incoming') {
-            const t = performance.now() / 1000;
-            const bob = Math.sin(t * 6) * 6;
-            ctx.fillStyle = INK;
-            ctx.globalAlpha = 0.75;
-            const ay = h * 0.78;
-            const draw = (dx) => {
-              ctx.beginPath();
-              ctx.moveTo(w * 0.5 + dx * (w * 0.18 + bob), ay);
-              ctx.lineTo(w * 0.5 + dx * (w * 0.1 + bob), ay - 12);
-              ctx.lineTo(w * 0.5 + dx * (w * 0.1 + bob), ay + 12);
-              ctx.closePath();
-              ctx.fill();
-            };
-            if (hz.dir === 'any') { draw(-1); draw(1); }
-            else if (hz.dir === 'left') draw(-1);
-            else if (hz.dir === 'right') draw(1);
-            else if (hz.dir === 'up') {
-              ctx.beginPath();
-              ctx.moveTo(w * 0.5, h * 0.6 - bob);
-              ctx.lineTo(w * 0.5 - 12, h * 0.6 - bob + 20);
-              ctx.lineTo(w * 0.5 + 12, h * 0.6 - bob + 20);
-              ctx.closePath();
-              ctx.fill();
-            }
-            ctx.globalAlpha = 1;
+            drawIncomingCue(ctx, hz, w, h);
           }
         }
       }

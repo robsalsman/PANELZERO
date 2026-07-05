@@ -118,7 +118,8 @@
             "text": "SPLOOSH",
             "from": "right",
             "dir": "left",
-            "time": 1.4
+            "time": 1.4,
+            "obj": "inkblob"
           }
         ]
       },
@@ -195,7 +196,8 @@
             "text": "SWOOSH",
             "from": "left",
             "dir": "up",
-            "time": 1.5
+            "time": 1.5,
+            "obj": "tail"
           }
         ]
       },

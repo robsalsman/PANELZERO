@@ -84,7 +84,8 @@
             "text": "STAB",
             "from": "top",
             "dir": "any",
-            "time": 1.25
+            "time": 1.25,
+            "obj": "pencil"
           }
         ]
       },
@@ -214,14 +215,16 @@
             "text": "SCRATCH",
             "from": "right",
             "dir": "left",
-            "time": 1.2
+            "time": 1.2,
+            "obj": "pencil"
           },
           {
             "text": "SCRUB",
             "from": "left",
             "dir": "right",
             "time": 1.1,
-            "delay": 0.5
+            "delay": 0.5,
+            "obj": "eraser"
           }
         ]
       },

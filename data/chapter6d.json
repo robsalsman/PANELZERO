@@ -157,7 +157,8 @@
             "text": "GOUU",
             "from": "right",
             "dir": "left",
-            "time": 1.3
+            "time": 1.3,
+            "obj": "fist"
           }
         ]
       },
@@ -361,14 +362,16 @@
             "text": "SLASH",
             "from": "right",
             "dir": "left",
-            "time": 1.25
+            "time": 1.25,
+            "obj": "frame"
           },
           {
             "text": "BREAK",
             "from": "left",
             "dir": "right",
             "time": 1.15,
-            "delay": 0.5
+            "delay": 0.5,
+            "obj": "frame"
           }
         ]
       },
@@ -575,7 +578,8 @@
             "text": "ZAN",
             "from": "left",
             "dir": "up",
-            "time": 1.3
+            "time": 1.3,
+            "obj": "fist"
           }
         ]
       },
