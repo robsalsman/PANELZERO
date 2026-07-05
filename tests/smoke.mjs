@@ -42,6 +42,24 @@ const SCENARIOS = {
     },
     expect: 'THE PUBLISHED',
   },
+  // saved + mercy + finish, but execute Yuri and resent the Artist -> THE NEW ARTIST
+  artist: {
+    startAt: { chapter: 'ch2', flags: [] },
+    choices: {
+      'ch2:p04': 0, 'ch2:p11': 0, 'ch3a:p11': 0, 'ch4:p09': 0,
+      'g1:p11': 1, 'g2:p11': 1, 'g2:p13': 1, 'g3:p09': 0, 'ch5:p13': 0,
+    },
+    expect: 'THE NEW ARTIST',
+  },
+  // clean hands (ruthless 0), duel Ken + recruit, then erase the border -> THE ESCAPE
+  escape: {
+    startAt: { chapter: 'ch2', flags: [] },
+    choices: {
+      'ch2:p04': 0, 'ch2:p11': 0, 'ch3a:p11': 0, 'ch4:p09': 0,
+      'g1:p11': 0, 'g2:p11': 0, 'g2:p13': 1, 'g3:p09': 1, 'ch5:p13': 2,
+    },
+    expect: 'THE ESCAPE',
+  },
 };
 
 const name = process.argv[2] || 'coauthors';

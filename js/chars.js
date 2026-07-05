@@ -677,7 +677,13 @@ function drawBody(ctx, x, y, s, pose, o) {
 function kaiSpriteName(pose, emotion, weapon) {
   switch (pose) {
     case 'stand':
-      return emotion === 'shock' ? 'kai-stand-shock' : emotion === 'smile' ? 'kai-stand-smile' : 'kai-stand';
+      // neutral stand breathes: kai-idle frames when present, kai-stand fallback
+      return emotion === 'shock' ? 'kai-stand-shock' : emotion === 'smile' ? 'kai-stand-smile' : 'kai-idle';
+    case 'jump': return 'kai-jump';
+    case 'land': return 'kai-land';
+    case 'hit': return 'kai-hit';
+    case 'guard': return 'kai-guard';
+    case 'victory': return 'kai-victory';
     case 'walk': return 'kai-walk';
     case 'run': return 'kai-run';
     case 'lying': return 'kai-lying';
@@ -713,6 +719,7 @@ export function drawSumi(ctx, x, y, s, pose = 'float', o = {}) {
   const emotion = o.emotion || 'smile';
   const dir = o.dir ?? -1;
   const name = pose === 'brace' ? 'sumi-brace'
+    : pose === 'attack' ? 'sumi-attack' : pose === 'shield' ? 'sumi-shield' : pose === 'hurt' ? 'sumi-hurt'
     : emotion === 'shock' ? 'sumi-float-shock' : emotion === 'sad' ? 'sumi-float-sad' : 'sumi-float';
   if (drawSprite(ctx, name, x, y + bob, s, dir === 0 ? 1 : dir)) return;
   drawBody(ctx, x, y + bob, s, pose, { dir, style: 'sumi', emotion });
@@ -720,8 +727,9 @@ export function drawSumi(ctx, x, y, s, pose = 'float', o = {}) {
 
 export function drawKen(ctx, x, y, s, pose = 'stand', o = {}) {
   const dir = o.dir ?? -1;
-  const name = pose === 'fight' ? 'ken-fight' : pose === 'kneel' ? 'ken-kneel'
-    : pose === 'guard' ? 'ken-guard' : (o.emotion === 'smile' ? 'ken-smile' : 'ken-stand');
+  const name = pose === 'fight' ? 'ken-punch' : pose === 'kneel' ? 'ken-kneel'
+    : pose === 'guard' ? 'ken-guard' : pose === 'charge' ? 'ken-charge' : pose === 'hit' ? 'ken-hit'
+    : pose === 'pose' ? 'ken-fight' : (o.emotion === 'smile' ? 'ken-smile' : 'ken-stand');
   if (drawSprite(ctx, name, x, y, s, dir === 0 ? 1 : dir)) return;
   // vector Ken is BUILT — draw 12% bigger and lower so he looms
   drawBody(ctx, x, y, s * 1.12, pose, { dir, style: 'ken', weapon: o.weapon || null, emotion: o.emotion || 'determined' });
@@ -729,8 +737,9 @@ export function drawKen(ctx, x, y, s, pose = 'stand', o = {}) {
 
 export function drawYuri(ctx, x, y, s, pose = 'stand', o = {}) {
   const dir = o.dir ?? -1;
-  const name = pose === 'fight' ? 'yuri-fight' : pose === 'kneel' ? 'yuri-kneel'
-    : pose === 'point' ? 'yuri-point' : (o.emotion === 'smile' ? 'yuri-smile' : 'yuri-stand');
+  const name = pose === 'fight' ? 'yuri-slash' : pose === 'kneel' ? 'yuri-kneel'
+    : pose === 'point' ? 'yuri-point' : pose === 'warp' ? 'yuri-warp' : pose === 'hit' ? 'yuri-hit'
+    : pose === 'pose' ? 'yuri-fight' : (o.emotion === 'smile' ? 'yuri-smile' : 'yuri-stand');
   if (drawSprite(ctx, name, x, y, s, dir === 0 ? 1 : dir)) return;
   drawBody(ctx, x, y, s, pose, { dir, style: 'yuri', weapon: o.weapon || null, emotion: o.emotion || 'neutral' });
 }
@@ -738,7 +747,7 @@ export function drawYuri(ctx, x, y, s, pose = 'stand', o = {}) {
 export function drawArtist(ctx, x, y, s, pose = 'stand', o = {}) {
   const dir = o.dir ?? -1;
   const name = pose === 'kneel' ? 'artist-kneel' : pose === 'sit' ? 'artist-sit'
-    : (o.emotion === 'smile' ? 'artist-smile' : 'artist-stand');
+    : pose === 'draw' ? 'artist-draw' : (o.emotion === 'smile' ? 'artist-smile' : 'artist-stand');
   if (drawSprite(ctx, name, x, y, s, dir === 0 ? 1 : dir)) return;
   drawBody(ctx, x, y, s, pose, { dir, style: 'artist', weapon: null, emotion: o.emotion || 'sad' });
 }
@@ -748,6 +757,7 @@ export function drawGoma(ctx, x, y, s, o = {}) {
   const mood = o.emotion || 'smile'; // smile | shock | sad | serious
   const t = o.t || 0;
   const sprite = mood === 'serious' ? 'goma-serious' : mood === 'sad' ? 'goma-sad'
+    : mood === 'bounce' ? 'goma-bounce' : mood === 'slam' ? 'goma-slam' : mood === 'cry' ? 'goma-cry'
     : (o.emotion === 'cheer' || o.emotion === 'smile') ? 'goma-cheer' : 'goma-stand';
   if (drawSprite(ctx, sprite, x, y, s, o.dir ?? -1)) return;
   const r = s * 0.42;
@@ -840,7 +850,9 @@ export function drawGoma(ctx, x, y, s, o = {}) {
 export function drawRejected(ctx, x, y, s, pose = 'stand', o = {}) {
   const dir = o.dir ?? -1;
   const name = o.restored ? 'rejected-restored'
-    : pose === 'fight' ? 'rejected-fight' : pose === 'kneel' ? 'rejected-kneel' : 'rejected-stand';
+    : pose === 'fight' ? 'rejected-fight' : pose === 'kneel' ? 'rejected-kneel'
+    : pose === 'dash' ? 'rejected-dash' : pose === 'hit' ? 'rejected-hit'
+    : pose === 'power' ? 'rejected-power' : 'rejected-stand';
   if (drawSprite(ctx, name, x, y, s, dir === 0 ? 1 : dir)) return;
   drawBody(ctx, x, y, s, pose, { dir, style: 'rejected', weapon: o.weapon || null, emotion: o.emotion || 'determined', restored: o.restored || false });
 }

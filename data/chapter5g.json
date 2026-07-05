@@ -460,7 +460,7 @@
         "actors": [
           {
             "who": "ken",
-            "pose": "fight",
+            "pose": "pose",
             "x": 0.62,
             "y": 0.92,
             "s": 0.5,
@@ -555,7 +555,7 @@
           },
           {
             "who": "ken",
-            "pose": "fight",
+            "pose": "pose",
             "x": 0.72,
             "y": 0.9,
             "s": 0.34,

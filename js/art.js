@@ -98,7 +98,30 @@ export function drawSprite(ctx, name, x, y, s, dir = 1, mode = 'height') {
 
 /* ---------------- screentone ---------------- */
 const toneCache = new Map();
+const toneImgs = new Map();
+function toneImg(density) {
+  let img = toneImgs.get(density);
+  if (!img) {
+    img = new Image();
+    img.src = `assets/tex/tone-dots-${density === 'dark' ? 'dark' : 'light'}.webp`;
+    toneImgs.set(density, img);
+  }
+  return img;
+}
 export function tonePattern(ctx, density) {
+  // painted screentone tile once loaded; procedural dots until then
+  const img = toneImg(density);
+  if (img.complete && img.naturalWidth) {
+    const pkey = `img-${density}`;
+    if (!toneCache.has(pkey)) {
+      const pat = ctx.createPattern(img, 'repeat');
+      const m = new DOMMatrix();
+      m.scaleSelf(0.35); // 512px tile down to a fine print-like dot pitch
+      pat.setTransform(m);
+      toneCache.set(pkey, pat);
+    }
+    return toneCache.get(pkey);
+  }
   // density: dot radius/step tuning; cached offscreen tile
   const key = density;
   if (toneCache.has(key)) return toneCache.get(key);
@@ -169,6 +192,8 @@ export function speedLinesH(ctx, w, h, n = 10, alpha = 0.25) {
 }
 
 export function impactStar(ctx, x, y, r, spikes = 9) {
+  // painted burst stamps: fx-impact-2 for big hits, -1 for small
+  if (drawSprite(ctx, r > 60 ? 'fx-impact-2' : 'fx-impact-1', x, y + r, r * 2, 1)) return;
   ctx.save();
   ctx.fillStyle = PAPER;
   ctx.strokeStyle = INK;
@@ -328,6 +353,14 @@ export function caption(ctx, text, w, y, fs = 14, measureOnly = false) {
 
 /* ---------------- The Artist's Hand ---------------- */
 export function drawPencilShadow(ctx, w, h, sweepX, alpha = 0.4) {
+  const ok = (() => {
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    const drawn = drawSprite(ctx, 'pencil-shadow', sweepX, h * 1.02, h * 0.95, 1);
+    ctx.restore();
+    return drawn;
+  })();
+  if (ok) return;
   // a giant pencil silhouette crossing the panel — pure shadow, no outline
   ctx.save();
   ctx.globalAlpha = alpha;

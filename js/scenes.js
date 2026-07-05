@@ -357,8 +357,14 @@ export const scenes = {
   smudge_defeat(ctx, w, h, o) {
     ground(ctx, w, h, h * 0.86);
     drawKai(ctx, w * 0.3, h * 0.86, h * 0.5, 'hold-club', { dir: 1 });
-    // dissolving smudge
     const p = Math.min(1, o.t / 2);
+    // painted: the scribble unraveling into one pencil line
+    ctx.save();
+    ctx.globalAlpha = Math.max(0.15, 1 - p * 0.6);
+    const painted = drawSprite(ctx, 'smudge-defeat', w * 0.7, h * 0.84, h * 0.34, 1);
+    ctx.restore();
+    if (painted) return;
+    // dissolving smudge
     ctx.fillStyle = INK;
     for (let i = 0; i < 14; i++) {
       const a = (i / 14) * Math.PI * 2 + i;

@@ -427,7 +427,12 @@ export const setpieces = {
   leviathan_end(ctx, w, h, o) {
     if (o.flags.mercy) {
       if (!o.hasImg) seaBase(ctx, w, h, o.t, 0.7);
-      // finished as a proper dragon-koi, leaping with joy
+      // finished as a proper dragon-koi, serene at last
+      if (drawSprite(ctx, 'leviathan-calm', w * 0.5, h * 0.72, h * 0.52, 1)) {
+        drawKai(ctx, w * 0.18, h * 0.88, h * 0.34, 'stand', { dir: 1, emotion: 'smile' });
+        drawSumi(ctx, w * 0.32, h * 0.86, h * 0.28, 'float', { dir: 1, t: o.t });
+        return;
+      }
       ctx.save();
       ctx.strokeStyle = C.leviathan;
       ctx.lineWidth = w * 0.05;
@@ -641,7 +646,7 @@ export const setpieces = {
   ending_coauthors(ctx, w, h, o) {
     drawBackdrop(ctx, w, h, 'assets/bg/ending-artist.webp');
     drawArtist(ctx, w * 0.3, h * 0.68, h * 0.24, 'stand', { dir: 1, emotion: 'smile' });
-    drawKai(ctx, w * 0.48, h * 0.7, h * 0.22, 'stand', { dir: -1, weapon: null, emotion: 'smile' });
+    drawKai(ctx, w * 0.48, h * 0.7, h * 0.22, 'victory', { dir: -1, weapon: null, emotion: 'smile' });
     drawSumi(ctx, w * 0.66, h * 0.68, h * 0.19, 'float', { dir: -1, t: o.t, emotion: 'smile' });
     if (o.flags.duel_goma) drawGoma(ctx, w * 0.82, h * 0.68, h * 0.14, { emotion: 'smile', t: o.t });
     else if (o.flags.duel_yuri) drawYuri(ctx, w * 0.82, h * 0.68, h * 0.18, 'stand', { dir: -1 });
